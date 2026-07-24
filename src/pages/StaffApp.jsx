@@ -459,7 +459,6 @@ export default function StaffApp(){
     {id:'chat',      label:'Chat',           sub:'5 Messages',       icon:'forum',                  grad:'#eef2ff'},
     {id:'reports',   label:'Reports',        sub:'Work Logs',        icon:'assessment',             grad:'#eef2ff'},
     {id:'requests',  label:'Requests',       sub:'Leave / Advance',  icon:'approval',               grad:'#eef2ff'},
-    {id:'profile_view', label:'My Profile',   sub:'ID, Docs & Details', icon:'person',                 grad:'#eef2ff'},
   ];
 
   // ─── Role quick stats ─────────────────────────────────────────────────────
