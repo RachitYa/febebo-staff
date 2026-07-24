@@ -15,6 +15,7 @@ const ROLE_META = {
   'Maintenance':      { emoji:'🛠️',   accent:'#fda4af', accentBg:'#ffe4e6', dept:'Repairs & Technical', grad:'#fda4af' },
   'Purchase Manager': { emoji:'🛒',   accent:'#94a3b8', accentBg:'#f1f5f9', dept:'Store & Inventory',   grad:'#94a3b8' },
   'Security Guard':   { emoji:'🛡️',   accent:'#6ee7b7', accentBg:'#d1fae5', dept:'Gate Security',       grad:'#6ee7b7' },
+  'HR':               { emoji:'👔',   accent:'#f472b6', accentBg:'#fce7f3', dept:'Human Resources & Hiring', grad:'#f472b6' },
 };
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
@@ -94,6 +95,19 @@ const INIT_DEMANDS = [
   {id:1,item:'Basmati Rice 25kg',qty:'2 Bags',reqBy:'Ramesh (Cook)',vendor:'Local Market',date:'22 Jul',status:'Pending'},
   {id:2,item:'Floor Cleaner 5L',qty:'3 cans',reqBy:'Lakshmi (Cleaner)',vendor:'Sunil Traders',date:'21 Jul',status:'Approved'},
   {id:3,item:'PVC Washers (20pc)',qty:'1 pack',reqBy:'Dinesh (Maint.)',vendor:'Hardware Depot',date:'22 Jul',status:'Pending'},
+];
+
+const INIT_CANDIDATES = [
+  {id:1, name:'Suresh Kumar', position:'Helper / Maintenance', experience:'3 Yrs', phone:'+91 9876543210', status:'Interview Scheduled', date:'Today 2:00 PM', note:'Experienced in plumbing & painting'},
+  {id:2, name:'Rekha Devi', position:'Cook', experience:'5 Yrs', phone:'+91 9812345678', status:'Applied', date:'Yesterday', note:'Specializes in North Indian dishes'},
+  {id:3, name:'Vikram Rathi', position:'Security Guard', experience:'2 Yrs', phone:'+91 9899988877', status:'Hired ✅', date:'22 Jul', note:'Joined night shift'}
+];
+
+const INIT_ENQUIRIES = [
+  {id:1, name:'Rohit Sharma', phone:'+91 9876543210', requirement:'Single Room AC', budget:'₹10,000', status:'New 🔴', source:'WhatsApp', text:'Looking for a single room with AC. Budget around ₹10,000.'},
+  {id:2, name:'Priya Mehta', phone:'+91 9123456789', requirement:'Double Sharing', budget:'₹7,500', status:'Contacted 🟡', source:'NoBroker', text:'Do you have double sharing available near metro station?'},
+  {id:3, name:'Arun Verma', phone:'+91 9012345678', requirement:'Triple Sharing', budget:'₹6,000', status:'Closed 🟢', source:'MagicBricks', text:'What is the security deposit for triple sharing?'},
+  {id:4, name:'Kavya Singh', phone:'+91 9811122233', requirement:'Double Sharing AC', budget:'₹8,500', status:'New 🔴', source:'Direct Call', text:'Need immediate move-in from 1st August.'}
 ];
 
 // ─── Small Reusable UI ────────────────────────────────────────────────────────
@@ -199,6 +213,11 @@ export default function StaffApp(){
 
   // Maintenance
   const [tickets,setTickets]    = useState(INIT_TICKETS);
+
+  // HR state
+  const [candidates, setCandidates] = useState(INIT_CANDIDATES);
+  const [enquiries, setEnquiries]   = useState(INIT_ENQUIRIES);
+  const [hrTab, setHrTab]           = useState('hiring'); // hiring | enquiries
 
   // Purchase
   const [demands,setDemands]    = useState(INIT_DEMANDS);
@@ -663,6 +682,22 @@ export default function StaffApp(){
                   <div>
                     <p style={{margin:0,fontSize:14,fontWeight:800,color:C.text}}>Gate Security Log</p>
                     <p style={{margin:'2px 0 0',fontSize:12,color:C.muted}}>{visitors.filter(v=>v.status==='Inside').length} visitors inside · {parcels.filter(p=>p.status==='Pending').length} parcels unclaimed</p>
+                  </div>
+                </div>
+                <span className="material-symbols-outlined" style={{fontSize:18,color:C.muted}}>chevron_right</span>
+              </Row>
+            </div>
+          )}
+
+          {/* HR preview */}
+          {staffRole === 'HR' && (
+            <div onClick={()=>setView('work')} style={{background:'#fff',borderRadius:18,border: '2px solid #000',padding:16,cursor:'pointer',boxShadow: '4px 4px 0px #000'}}>
+              <Row>
+                <div style={{display:'flex',alignItems:'center',gap:10}}>
+                  <div style={{width:40,height:40,borderRadius:13,background:meta.grad,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>👔</div>
+                  <div>
+                    <p style={{margin:0,fontSize:14,fontWeight:800,color:C.text}}>HR & Recruitment Portal</p>
+                    <p style={{margin:'2px 0 0',fontSize:12,color:C.muted}}>{candidates.filter(c=>c.status!=='Hired ✅').length} active hiring candidates · {enquiries.filter(e=>e.status.includes('New')).length} new room enquiries</p>
                   </div>
                 </div>
                 <span className="material-symbols-outlined" style={{fontSize:18,color:C.muted}}>chevron_right</span>
@@ -1202,6 +1237,160 @@ export default function StaffApp(){
             <button onClick={()=>alert('🚨 EMERGENCY ALERT sent to Admin & Security!')} style={{width:'100%',padding:16,background: C.primary,color:'#000',border:'2px solid #000',borderRadius:14,fontSize:15,fontWeight:900,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:8,boxShadow: '4px 4px 0px #000',fontFamily:'inherit'}}>
               <span className="material-symbols-outlined" style={{fontSize:22}}>warning</span>EMERGENCY SOS ALERT 🚨
             </button>
+          </>)}
+
+          {/* HR DASHBOARD - HIRING & ENQUIRIES */}
+          {staffRole === 'HR' && (<>
+            {/* HR Navigation Tabs */}
+            <div style={{display:'flex', background:'#fff', borderRadius:12, padding:4, border: '2px solid #000', boxShadow:'3px 3px 0px #000'}}>
+              <button 
+                onClick={()=>setHrTab('hiring')} 
+                style={{
+                  flex:1, padding:'10px 0', borderRadius:10, border: hrTab==='hiring'?'2px solid #000':'2px solid transparent',
+                  background: hrTab==='hiring' ? C.primary : 'transparent', color: '#000', fontSize:13, fontWeight:900, cursor:'pointer', fontFamily:'inherit'
+                }}
+              >
+                👥 Hiring & Candidates ({candidates.length})
+              </button>
+              <button 
+                onClick={()=>setHrTab('enquiries')} 
+                style={{
+                  flex:1, padding:'10px 0', borderRadius:10, border: hrTab==='enquiries'?'2px solid #000':'2px solid transparent',
+                  background: hrTab==='enquiries' ? C.primary : 'transparent', color: '#000', fontSize:13, fontWeight:900, cursor:'pointer', fontFamily:'inherit'
+                }}
+              >
+                📋 Room Enquiries ({enquiries.length})
+              </button>
+            </div>
+
+            {/* HIRING TAB */}
+            {hrTab === 'hiring' && (
+              <div style={{display:'flex', flexDirection:'column', gap:14}}>
+                {/* Hiring Stat Header */}
+                <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:10}}>
+                  <div style={{background:'#fef08a', borderRadius:14, border:'2px solid #000', padding:14, textAlign:'center', boxShadow:'3px 3px 0px #000'}}>
+                    <p style={{fontSize:24, fontWeight:900, margin:0, color:'#000'}}>{candidates.filter(c=>c.status!=='Hired ✅').length}</p>
+                    <p style={{fontSize:11, fontWeight:800, margin:'2px 0 0', textTransform:'uppercase', color:'#000'}}>Active Candidates</p>
+                  </div>
+                  <div style={{background:'#bbf7d0', borderRadius:14, border:'2px solid #000', padding:14, textAlign:'center', boxShadow:'3px 3px 0px #000'}}>
+                    <p style={{fontSize:24, fontWeight:900, margin:0, color:'#000'}}>{candidates.filter(c=>c.status==='Hired ✅').length}</p>
+                    <p style={{fontSize:11, fontWeight:800, margin:'2px 0 0', textTransform:'uppercase', color:'#000'}}>Staff Hired</p>
+                  </div>
+                </div>
+
+                {/* Candidate Action Card List */}
+                <div style={{background:'#fff', borderRadius:16, border:'2px solid #000', padding:16, boxShadow:'4px 4px 0px #000'}}>
+                  <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12}}>
+                    <p style={{margin:0, fontSize:15, fontWeight:900, color:'#000'}}>👔 Candidate Recruitment Pipeline</p>
+                    <button 
+                      onClick={()=>{
+                        const name = prompt('Candidate Name:');
+                        const pos = prompt('Applied Position (e.g. Cook, Cleaner, Security):');
+                        if (name && pos) {
+                          setCandidates(prev => [{id:Date.now(), name, position:pos, experience:'1 Yr', phone:'+91 9800000000', status:'Applied', date:'Just Now', note:'New Applicant'}, ...prev]);
+                        }
+                      }}
+                      style={{padding:'6px 10px', background:'#fde047', border:'2px solid #000', borderRadius:8, fontSize:11, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}
+                    >
+                      + Add Candidate
+                    </button>
+                  </div>
+
+                  <div style={{display:'flex', flexDirection:'column', gap:10}}>
+                    {candidates.map(c => (
+                      <div key={c.id} style={{background:'#fafafa', border:'2px solid #000', borderRadius:12, padding:14, boxShadow:'2px 2px 0px #000'}}>
+                        <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
+                          <div>
+                            <span style={{fontSize:15, fontWeight:900, color:'#000'}}>{c.name}</span>
+                            <div style={{display:'flex', gap:6, marginTop:4}}>
+                              <Chip label={c.position} color="#000" bg="#fef08a"/>
+                              <Chip label={c.experience} color="#000" bg="#cffafe"/>
+                            </div>
+                          </div>
+                          <span style={{fontSize:11, fontWeight:800, padding:'3px 8px', borderRadius:8, border:'1.5px solid #000', background: c.status==='Hired ✅'?'#bbf7d0':'#fef08a', color:'#000'}}>
+                            {c.status}
+                          </span>
+                        </div>
+
+                        {c.note && (
+                          <p style={{margin:'8px 0 0', fontSize:11, fontWeight:700, color:'#444'}}>💬 {c.note}</p>
+                        )}
+
+                        <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginTop:12, paddingTop:8, borderTop:'1px dashed #000'}}>
+                          <a href={`tel:${c.phone}`} style={{padding:'6px 10px', borderRadius:8, border:'2px solid #000', background:'#bbf7d0', color:'#000', textDecoration:'none', fontSize:11, fontWeight:800, boxShadow:'1px 1px 0px #000'}}>
+                            📞 Call Applicant
+                          </a>
+
+                          {c.status !== 'Hired ✅' && (
+                            <button 
+                              onClick={() => setCandidates(prev => prev.map(x => x.id === c.id ? {...x, status:'Hired ✅'} : x))}
+                              style={{padding:'7px 12px', background:'#fde047', border:'2px solid #000', borderRadius:8, color:'#000', fontSize:11, fontWeight:900, cursor:'pointer', fontFamily:'inherit', boxShadow:'2px 2px 0px #000'}}
+                            >
+                              Hire Staff ✅
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ROOM ENQUIRIES TAB */}
+            {hrTab === 'enquiries' && (
+              <div style={{display:'flex', flexDirection:'column', gap:14}}>
+                {/* Enquiries Header Stats */}
+                <div style={{background:'#0f172a', borderRadius:16, border:'2px solid #000', padding:'14px 16px', color:'#fff', boxShadow:'4px 4px 0px #000'}}>
+                  <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                    <div>
+                      <p style={{margin:0, fontSize:11, fontWeight:800, textTransform:'uppercase', color:'#fde047'}}>🏠 Room Enquiries & Leads</p>
+                      <h3 style={{margin:'2px 0 0', fontSize:20, fontWeight:900}}>Tenant Leads Management</h3>
+                    </div>
+                    <Chip label={`${enquiries.length} Leads`} color="#000" bg="#fde047"/>
+                  </div>
+                </div>
+
+                {/* Enquiries List matching Screenshot 3 */}
+                <div style={{display:'flex', flexDirection:'column', gap:12}}>
+                  {enquiries.map(e => (
+                    <div key={e.id} style={{background:'#fff', border:'2px solid #000', borderRadius:14, padding:14, boxShadow:'3px 3px 0px #000'}}>
+                      <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:6}}>
+                        <div>
+                          <h4 style={{margin:0, fontSize:16, fontWeight:900, color:'#000'}}>{e.name}</h4>
+                          <p style={{margin:'2px 0 0', fontSize:12, fontWeight:800, color:C.muted}}>{e.phone}</p>
+                        </div>
+                        <span style={{fontSize:11, fontWeight:800, padding:'3px 8px', borderRadius:8, border:'1.5px solid #000', background: e.status.includes('Closed')?'#bbf7d0':e.status.includes('Contacted')?'#fde047':'#fecaca', color:'#000'}}>
+                          {e.status}
+                        </span>
+                      </div>
+
+                      <div style={{display:'flex', gap:6, margin:'6px 0'}}>
+                        <Chip label={e.requirement} color="#000" bg="#cffafe"/>
+                        <Chip label={`Budget: ${e.budget}`} color="#000" bg="#fef08a"/>
+                        <Chip label={e.source} color="#000" bg="#e0e7ff"/>
+                      </div>
+
+                      <p style={{margin:'6px 0 10px', fontSize:12, fontWeight:700, color:'#333', background:'#f8fafc', padding:'8px 10px', borderRadius:8, border:'1px solid #000'}}>
+                        "{e.text}"
+                      </p>
+
+                      <div style={{display:'flex', gap:8, marginTop:8}}>
+                        <a href={`tel:${e.phone}`} style={{flex:1, textAlign:'center', padding:'8px 0', background:'#bbf7d0', border:'2px solid #000', borderRadius:8, color:'#000', fontSize:11, fontWeight:800, textDecoration:'none', boxShadow:'1px 1px 0px #000'}}>
+                          📞 Call Lead
+                        </a>
+                        <button 
+                          onClick={()=>setEnquiries(prev=>prev.map(x=>x.id===e.id?{...x, status: x.status.includes('Contacted')?'Closed 🟢':'Contacted 🟡'}:x))}
+                          style={{flex:1, padding:'8px 0', background:'#fde047', border:'2px solid #000', borderRadius:8, color:'#000', fontSize:11, fontWeight:900, cursor:'pointer', fontFamily:'inherit', boxShadow:'1px 1px 0px #000'}}
+                        >
+                          {e.status.includes('Contacted') ? 'Mark Closed 🟢' : 'Mark Contacted 🟡'}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </>)}
         </div>
       )}
