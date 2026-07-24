@@ -16,6 +16,13 @@ const ROLE_META = {
   'Purchase Manager': { emoji:'🛒',   accent:'#94a3b8', accentBg:'#f1f5f9', dept:'Store & Inventory',   grad:'#94a3b8' },
   'Security Guard':   { emoji:'🛡️',   accent:'#6ee7b7', accentBg:'#d1fae5', dept:'Gate Security',       grad:'#6ee7b7' },
   'HR':               { emoji:'👔',   accent:'#f472b6', accentBg:'#fce7f3', dept:'Human Resources & Hiring', grad:'#f472b6' },
+  'Helper':           { emoji:'🙋',   accent:'#fb923c', accentBg:'#fff7ed', dept:'General Helper',          grad:'#fb923c' },
+  'Plumber':          { emoji:'🔧',   accent:'#60a5fa', accentBg:'#eff6ff', dept:'Plumbing & Water',        grad:'#60a5fa' },
+  'Electrician':      { emoji:'⚡',   accent:'#facc15', accentBg:'#fefce8', dept:'Electrical & Wiring',     grad:'#facc15' },
+  'Carpenter':        { emoji:'🪚',   accent:'#a3a3a3', accentBg:'#fafafa', dept:'Carpentry & Fixtures',    grad:'#d4a574' },
+  'Sales Manager':    { emoji:'📈',   accent:'#34d399', accentBg:'#ecfdf5', dept:'Sales & Admissions',      grad:'#34d399' },
+  'Manager':          { emoji:'🏢',   accent:'#818cf8', accentBg:'#eef2ff', dept:'Operations Management',   grad:'#818cf8' },
+  'Others':           { emoji:'⚙️',   accent:'#9ca3af', accentBg:'#f9fafb', dept:'General Staff',           grad:'#9ca3af' },
 };
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
@@ -108,6 +115,43 @@ const INIT_ENQUIRIES = [
   {id:2, name:'Priya Mehta', phone:'+91 9123456789', requirement:'Double Sharing', budget:'₹7,500', status:'Contacted 🟡', source:'NoBroker', text:'Do you have double sharing available near metro station?'},
   {id:3, name:'Arun Verma', phone:'+91 9012345678', requirement:'Triple Sharing', budget:'₹6,000', status:'Closed 🟢', source:'MagicBricks', text:'What is the security deposit for triple sharing?'},
   {id:4, name:'Kavya Singh', phone:'+91 9811122233', requirement:'Double Sharing AC', budget:'₹8,500', status:'New 🔴', source:'Direct Call', text:'Need immediate move-in from 1st August.'}
+];
+
+const INIT_TASKS = [
+  {id:1, title:'Clean common area corridor – Ground Floor', assignedBy:'Admin', priority:'High', status:'Pending', room:'Common', time:'09:00 AM'},
+  {id:2, title:'Carry vegetable delivery to kitchen', assignedBy:'Cook Ramesh', priority:'Normal', status:'Done', room:'Kitchen', time:'10:30 AM'},
+  {id:3, title:'Help guest luggage – Room 204 checkout', assignedBy:'Admin', priority:'Normal', status:'Pending', room:'204', time:'12:00 PM'},
+  {id:4, title:'Replace welcome mat at main entrance', assignedBy:'Admin', priority:'Low', status:'Pending', room:'Entrance', time:'02:00 PM'},
+];
+
+const INIT_PLUMBING = [
+  {id:1, room:'108', issue:'Bathroom sink tap leaking continuously', student:'Sneha Kapoor', priority:'High', status:'Open', date:'Today 09:30 AM', note:'Water pooling on floor'},
+  {id:2, room:'302', issue:'Flush not working – Tank valve stuck', student:'Gaurav Malhotra', priority:'Normal', status:'In Progress', date:'Today 10:00 AM', note:'Need new valve'},
+  {id:3, room:'201', issue:'Hot water geyser not heating', student:'Karan Singh', priority:'Normal', status:'Open', date:'Yesterday 4 PM', note:'Check element'},
+  {id:4, room:'401', issue:'Main inlet pipe making noise', student:'Ravi Kumar', priority:'Low', status:'Open', date:'22 Jul', note:'Loose fitting'},
+];
+
+const INIT_ELECTRICAL = [
+  {id:1, room:'305', issue:'Geyser switch sparking / MCB tripping', student:'Ravi Kumar', priority:'High', status:'Open', date:'Today 08:00 AM', note:'Do not use till fixed'},
+  {id:2, room:'102', issue:'Fan running slow – capacitor issue', student:'Priya Sharma', priority:'Normal', status:'Open', date:'Today 11:00 AM', note:''},
+  {id:3, room:'207', issue:'2 power sockets not working', student:'Mohan Lal', priority:'Normal', status:'In Progress', date:'Yesterday', note:'Extension used as workaround'},
+  {id:4, room:'103', issue:'AC remote not pairing', student:'Arjun Mehta', priority:'Low', status:'Resolved', date:'22 Jul', note:'Remote replaced'},
+];
+
+const INIT_CARPENTER = [
+  {id:1, room:'104', issue:'Wardrobe door hinge broken', student:'Divya Joshi', priority:'Normal', status:'Open', date:'Today 10:00 AM', note:'Needs 2 hinges'},
+  {id:2, room:'202', issue:'Study table drawer stuck / jammed', student:'Sneha Kapoor', priority:'Low', status:'Open', date:'Today 11:30 AM', note:''},
+  {id:3, room:'301', issue:'Bed slat cracked – squeaking', student:'Rahul Sharma', priority:'High', status:'In Progress', date:'Yesterday', note:'Replacement slat ordered'},
+  {id:4, room:'106', issue:'Window latch / lock not closing', student:'Aman Verma', priority:'Normal', status:'Open', date:'22 Jul', note:'Security risk'},
+];
+
+const INIT_ROOMS = [
+  {id:1, number:'101', type:'Single AC', status:'Occupied', student:'Arjun Mehta', rent:'₹12,000', due:'2026-08-01'},
+  {id:2, number:'102', type:'Double Sharing', status:'Occupied', student:'Priya Sharma / Kavya', rent:'₹8,500', due:'2026-08-01'},
+  {id:3, number:'201', type:'Triple Sharing', status:'Occupied', student:'Karan / Rohit / Aman', rent:'₹7,000', due:'2026-08-01'},
+  {id:4, number:'203', type:'Single Non-AC', status:'Vacant', student:'—', rent:'₹9,000', due:'—'},
+  {id:5, number:'301', type:'Double Sharing AC', status:'Vacant', student:'—', rent:'₹10,500', due:'—'},
+  {id:6, number:'305', type:'Single AC', status:'Occupied', student:'Ravi Kumar', rent:'₹12,000', due:'2026-08-01'},
 ];
 
 // ─── Small Reusable UI ────────────────────────────────────────────────────────
@@ -425,6 +469,13 @@ export default function StaffApp(){
     'Maintenance':      [{l:'Open',v:INIT_TICKETS.filter(t=>t.status==='Open').length,icon:'build'},{l:'In Progress',v:INIT_TICKETS.filter(t=>t.status==='In Progress').length,icon:'construction'},{l:'Resolved',v:8,icon:'check_circle'},{l:'High Priority',v:2,icon:'priority_high'}],
     'Purchase Manager': [{l:'Pending POs',v:INIT_DEMANDS.filter(d=>d.status==='Pending').length,icon:'pending'},{l:'Approved',v:INIT_DEMANDS.filter(d=>d.status==='Approved').length,icon:'verified'},{l:'Items Low',v:2,icon:'inventory_2'},{l:'Out of Stock',v:1,icon:'remove_shopping_cart'}],
     'Security Guard':   [{l:'Visitors In',v:INIT_VISITORS.filter(v=>v.status==='Inside').length,icon:'person'},{l:'Today Total',v:INIT_VISITORS.length,icon:'groups'},{l:'Parcels',v:INIT_PARCELS.filter(p=>p.status==='Pending').length,icon:'package_2'},{l:'Incidents',v:0,icon:'warning'}],
+    'Helper':           [{l:'Tasks Today',v:INIT_TASKS.length,icon:'task_alt'},{l:'Pending',v:INIT_TASKS.filter(t=>t.status==='Pending').length,icon:'pending'},{l:'Done',v:INIT_TASKS.filter(t=>t.status==='Done').length,icon:'check_circle'},{l:'High Priority',v:INIT_TASKS.filter(t=>t.priority==='High').length,icon:'priority_high'}],
+    'Plumber':          [{l:'Open Jobs',v:INIT_PLUMBING.filter(t=>t.status==='Open').length,icon:'plumbing'},{l:'In Progress',v:INIT_PLUMBING.filter(t=>t.status==='In Progress').length,icon:'construction'},{l:'Resolved',v:1,icon:'check_circle'},{l:'High Priority',v:INIT_PLUMBING.filter(t=>t.priority==='High').length,icon:'priority_high'}],
+    'Electrician':      [{l:'Open',v:INIT_ELECTRICAL.filter(t=>t.status==='Open').length,icon:'electrical_services'},{l:'In Progress',v:INIT_ELECTRICAL.filter(t=>t.status==='In Progress').length,icon:'construction'},{l:'Resolved',v:INIT_ELECTRICAL.filter(t=>t.status==='Resolved').length,icon:'check_circle'},{l:'High Priority',v:INIT_ELECTRICAL.filter(t=>t.priority==='High').length,icon:'priority_high'}],
+    'Carpenter':        [{l:'Open Jobs',v:INIT_CARPENTER.filter(t=>t.status==='Open').length,icon:'carpenter'},{l:'In Progress',v:INIT_CARPENTER.filter(t=>t.status==='In Progress').length,icon:'construction'},{l:'Resolved',v:0,icon:'check_circle'},{l:'High Priority',v:INIT_CARPENTER.filter(t=>t.priority==='High').length,icon:'priority_high'}],
+    'Sales Manager':    [{l:'New Leads',v:INIT_ENQUIRIES.filter(e=>e.status.includes('New')).length,icon:'contact_phone'},{l:'Contacted',v:INIT_ENQUIRIES.filter(e=>e.status.includes('Contacted')).length,icon:'call_made'},{l:'Vacant Rooms',v:INIT_ROOMS.filter(r=>r.status==='Vacant').length,icon:'meeting_room'},{l:'Closed Deals',v:INIT_ENQUIRIES.filter(e=>e.status.includes('Closed')).length,icon:'handshake'}],
+    'Manager':          [{l:'Staff On Duty',v:12,icon:'groups'},{l:'Open Tickets',v:INIT_TICKETS.filter(t=>t.status!=='Resolved').length+INIT_PLUMBING.filter(t=>t.status==='Open').length,icon:'confirmation_number'},{l:'Vacant Rooms',v:INIT_ROOMS.filter(r=>r.status==='Vacant').length,icon:'meeting_room'},{l:'Pending POs',v:INIT_DEMANDS.filter(d=>d.status==='Pending').length,icon:'pending'}],
+    'Others':           [{l:'Tasks Today',v:INIT_TASKS.length,icon:'task_alt'},{l:'Pending',v:INIT_TASKS.filter(t=>t.status==='Pending').length,icon:'pending'},{l:'Done',v:INIT_TASKS.filter(t=>t.status==='Done').length,icon:'check_circle'},{l:'Available',v:1,icon:'person_check'}],
   };
   const stats = roleStats[staffRole] || roleStats['HR'];
 
