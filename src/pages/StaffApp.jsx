@@ -631,7 +631,7 @@ export default function StaffApp(){
                 <span style={{width:10, height:10, borderRadius:'50%', background: clocked ? '#10b981' : '#ef4444', display:'inline-block'}}/>
                 <span style={{fontSize:14, fontWeight:900, color: '#0f172a'}}>{clocked ? `On Duty · In at ${clockIn}` : 'Off Shift'}</span>
               </div>
-              <p style={{margin:0, fontSize:12, color: '#475569', fontWeight: 700}}>📍 Location verified · {meta.dept}</p>
+              
             </div>
             <button onClick={punch} style={{padding:'10px 16px', borderRadius:10, border: 'none', background: clocked ? '#fee2e2' : '#dcfce7', color: clocked ? '#991b1b' : '#166534', fontSize:13, fontWeight:900, cursor:'pointer', fontFamily:'inherit', whiteSpace:'nowrap', boxShadow: '0 2px 6px rgba(0,0,0,0.06)'}}>
               {clocked ? '⏹ Punch Out' : '▶ Punch In'}
@@ -707,48 +707,25 @@ export default function StaffApp(){
             ))}
           </div>
 
-          {/* Dual Quick Shortcuts */}
-          <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginBottom:20}}>
-            {/* Clock Status Card */}
-            <div onClick={punch} style={{
-              background: clocked ? '#f0fdf4' : '#fffdf0',
-              border: `1px solid ${clocked ? '#bbf7d0' : '#e8df9a'}`,
-              borderRadius: 18,
-              padding: '12px 14px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(120, 104, 10, 0.03)'
-            }}>
-              <div style={{width:32, height:32, borderRadius:50, background: clocked ? '#dcfce7' : '#fefce8', display:'flex', alignItems:'center', justifyContent:'center'}}>
-                <span className="material-symbols-outlined" style={{fontSize:18, color: clocked ? '#166534' : '#78680a'}}>{clocked ? 'check_circle' : 'cancel'}</span>
-              </div>
-              <div>
-                <p style={{margin:0, fontSize:13, fontWeight:800, color: clocked ? '#166534' : '#1a1500'}}>{clocked ? 'On Duty' : 'Off Shift'}</p>
-                <p style={{margin:0, fontSize:10.5, fontWeight:700, color: clocked ? '#15803d' : '#78680a'}}>{clocked ? `In at ${clockIn}` : 'Tap to Punch In'}</p>
-              </div>
+          {/* Need Supplies Card */}
+          <div onClick={() => setShowDemand(true)} style={{
+            background: '#ffffff',
+            border: `1px solid ${C.border}`,
+            borderRadius: 18,
+            padding: '12px 14px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            cursor: 'pointer',
+            boxShadow: '0 4px 12px rgba(120, 104, 10, 0.03)',
+            marginBottom: 20
+          }}>
+            <div style={{width:32, height:32, borderRadius:50, background: '#fefce8', display:'flex', alignItems:'center', justifyContent:'center'}}>
+              <span className="material-symbols-outlined" style={{fontSize:18, color: '#ca8a04'}}>shopping_cart</span>
             </div>
-
-            {/* Price Menu / Request Supplies Card */}
-            <div onClick={() => setShowDemand(true)} style={{
-              background: '#ffffff',
-              border: `1px solid ${C.border}`,
-              borderRadius: 18,
-              padding: '12px 14px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(120, 104, 10, 0.03)'
-            }}>
-              <div style={{width:32, height:32, borderRadius:50, background: '#fefce8', display:'flex', alignItems:'center', justifyContent:'center'}}>
-                <span className="material-symbols-outlined" style={{fontSize:18, color: '#ca8a04'}}>shopping_cart</span>
-              </div>
-              <div>
-                <p style={{margin:0, fontSize:13, fontWeight:800, color: C.text}}>Need Supplies</p>
-                <p style={{margin:0, fontSize:10.5, fontWeight:700, color: C.muted}}>Request Materials</p>
-              </div>
+            <div>
+              <p style={{margin:0, fontSize:13, fontWeight:800, color: C.text}}>Need Supplies</p>
+              <p style={{margin:0, fontSize:10.5, fontWeight:700, color: C.muted}}>Request Materials</p>
             </div>
           </div>
 
