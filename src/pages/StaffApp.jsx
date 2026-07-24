@@ -380,7 +380,7 @@ export default function StaffApp(){
   // ─── Module tiles on Home ──────────────────────────────────────────────────
   const MODULES = [
     {id:'work',      label:'My Work',        sub:staffRole,          icon:'home_work',              grad:`#fef08a`},
-    {id:'inventory', label:'Inventory/Cash', sub:'Petty Funds & Assets', icon:'account_balance_wallet', grad:'#fef08a'},
+    {id:'inventory', label:'Inventory',      sub:'Petty Funds & Assets', icon:'account_balance_wallet', grad:'#fef08a'},
     {id:'inout',     label:'Attendance',     sub:'Punch In / Out',   icon:'schedule',               grad:'#fef08a'},
     {id:'salary',    label:'Salary',         sub:'₹18,500 Jul',      icon:'payments',               grad:'#fef08a'},
     {id:'items',     label:'Item List',      sub:'Store Inventory',  icon:'inventory_2',            grad:'#fef08a'},
@@ -567,18 +567,18 @@ export default function StaffApp(){
             ))}
           </div>
 
-          {/* Module Grid */}
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
-            <p style={{margin:0,fontSize:13,fontWeight:800,color:C.text}}>Quick Access</p>
+          {/* Module Grid - Android Touch Optimized */}
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
+            <p style={{margin:0,fontSize:14,fontWeight:900,color:'#000'}}>Quick Access</p>
           </div>
-          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10,marginBottom:20}}>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:20}}>
             {MODULES.map((m,i)=>(
               <button key={m.id} onClick={()=>setView(m.id)}
-                style={{display:'flex',flexDirection:'column',alignItems:'center',gap:7,background:'#fff',border: '2px solid #000',borderRadius:18,padding:'14px 6px',cursor:'pointer',boxShadow: '4px 4px 0px #000'}}>
-                <div style={{width:44,height:44,borderRadius:14,background:m.grad,display:'flex',alignItems:'center',justifyContent:'center',boxShadow: '4px 4px 0px #000'}}>
-                  <span className="material-symbols-outlined" style={{fontSize:22,color:'#000'}}>{m.icon}</span>
+                style={{display:'flex',flexDirection:'column',alignItems:'center',gap:8,background:'#fff',border: '2px solid #000',borderRadius:18,padding:'16px 4px',cursor:'pointer',boxShadow: '4px 4px 0px #000',minHeight:96}}>
+                <div style={{width:50,height:50,borderRadius:16,background:m.grad,border:'2px solid #000',display:'flex',alignItems:'center',justifyContent:'center',boxShadow: '2px 2px 0px #000'}}>
+                  <span className="material-symbols-outlined" style={{fontSize:26,color:'#000'}}>{m.icon}</span>
                 </div>
-                <span style={{fontSize:10.5,fontWeight:800,color:C.text,textAlign:'center',lineHeight:1.2}}>{m.label}</span>
+                <span style={{fontSize:11,fontWeight:900,color:'#000',textAlign:'center',lineHeight:1.2}}>{m.label}</span>
               </button>
             ))}
           </div>
@@ -629,7 +629,7 @@ export default function StaffApp(){
                 <div style={{display:'flex',alignItems:'center',gap:10}}>
                   <div style={{width:40,height:40,borderRadius:13,background:meta.grad,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>🛠️</div>
                   <div>
-                    <p style={{margin:0,fontSize:14,fontWeight:800,color:C.text}}>Repair Tickets</p>
+                    <p style={{margin:0,fontSize:14,fontWeight:800,color:C.text}>Repair Tickets</p>
                     <p style={{margin:'2px 0 0',fontSize:12,color:C.muted}}>{tickets.filter(t=>t.status!=='Resolved').length} active · {tickets.filter(t=>t.priority==='High'&&t.status!=='Resolved').length} high priority</p>
                   </div>
                 </div>
@@ -645,7 +645,7 @@ export default function StaffApp(){
                 <div style={{display:'flex',alignItems:'center',gap:10}}>
                   <div style={{width:40,height:40,borderRadius:13,background:meta.grad,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>🛒</div>
                   <div>
-                    <p style={{margin:0,fontSize:14,fontWeight:800,color:C.text}}>Requisitions Queue</p>
+                    <p style={{margin:0,fontSize:14,fontWeight:800,color:C.text}>Requisitions Queue</p>
                     <p style={{margin:'2px 0 0',fontSize:12,color:C.muted}}>{demands.filter(d=>d.status==='Pending').length} pending POs to action</p>
                   </div>
                 </div>
@@ -661,7 +661,7 @@ export default function StaffApp(){
                 <div style={{display:'flex',alignItems:'center',gap:10}}>
                   <div style={{width:40,height:40,borderRadius:13,background:meta.grad,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>🛡️</div>
                   <div>
-                    <p style={{margin:0,fontSize:14,fontWeight:800,color:C.text}}>Gate Security Log</p>
+                    <p style={{margin:0,fontSize:14,fontWeight:800,color:C.text}>Gate Security Log</p>
                     <p style={{margin:'2px 0 0',fontSize:12,color:C.muted}}>{visitors.filter(v=>v.status==='Inside').length} visitors inside · {parcels.filter(p=>p.status==='Pending').length} parcels unclaimed</p>
                   </div>
                 </div>
@@ -669,28 +669,6 @@ export default function StaffApp(){
               </Row>
             </div>
           )}
-
-          {/* Recent chat preview */}
-          <div onClick={()=>setView('chat')} style={{marginTop:10,background:'#fff',borderRadius:18,border: '2px solid #000',padding:16,cursor:'pointer',boxShadow: '4px 4px 0px #000'}}>
-            <Row style={{marginBottom:10}}>
-              <div style={{display:'flex',alignItems:'center',gap:8}}>
-                <div style={{width:36,height:36,borderRadius:11,background: C.primary,display:'flex',alignItems:'center',justifyContent:'center'}}>
-                  <span className="material-symbols-outlined" style={{fontSize:18,color:'#000'}}>forum</span>
-                </div>
-                <p style={{margin:0,fontSize:14,fontWeight:800,color:C.text}}>Recent Chat</p>
-              </div>
-              <Chip label={`${contacts.length} chats`} color="#db2777" bg="#fdf2f8"/>
-            </Row>
-            {contacts.slice(0, 2).map(c=>(
-              <div key={c.id} style={{background:C.bg,borderRadius:10,padding:'8px 10px',marginBottom:6,display:'flex',alignItems:'center',gap:10}}>
-                <div style={{width:28,height:28,borderRadius:8,background:meta.accentBg,display:'flex',alignItems:'center',justifyContent:'center'}}>{c.avatar}</div>
-                <div style={{flex:1, overflow:'hidden'}}>
-                  <p style={{margin:0,fontSize:13,fontWeight:800,color:C.text}}>{c.name}</p>
-                  <p style={{margin:'2px 0 0',fontSize:12,color:C.sub,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{c.lastMsg}</p>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       )}
 
@@ -942,14 +920,27 @@ export default function StaffApp(){
 
                     {/* Cleaned Rooms Section */}
                     <div style={{background:'#fff', borderRadius:16, border:'2px solid #000', padding:16, boxShadow:'4px 4px 0px #000'}}>
-                      <p style={{margin:'0 0 12px', fontSize:15, fontWeight:800, color:'#000'}}>✅ Cleaned Rooms Details ({cleanerTimeFilter})</p>
+                      <p style={{margin:'0 0 6px', fontSize:15, fontWeight:800, color:'#000'}}>✅ Cleaned Rooms Details ({cleanerTimeFilter})</p>
+                      
+                      {/* Cleaning Type Breakdown Pills */}
+                      <div style={{display:'flex', gap:6, flexWrap:'wrap', marginBottom:12}}>
+                        {['Full Room Clean', 'Dusting & Mop', 'Bathroom Sanitise', 'Bedsheet & Towel Change'].map(type => {
+                          const count = cleaning.filter(c => c.done && c.type.toLowerCase().includes(type.toLowerCase().split(' ')[0])).length * mult;
+                          return (
+                            <span key={type} style={{fontSize:10.5, fontWeight:800, background:'#fef08a', color:'#000', padding:'3px 8px', borderRadius:8, border:'1px solid #000'}}>
+                              {type}: {count}
+                            </span>
+                          );
+                        })}
+                      </div>
+
                       <div style={{display:'flex', flexDirection:'column', gap:8}}>
                         {cleaning.filter(c => c.done && matchesType(c)).map(c => (
                           <div key={c.id} style={{background:'#f0fdf4', border:'2px solid #000', borderRadius:12, padding:12, display:'flex', justifyContent:'space-between', alignItems:'center'}}>
                             <div>
                               <div style={{display:'flex', alignItems:'center', gap:6}}>
                                 <span style={{fontSize:14, fontWeight:900, color:'#000'}}>Room {c.room}</span>
-                                <Chip label={c.type} color="#000" bg="#fef08a"/>
+                                <Chip label={c.type} color="#000" bg="#fde047"/>
                               </div>
                               <p style={{margin:'2px 0 0', fontSize:11, color:C.muted, fontWeight:700}}>Student: {c.student} · Slot: {c.slot}</p>
                             </div>
@@ -961,14 +952,27 @@ export default function StaffApp(){
 
                     {/* Uncleaned Rooms Section */}
                     <div style={{background:'#fff', borderRadius:16, border:'2px solid #000', padding:16, boxShadow:'4px 4px 0px #000'}}>
-                      <p style={{margin:'0 0 12px', fontSize:15, fontWeight:800, color:'#000'}}>⏳ Uncleaned / Pending Rooms ({cleanerTimeFilter})</p>
+                      <p style={{margin:'0 0 6px', fontSize:15, fontWeight:800, color:'#000'}}>⏳ Uncleaned / Pending Rooms ({cleanerTimeFilter})</p>
+                      
+                      {/* Uncleaned Type Breakdown Pills */}
+                      <div style={{display:'flex', gap:6, flexWrap:'wrap', marginBottom:12}}>
+                        {['Full Room Clean', 'Dusting & Mop', 'Bathroom Sanitise', 'Bedsheet & Towel Change'].map(type => {
+                          const count = cleaning.filter(c => !c.done && c.type.toLowerCase().includes(type.toLowerCase().split(' ')[0])).length * mult;
+                          return (
+                            <span key={type} style={{fontSize:10.5, fontWeight:800, background:'#fecaca', color:'#000', padding:'3px 8px', borderRadius:8, border:'1px solid #000'}}>
+                              {type}: {count}
+                            </span>
+                          );
+                        })}
+                      </div>
+
                       <div style={{display:'flex', flexDirection:'column', gap:8}}>
                         {cleaning.filter(c => !c.done && matchesType(c)).map(c => (
                           <div key={c.id} style={{background:'#fff1f2', border:'2px solid #000', borderRadius:12, padding:12, display:'flex', justifyContent:'space-between', alignItems:'center'}}>
                             <div>
                               <div style={{display:'flex', alignItems:'center', gap:6}}>
                                 <span style={{fontSize:14, fontWeight:900, color:'#000'}}>Room {c.room}</span>
-                                <Chip label={c.type} color="#000" bg="#fef08a"/>
+                                <Chip label={c.type} color="#000" bg="#fde047"/>
                               </div>
                               <p style={{margin:'2px 0 0', fontSize:11, color:C.muted, fontWeight:700}}>Student: {c.student} · Slot: {c.slot}</p>
                             </div>
