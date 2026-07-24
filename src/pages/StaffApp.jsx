@@ -3,10 +3,10 @@ import { useAuth } from '../context/AuthContext';
 
 // ─── Design Tokens ────────────────────────────────────────────────────────────
 const C = {
-  bg:'#f8fafc', card:'#ffffff', text:'#0f172a', sub:'#475569', muted:'#64748b',
-  border:'#e2e8f0', primary:'#6366f1', primaryDk:'#4f46e5', primaryBg:'#eef2ff',
+  bg:'#fffdf0', card:'#ffffff', text:'#1a1500', sub:'#78680a', muted:'#78680a',
+  border:'#e8df9a', primary:'#fde047', primaryDk:'#ca8a04', primaryBg:'#fefce8',
   success:'#10b981', successBg:'#dcfce7', warn:'#f59e0b', warnBg:'#fef3c7',
-  danger:'#ef4444', dangerBg:'#fee2e2', indigo:'#6366f1', indigoBg:'#eef2ff',
+  danger:'#dc2626', dangerBg:'#fee2e2', indigo:'#fde047', indigoBg:'#fefce8',
 };
 
 const ROLE_META = {
@@ -171,6 +171,49 @@ const InputField = ({label,textarea=false,...props})=>{
     <div style={{display:'flex',flexDirection:'column',gap:5}}>
       {label&&<label style={{fontSize:11,fontWeight:700,color:C.muted,textTransform:'uppercase',letterSpacing:.4}}>{label}</label>}
       <Tag {...props} style={{padding:'11px 14px',border: '1px solid #e2e8f0',borderRadius: 8,fontSize:14,fontFamily:'inherit',background:'#fff',color:C.text,outline:'none',boxSizing:'border-box',width:'100%',resize:textarea?'vertical':'none',...props.style}}/>
+      {/* Fixed Bottom Navigation Bar (Android/iOS Mock layout matching screenshots) */}
+      <div style={{
+        position: 'fixed',
+        bottom: 0,
+        left: '50%',
+        transform: 'translateX(-50%)',
+        width: '100%',
+        maxWidth: 480,
+        height: 68,
+        background: '#ffffff',
+        borderTop: `1.5px solid ${C.border}`,
+        display: 'flex',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        zIndex: 100,
+        boxShadow: '0 -4px 16px rgba(120, 104, 10, 0.05)'
+      }}>
+        {[
+          { id: 'home', label: 'Dashboard', icon: 'home' },
+          { id: 'work', label: 'My Work', icon: 'home_work' },
+          { id: 'chat', label: 'Chat', icon: 'forum' },
+          { id: 'profile_view', label: 'Profile', icon: 'person' }
+        ].map(item => {
+          const active = view === item.id;
+          return (
+            <div key={item.id} onClick={() => { setView(item.id); setActiveContact(null); }} style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              padding: '6px 12px',
+              color: active ? '#ca8a04' : '#78680a',
+              transition: 'color 0.2s',
+              flex: 1
+            }}>
+              <span className={`material-symbols-outlined ${active ? 'filled' : ''}`} style={{ fontSize: 24, marginBottom: 2 }}>{item.icon}</span>
+              <span style={{ fontSize: 10, fontWeight: active ? 800 : 600 }}>{item.label}</span>
+            </div>
+          );
+        })}
+      </div>
+
     </div>
   );
 };
@@ -559,7 +602,7 @@ export default function StaffApp(){
       {/* ── HEADER (always visible) ──────────────────────────────────────── */}
       {view === 'home' ? (
         // Home Hero Header
-        <div style={{background: 'linear-gradient(135deg, #ca8a04 0%, #f59e0b 100%)', padding:'0 16px 20px', color: '#ffffff', borderBottom: '1px solid #fcd34d'}}>
+        <div style={{background: '#ffffff', padding:'0 16px 20px', color: '#1a1500', borderBottom: '1px solid #e8df9a'}}>
           <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', height:60}}>
             <button onClick={()=>setSidebar(true)} style={{background: 'rgba(255,255,255,0.45)', backdropFilter:'blur(4px)', border: '1px solid rgba(255,255,255,0.5)', borderRadius:10, width:38, height:38, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer'}}>
               <span className="material-symbols-outlined" style={{fontSize:20, color: '#78350f'}}>menu</span>
@@ -635,137 +678,146 @@ export default function StaffApp(){
           HOME VIEW
          ══════════════════════════════════════════════════════════════════════ */}
       {view === 'home' && (
-        <div style={{padding:'16px 14px',paddingBottom:32}}>
+        <div style={{padding:'16px 14px', paddingBottom:96}}>
 
-          {/* Quick Stats Row */}
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr 1fr',gap:8,marginBottom:18}}>
-            {stats.map((s,i)=>(
-              <div key={i} style={{background:'#fff',borderRadius:14,padding:'10px 8px',textAlign:'center',border: '1px solid #e2e8f0',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
-                <span className="material-symbols-outlined" style={{fontSize:18,color:meta.accent,display:'block',marginBottom:3}}>{s.icon}</span>
-                <p style={{margin:0,fontSize:20,fontWeight:900,color:C.text}}>{s.v}</p>
-                <p style={{margin:0,fontSize:9,fontWeight:700,color:C.muted,lineHeight:1.2,textTransform:'uppercase'}}>{s.l}</p>
+          {/* Quick Stats Grid */}
+          <div style={{display:'grid', gridTemplateColumns:'repeat(4, 1fr)', gap:8, marginBottom:20}}>
+            {stats.map((s, i) => (
+              <div key={i} style={{background:'#fff', borderRadius:16, padding:'12px 6px', textAlign:'center', border:`1px solid ${C.border}`, boxShadow:'0 4px 12px rgba(120, 104, 10, 0.04)'}}>
+                <div style={{width:32, height:32, borderRadius:50, background:meta.accentBg, display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 6px'}}>
+                  <span className="material-symbols-outlined" style={{fontSize:18, color:meta.accent}}>{s.icon}</span>
+                </div>
+                <p style={{margin:0, fontSize:18, fontWeight:900, color:C.text}}>{s.v}</p>
+                <p style={{margin:0, fontSize:9, fontWeight:800, color:C.muted, lineHeight:1.2, textTransform:'uppercase', letterSpacing:0.3}}>{s.l}</p>
               </div>
             ))}
           </div>
 
-          {/* Module Grid - Android Touch Optimized */}
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
-            <p style={{margin:0,fontSize:14,fontWeight:900,color:'#000'}}>Quick Access</p>
+          {/* Modules Grid */}
+          <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12}}>
+            <p style={{margin:0, fontSize:15, fontWeight:900, color:C.text}}>Modules</p>
+            <span style={{fontSize:12, fontWeight:800, color:C.primaryDk, cursor:'pointer'}}>See all ▾</span>
           </div>
-          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:20}}>
-            {MODULES.map((m,i)=>(
-              <button key={m.id} onClick={()=>setView(m.id)}
-                style={{display:'flex',flexDirection:'column',alignItems:'center',gap:8,background:'#fff',border: '1px solid #e2e8f0',borderRadius:18,padding:'16px 4px',cursor:'pointer',boxShadow: '0 4px 16px rgba(15,23,42,0.05)',minHeight:96}}>
-                <div style={{width:50,height:50,borderRadius:16,background:m.grad,border: '1px solid #e2e8f0',display:'flex',alignItems:'center',justifyContent:'center',boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
-                  <span className="material-symbols-outlined" style={{fontSize:26,color:'#000'}}>{m.icon}</span>
+
+          <div style={{display:'grid', gridTemplateColumns:'repeat(4, 1fr)', gap:10, marginBottom:20}}>
+            {[
+              {id:'work',      label:'My Work',        sub:staffRole,          icon:'home_work',              bg:'#eef2ff', c:'#6366f1'},
+              {id:'inventory', label:'Inventory',      sub:'Petty Cash',       icon:'account_balance_wallet', bg:'#fdf2f8', c:'#ec4899'},
+              {id:'inout',     label:'Attendance',     sub:'Punch In/Out',     icon:'schedule',               bg:'#f0fdf4', c:'#10b981'},
+              {id:'salary',    label:'Salary',         sub:'Statement',        icon:'payments',               bg:'#fefce8', c:'#eab308'},
+              {id:'items',     label:'Item List',      sub:'Store Stock',      icon:'inventory_2',            bg:'#fff7ed', c:'#f97316'},
+              {id:'chat',      label:'Chat',           sub:'Messages',         icon:'forum',                  bg:'#f0f9ff', c:'#0ea5e9'},
+              {id:'reports',   label:'Reports',        sub:'Work Logs',        icon:'assessment',             bg:'#fff1f2', c:'#f43f5e'},
+              {id:'requests',  label:'Requests',       sub:'Leave/Advance',    icon:'approval',               bg:'#f5f3ff', c:'#8b5cf6'},
+            ].map(m => (
+              <button key={m.id} onClick={() => setView(m.id)}
+                style={{display:'flex', flexDirection:'column', alignItems:'center', gap:8, background:'#fff', border:`1px solid ${C.border}`, borderRadius:20, padding:'14px 4px 10px', cursor:'pointer', boxShadow:'0 4px 12px rgba(120, 104, 10, 0.04)', minHeight:94, outline:'none', transition:'all 0.15s'}}>
+                <div style={{width:44, height:44, borderRadius:14, background:m.bg, display:'flex', alignItems:'center', justifyContent:'center'}}>
+                  <span className="material-symbols-outlined" style={{fontSize:22, color:m.c}}>{m.icon}</span>
                 </div>
-                <span style={{fontSize:11,fontWeight:900,color:'#000',textAlign:'center',lineHeight:1.2}}>{m.label}</span>
+                <div style={{display:'flex', flexDirection:'column', alignItems:'center', gap:1}}>
+                  <span style={{fontSize:11.5, fontWeight:800, color:C.text, textAlign:'center', lineHeight:1.1}}>{m.label}</span>
+                  <span style={{fontSize:8.5, fontWeight:700, color:C.muted, textAlign:'center'}}>{m.sub}</span>
+                </div>
               </button>
             ))}
           </div>
 
-          {/* Recent Activity */}
-          <p style={{margin:'0 0 10px',fontSize:13,fontWeight:800,color:C.text}}>Recent Activity</p>
-
-          {/* Cook preview */}
-          {staffRole === 'Cook' && (
-            <div onClick={()=>setView('work')} style={{background:'#fff',borderRadius:18,border: '1px solid #e2e8f0',padding:16,cursor:'pointer',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
-              <Row>
-                <div style={{display:'flex',alignItems:'center',gap:10}}>
-                  <div style={{width:40,height:40,borderRadius:13,background:meta.grad,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>👨‍🍳</div>
-                  <div>
-                    <p style={{margin:0,fontSize:14,fontWeight:800,color:C.text}}>Today's Mess Overview</p>
-                    <p style={{margin:'2px 0 0',fontSize:12,color:C.muted}}>Breakfast: 30 · Lunch: 28</p>
-                  </div>
-                </div>
-                <span className="material-symbols-outlined" style={{fontSize:18,color:C.muted}}>chevron_right</span>
-              </Row>
-              <div style={{marginTop:12,background:meta.accentBg,borderRadius: 8,padding:'10px 12px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-                <span style={{fontSize:12,color:meta.accent,fontWeight:700}}>📊 Track meals, extra plates & packs</span>
-                <Chip label="Update" color={meta.accent} bg={meta.accentBg}/>
+          {/* Dual Quick Shortcuts */}
+          <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginBottom:20}}>
+            {/* Clock Status Card */}
+            <div onClick={punch} style={{
+              background: clocked ? '#f0fdf4' : '#fffdf0',
+              border: `1px solid ${clocked ? '#bbf7d0' : '#e8df9a'}`,
+              borderRadius: 18,
+              padding: '12px 14px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(120, 104, 10, 0.03)'
+            }}>
+              <div style={{width:32, height:32, borderRadius:50, background: clocked ? '#dcfce7' : '#fefce8', display:'flex', alignItems:'center', justifyContent:'center'}}>
+                <span className="material-symbols-outlined" style={{fontSize:18, color: clocked ? '#166534' : '#78680a'}}>{clocked ? 'check_circle' : 'cancel'}</span>
+              </div>
+              <div>
+                <p style={{margin:0, fontSize:13, fontWeight:800, color: clocked ? '#166534' : '#1a1500'}}>{clocked ? 'On Duty' : 'Off Shift'}</p>
+                <p style={{margin:0, fontSize:10.5, fontWeight:700, color: clocked ? '#15803d' : '#78680a'}}>{clocked ? `In at ${clockIn}` : 'Tap to Punch In'}</p>
               </div>
             </div>
-          )}
 
-          {/* Cleaner preview */}
-          {staffRole === 'Cleaner' && (
-            <div onClick={()=>setView('work')} style={{background:'#fff',borderRadius:18,border: '1px solid #e2e8f0',padding:16,cursor:'pointer',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
-              <Row>
-                <div style={{display:'flex',alignItems:'center',gap:10}}>
-                  <div style={{width:40,height:40,borderRadius:13,background:meta.grad,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>🧹</div>
+            {/* Price Menu / Request Supplies Card */}
+            <div onClick={() => setShowDemand(true)} style={{
+              background: '#ffffff',
+              border: `1px solid ${C.border}`,
+              borderRadius: 18,
+              padding: '12px 14px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(120, 104, 10, 0.03)'
+            }}>
+              <div style={{width:32, height:32, borderRadius:50, background: '#fefce8', display:'flex', alignItems:'center', justifyContent:'center'}}>
+                <span className="material-symbols-outlined" style={{fontSize:18, color: '#ca8a04'}}>shopping_cart</span>
+              </div>
+              <div>
+                <p style={{margin:0, fontSize:13, fontWeight:800, color: C.text}}>Need Supplies</p>
+                <p style={{margin:0, fontSize:10.5, fontWeight:700, color: C.muted}}>Request Materials</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Outstanding Work section */}
+          <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12}}>
+            <p style={{margin:0, fontSize:15, fontWeight:900, color:C.text}}>Today's Tasks</p>
+            <span onClick={() => setView('work')} style={{fontSize:12, fontWeight:800, color:C.primaryDk, cursor:'pointer'}}>See all ▾</span>
+          </div>
+
+          <div style={{display:'flex', flexDirection:'column', gap:10}}>
+            {/* Cleaner Outstanding list */}
+            {staffRole === 'Cleaner' && cleaning.filter(c => !c.done).slice(0, 3).map(c => (
+              <div key={c.id} onClick={() => setView('work')} style={{background:'#fff', border:`1px solid ${C.border}`, borderRadius:18, padding:14, display:'flex', alignItems:'center', justifyContent:'space-between', boxShadow:'0 4px 12px rgba(120, 104, 10, 0.03)', cursor:'pointer'}}>
+                <div style={{display:'flex', alignItems:'center', gap:12}}>
+                  <div style={{width:40, height:40, borderRadius:12, background:'#fefce8', display:'flex', alignItems:'center', justifyContent:'center', fontSize:20}}>🧹</div>
                   <div>
-                    <p style={{margin:0,fontSize:14,fontWeight:800,color:C.text}}>Cleaning Schedule</p>
-                    <p style={{margin:'2px 0 0',fontSize:12,color:C.muted}}>{cleaning.filter(c=>!c.done).length} rooms pending · {cleaning.filter(c=>c.done).length} cleaned</p>
+                    <h4 style={{margin:0, fontSize:14, fontWeight:800, color:C.text}}>Room {c.room}</h4>
+                    <p style={{margin:0, fontSize:11, color:C.muted}}>Housekeeping slot · {c.type}</p>
                   </div>
                 </div>
-                <span className="material-symbols-outlined" style={{fontSize:18,color:C.muted}}>chevron_right</span>
-              </Row>
-            </div>
-          )}
+                <span style={{fontSize:11, fontWeight:800, padding:'4px 10px', borderRadius:10, background:'#fee2e2', color:'#dc2626'}}>Pending</span>
+              </div>
+            ))}
 
-          {/* Maintenance preview */}
-          {staffRole === 'Maintenance' && (
-            <div onClick={()=>setView('work')} style={{background:'#fff',borderRadius:18,border: '1px solid #e2e8f0',padding:16,cursor:'pointer',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
-              <Row>
-                <div style={{display:'flex',alignItems:'center',gap:10}}>
-                  <div style={{width:40,height:40,borderRadius:13,background:meta.grad,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>🛠️</div>
+            {/* Cook Outstanding list */}
+            {staffRole === 'Cook' && (
+              <div onClick={() => setView('work')} style={{background:'#fff', border:`1px solid ${C.border}`, borderRadius:18, padding:14, display:'flex', alignItems:'center', justifyContent:'space-between', boxShadow:'0 4px 12px rgba(120, 104, 10, 0.03)', cursor:'pointer'}}>
+                <div style={{display:'flex', alignItems:'center', gap:12}}>
+                  <div style={{width:40, height:40, borderRadius:12, background:'#fefce8', display:'flex', alignItems:'center', justifyContent:'center', fontSize:20}}>👨‍🍳</div>
                   <div>
-                    <p style={{margin:0,fontSize:14,fontWeight:800,color:C.text}}>Repair Tickets</p>
-                    <p style={{margin:'2px 0 0',fontSize:12,color:C.muted}}>{tickets.filter(t=>t.status!=='Resolved').length} active · {tickets.filter(t=>t.priority==='High'&&t.status!=='Resolved').length} high priority</p>
+                    <h4 style={{margin:0, fontSize:14, fontWeight:800, color:C.text}}>Meals Log & Requests</h4>
+                    <p style={{margin:0, fontSize:11, color:C.muted}}>Breakfast: 30 · Lunch: 28 · Dinner: 30</p>
                   </div>
                 </div>
-                <span className="material-symbols-outlined" style={{fontSize:18,color:C.muted}}>chevron_right</span>
-              </Row>
-            </div>
-          )}
+                <span className="material-symbols-outlined" style={{fontSize:18, color:C.muted}}>chevron_right</span>
+              </div>
+            )}
 
-          {/* Purchase preview */}
-          {staffRole === 'Purchase Manager' && (
-            <div onClick={()=>setView('work')} style={{background:'#fff',borderRadius:18,border: '1px solid #e2e8f0',padding:16,cursor:'pointer',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
-              <Row>
-                <div style={{display:'flex',alignItems:'center',gap:10}}>
-                  <div style={{width:40,height:40,borderRadius:13,background:meta.grad,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>🛒</div>
-                  <div>
-                    <p style={{margin:0,fontSize:14,fontWeight:800,color:C.text}}>Requisitions Queue</p>
-                    <p style={{margin:'2px 0 0',fontSize:12,color:C.muted}}>{demands.filter(d=>d.status==='Pending').length} pending POs to action</p>
+            {/* General Tasks List (Helper, Maintenance, Plumber, etc.) */}
+            {staffRole !== 'Cleaner' && staffRole !== 'Cook' && tasks.filter(t => t.status === 'Pending').slice(0, 3).map(t => (
+              <div key={t.id} onClick={() => setView('work')} style={{background:'#fff', border:`1px solid ${C.border}`, borderRadius:18, padding:14, display:'flex', alignItems:'center', justifyContent:'space-between', boxShadow:'0 4px 12px rgba(120, 104, 10, 0.03)', cursor:'pointer'}}>
+                <div style={{display:'flex', alignItems:'center', gap:12}}>
+                  <div style={{width:40, height:40, borderRadius:12, background:'#fefce8', display:'flex', alignItems:'center', justifyContent:'center', fontSize:20}}>{meta.emoji}</div>
+                  <div style={{flex:1, minWidth:0}}>
+                    <h4 style={{margin:0, fontSize:14, fontWeight:800, color:C.text, whiteSpace:'nowrap', textOverflow:'ellipsis', overflow:'hidden', maxWidth:220}}>{t.title}</h4>
+                    <p style={{margin:0, fontSize:11, color:C.muted}}>Room {t.room} · Priority: {t.priority}</p>
                   </div>
                 </div>
-                <span className="material-symbols-outlined" style={{fontSize:18,color:C.muted}}>chevron_right</span>
-              </Row>
-            </div>
-          )}
+                <span style={{fontSize:11, fontWeight:800, padding:'4px 10px', borderRadius:10, background: t.priority==='High'?'#fee2e2':'#fef3c7', color: t.priority==='High'?'#dc2626':'#ca8a04'}}>{t.priority}</span>
+              </div>
+            ))}
+          </div>
 
-          {/* Security preview */}
-          {staffRole === 'Security Guard' && (
-            <div onClick={()=>setView('work')} style={{background:'#fff',borderRadius:18,border: '1px solid #e2e8f0',padding:16,cursor:'pointer',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
-              <Row>
-                <div style={{display:'flex',alignItems:'center',gap:10}}>
-                  <div style={{width:40,height:40,borderRadius:13,background:meta.grad,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>🛡️</div>
-                  <div>
-                    <p style={{margin:0,fontSize:14,fontWeight:800,color:C.text}}>Gate Security Log</p>
-                    <p style={{margin:'2px 0 0',fontSize:12,color:C.muted}}>{visitors.filter(v=>v.status==='Inside').length} visitors inside · {parcels.filter(p=>p.status==='Pending').length} parcels unclaimed</p>
-                  </div>
-                </div>
-                <span className="material-symbols-outlined" style={{fontSize:18,color:C.muted}}>chevron_right</span>
-              </Row>
-            </div>
-          )}
-
-          {/* HR preview */}
-          {staffRole === 'HR' && (
-            <div onClick={()=>setView('work')} style={{background:'#fff',borderRadius:18,border: '1px solid #e2e8f0',padding:16,cursor:'pointer',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
-              <Row>
-                <div style={{display:'flex',alignItems:'center',gap:10}}>
-                  <div style={{width:40,height:40,borderRadius:13,background:meta.grad,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>👔</div>
-                  <div>
-                    <p style={{margin:0,fontSize:14,fontWeight:800,color:C.text}}>HR & Recruitment Portal</p>
-                    <p style={{margin:'2px 0 0',fontSize:12,color:C.muted}}>{candidates.filter(c=>c.status!=='Hired ✅').length} active hiring candidates · {enquiries.filter(e=>e.status.includes('New')).length} new room enquiries</p>
-                  </div>
-                </div>
-                <span className="material-symbols-outlined" style={{fontSize:18,color:C.muted}}>chevron_right</span>
-              </Row>
-            </div>
-          )}
         </div>
       )}
 
@@ -850,7 +902,7 @@ export default function StaffApp(){
                    {/* Scrollable Stat Cards Container */}
                    <div style={{display:'flex', gap:8, overflowX:'auto', paddingBottom:4, margin:'0 -4px', paddingLeft:4, paddingRight:4, scrollbarWidth:'none'}}>
                      {statCards.map(s => (
-                       <div key={s.id} onClick={()=>setSelectedStat(s.id)} style={{flexShrink:0, width:92, background:selectedStat===s.id?s.bg:'#fff', border:`2px solid #000`, borderRadius:14, padding:'12px 10px', textAlign:'center', cursor:'pointer', boxShadow:selectedStat===s.id?'3px 3px 0px #000':'none', transition:'all .15s'}}>
+                       <div key={s.id} onClick={()=>setSelectedStat(s.id)} style={{flexShrink:0, width:92, background:selectedStat===s.id?s.bg:'#fff', border:`2px solid #000`, borderRadius:14, padding:'12px 10px', textAlign:'center', cursor:'pointer', boxShadow: selectedStat === s.id ? '0 4px 12px rgba(120, 104, 10, 0.06)' : 'none', transition:'all .15s'}}>
                          <p style={{fontSize:22,fontWeight:900,color:'#000',margin:0}}>{s.v}</p>
                          <p style={{fontSize:10,fontWeight:800,color:'#000',margin:'4px 0 0',textTransform:'uppercase'}}>{s.l}</p>
                        </div>
@@ -870,9 +922,9 @@ export default function StaffApp(){
                              <span style={{fontSize:14,fontWeight:800,color:'#000'}}>{s.name} </span>
                              <p style={{margin:'2px 0 6px',fontSize:12,color:C.muted,fontWeight:600}}>Rm {s.room} · {s.bed}</p>
                              <div style={{display:'flex', gap:6, flexWrap:'wrap', alignItems:'center'}}>
-                               <Chip label={s.phone} color="#000" bg="#fef08a"/>
+                               <Chip label={s.phone} color="#78680a" bg="#fefce8"/>
                                {(selectedStat === 'pack' || selectedStat === 'extra') && s[detailsKey] && (
-                                 <span style={{fontSize:11, fontWeight:800, color:'#000', background:'#fef08a', padding:'4px 8px', borderRadius:8, border:'1px solid #000'}}>
+                                 <span style={{fontSize:11, fontWeight:800, color:'#78680a', background:'#fefce8', padding:'4px 8px', borderRadius:8, border: '1px solid #e8df9a'}}>
                                    {s[detailsKey]}
                                  </span>
                                )}
@@ -908,7 +960,7 @@ export default function StaffApp(){
                                </button>
                              )}
                              {selectedStat === 'eaten' && timeFilter === 'Daily' && (
-                                <Chip label="Eaten ✅" color="#000" bg="#bbf7d0"/>
+                                <Chip label="Eaten ✅" color="#166534" bg="#dcfce7"/>
                              )}
                            </div>
                          </div>
@@ -986,7 +1038,7 @@ export default function StaffApp(){
                           background: cleanerTypeFilter === t ? '#fde047' : '#fff',
                           color: '#000',
                           border: '1px solid #e2e8f0',
-                          boxShadow: cleanerTypeFilter === t ? '2px 2px 0px #000' : 'none'
+                          boxShadow: cleanerTypeFilter === t ? '0 3px 8px rgba(120, 104, 10, 0.05)' : 'none'
                         }}
                       >
                         {t === 'All' ? '🧹 All Types' : t}
@@ -1024,7 +1076,7 @@ export default function StaffApp(){
                         {['Full Room Clean', 'Dusting & Mop', 'Bathroom Sanitise', 'Bedsheet & Towel Change'].map(type => {
                           const count = cleaning.filter(c => c.done && c.type.toLowerCase().includes(type.toLowerCase().split(' ')[0])).length * mult;
                           return (
-                            <span key={type} style={{fontSize:10.5, fontWeight:800, background:'#fef08a', color:'#000', padding:'3px 8px', borderRadius:8, border:'1px solid #000'}}>
+                            <span key={type} style={{fontSize:10.5, fontWeight:800, background:'#fef08a', color:'#000', padding:'3px 8px', borderRadius:8, border: '1px solid #e8df9a'}}>
                               {type}: {count}
                             </span>
                           );
@@ -1037,11 +1089,11 @@ export default function StaffApp(){
                             <div>
                               <div style={{display:'flex', alignItems:'center', gap:6}}>
                                 <span style={{fontSize:14, fontWeight:900, color:'#000'}}>Room {c.room}</span>
-                                <Chip label={c.type} color="#000" bg="#fde047"/>
+                                <Chip label={c.type} color="#78680a" bg="#fefce8"/>
                               </div>
                               <p style={{margin:'2px 0 0', fontSize:11, color:C.muted, fontWeight:700}}>Student: {c.student} · Slot: {c.slot}</p>
                             </div>
-                            <Chip label="Cleaned ✓" color="#000" bg="#bbf7d0"/>
+                            <Chip label="Cleaned ✓" color="#166534" bg="#dcfce7"/>
                           </div>
                         ))}
                       </div>
@@ -1056,7 +1108,7 @@ export default function StaffApp(){
                         {['Full Room Clean', 'Dusting & Mop', 'Bathroom Sanitise', 'Bedsheet & Towel Change'].map(type => {
                           const count = cleaning.filter(c => !c.done && c.type.toLowerCase().includes(type.toLowerCase().split(' ')[0])).length * mult;
                           return (
-                            <span key={type} style={{fontSize:10.5, fontWeight:800, background:'#fecaca', color:'#000', padding:'3px 8px', borderRadius:8, border:'1px solid #000'}}>
+                            <span key={type} style={{fontSize:10.5, fontWeight:800, background:'#fecaca', color:'#000', padding:'3px 8px', borderRadius:8, border: '1px solid #e8df9a'}}>
                               {type}: {count}
                             </span>
                           );
@@ -1069,11 +1121,11 @@ export default function StaffApp(){
                             <div>
                               <div style={{display:'flex', alignItems:'center', gap:6}}>
                                 <span style={{fontSize:14, fontWeight:900, color:'#000'}}>Room {c.room}</span>
-                                <Chip label={c.type} color="#000" bg="#fde047"/>
+                                <Chip label={c.type} color="#78680a" bg="#fefce8"/>
                               </div>
                               <p style={{margin:'2px 0 0', fontSize:11, color:C.muted, fontWeight:700}}>Student: {c.student} · Slot: {c.slot}</p>
                             </div>
-                            <Chip label="Pending ⏳" color="#000" bg="#fecaca"/>
+                            <Chip label="Pending ⏳" color="#b91c1c" bg="#fee2e2"/>
                           </div>
                         ))}
                       </div>
@@ -1146,7 +1198,7 @@ export default function StaffApp(){
                               <div>
                                 <div style={{display:'flex', alignItems:'center', gap:6}}>
                                   <span style={{fontSize:16, fontWeight:900, color:'#000'}}>Room {slot.room}</span>
-                                  <Chip label={slot.type} color="#000" bg="#fef08a"/>
+                                  <Chip label={slot.type} color="#78680a" bg="#fefce8"/>
                                 </div>
                                 <p style={{margin:'4px 0 0', fontSize:12, fontWeight:700, color:C.muted}}>
                                   👤 Student: <b>{slot.student}</b>
@@ -1154,7 +1206,7 @@ export default function StaffApp(){
                               </div>
 
                               <span style={{
-                                fontSize:11, fontWeight:800, padding:'4px 8px', borderRadius:8, border:'1.5px solid #000',
+                                fontSize:11, fontWeight:800, padding:'4px 8px', borderRadius:8, border: '1px solid #e8df9a',
                                 background: slot.done ? '#bbf7d0' : slot.slotStatus==='active' ? '#fde047' : '#cffafe',
                                 color: '#000'
                               }}>
@@ -1163,19 +1215,19 @@ export default function StaffApp(){
                             </div>
 
                             {slot.note && (
-                              <div style={{background:'#fff', padding:'6px 10px', borderRadius:8, border:'1px solid #000', fontSize:11, fontWeight:700, color:'#333', marginBottom:10}}>
+                              <div style={{background:'#fff', padding:'6px 10px', borderRadius:8, border: '1px solid #e8df9a', fontSize:11, fontWeight:700, color:'#333', marginBottom:10}}>
                                 💬 Note: "{slot.note}"
                               </div>
                             )}
 
                             <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginTop:10, paddingTop:8, borderTop:'1px dashed #000'}}>
                               <a href={`tel:${slot.phone.replace(/\s+/g, '')}`} 
-                                style={{padding:'6px 10px', borderRadius:8, border: '1px solid #e2e8f0', background:'#bbf7d0', color:'#000', textDecoration:'none', fontSize:11, fontWeight:800, display:'inline-flex', alignItems:'center', gap:4, boxShadow:'1px 1px 0px #000'}}>
+                                style={{padding:'6px 10px', borderRadius:8, border: '1px solid #e2e8f0', background:'#bbf7d0', color:'#000', textDecoration:'none', fontSize:11, fontWeight:800, display:'inline-flex', alignItems:'center', gap:4, boxShadow: '0 2px 6px rgba(120, 104, 10, 0.04)'}}>
                                 📞 Call Student
                               </a>
 
                               {slot.done ? (
-                                <Chip label="Cleaned ✅" color="#000" bg="#bbf7d0"/>
+                                <Chip label="Cleaned ✅" color="#166534" bg="#dcfce7"/>
                               ) : (
                                 <button 
                                   onClick={() => setCleaning(prev => prev.map(c => c.id === slot.id ? {...c, done:true, slotStatus:'completed'} : c))}
@@ -1698,11 +1750,11 @@ export default function StaffApp(){
                           <div>
                             <span style={{fontSize:15, fontWeight:900, color:'#000'}}>{c.name}</span>
                             <div style={{display:'flex', gap:6, marginTop:4}}>
-                              <Chip label={c.position} color="#000" bg="#fef08a"/>
-                              <Chip label={c.experience} color="#000" bg="#cffafe"/>
+                              <Chip label={c.position} color="#78680a" bg="#fefce8"/>
+                              <Chip label={c.experience} color="#0891b2" bg="#ecfeff"/>
                             </div>
                           </div>
-                          <span style={{fontSize:11, fontWeight:800, padding:'3px 8px', borderRadius:8, border:'1.5px solid #000', background: c.status==='Hired ✅'?'#bbf7d0':'#fef08a', color:'#000'}}>
+                          <span style={{fontSize:11, fontWeight:800, padding:'3px 8px', borderRadius:8, border: '1px solid #e8df9a', background: c.status==='Hired ✅'?'#bbf7d0':'#fef08a', color:'#000'}}>
                             {c.status}
                           </span>
                         </div>
@@ -1712,7 +1764,7 @@ export default function StaffApp(){
                         )}
 
                         <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginTop:12, paddingTop:8, borderTop:'1px dashed #000'}}>
-                          <a href={`tel:${c.phone}`} style={{padding:'6px 10px', borderRadius:8, border: '1px solid #e2e8f0', background:'#bbf7d0', color:'#000', textDecoration:'none', fontSize:11, fontWeight:800, boxShadow:'1px 1px 0px #000'}}>
+                          <a href={`tel:${c.phone}`} style={{padding:'6px 10px', borderRadius:8, border: '1px solid #e2e8f0', background:'#bbf7d0', color:'#000', textDecoration:'none', fontSize:11, fontWeight:800, boxShadow: '0 2px 6px rgba(120, 104, 10, 0.04)'}}>
                             📞 Call Applicant
                           </a>
 
@@ -1766,22 +1818,22 @@ export default function StaffApp(){
                       </div>
 
                       <div style={{display:'flex', gap:6, margin:'6px 0'}}>
-                        <Chip label={e.requirement} color="#000" bg="#cffafe"/>
-                        <Chip label={`Budget: ${e.budget}`} color="#000" bg="#fef08a"/>
-                        <Chip label={e.source} color="#000" bg="#fef9c3"/>
+                        <Chip label={e.requirement} color="#0891b2" bg="#ecfeff"/>
+                        <Chip label={`Budget: ${e.budget}`} color="#78680a" bg="#fefce8"/>
+                        <Chip label={e.source} color="#78680a" bg="#fefce8"/>
                       </div>
 
-                      <p style={{margin:'6px 0 10px', fontSize:12, fontWeight:700, color:'#333', background:'#f8fafc', padding:'8px 10px', borderRadius:8, border:'1px solid #000'}}>
+                      <p style={{margin:'6px 0 10px', fontSize:12, fontWeight:700, color:'#333', background:'#f8fafc', padding:'8px 10px', borderRadius:8, border: '1px solid #e8df9a'}}>
                         "{e.text}"
                       </p>
 
                       <div style={{display:'flex', gap:8, marginTop:8}}>
-                        <a href={`tel:${e.phone}`} style={{flex:1, textAlign:'center', padding:'8px 0', background:'#bbf7d0', border: '1px solid #e2e8f0', borderRadius:8, color:'#000', fontSize:11, fontWeight:800, textDecoration:'none', boxShadow:'1px 1px 0px #000'}}>
+                        <a href={`tel:${e.phone}`} style={{flex:1, textAlign:'center', padding:'8px 0', background:'#bbf7d0', border: '1px solid #e2e8f0', borderRadius:8, color:'#000', fontSize:11, fontWeight:800, textDecoration:'none', boxShadow: '0 2px 6px rgba(120, 104, 10, 0.04)'}}>
                           📞 Call Lead
                         </a>
                         <button 
                           onClick={()=>setEnquiries(prev=>prev.map(x=>x.id===e.id?{...x, status: x.status.includes('Contacted')?'Closed 🟢':'Contacted 🟡'}:x))}
-                          style={{flex:1, padding:'8px 0', background:'#fef08a', border: '1px solid #e2e8f0', borderRadius:8, color:'#000', fontSize:11, fontWeight:900, cursor:'pointer', fontFamily:'inherit', boxShadow:'1px 1px 0px #000'}}
+                          style={{flex:1, padding:'8px 0', background:'#fef08a', border: '1px solid #e2e8f0', borderRadius:8, color:'#000', fontSize:11, fontWeight:900, cursor:'pointer', fontFamily:'inherit', boxShadow: '0 2px 6px rgba(120, 104, 10, 0.04)'}}
                         >
                           {e.status.includes('Contacted') ? 'Mark Closed 🟢' : 'Mark Contacted 🟡'}
                         </button>
@@ -1834,11 +1886,11 @@ export default function StaffApp(){
                   <p style={{margin:'3px 0 0', fontSize:12, color:C.muted, fontWeight:600}}>In: <b style={{color:'#000'}}>{p.inT}</b> · Out: <b style={{color:'#000'}}>{p.outT||'—'}</b></p>
                 </div>
                 {p.hrs ? (
-                  <span style={{fontSize:11, fontWeight:800, color:'#000', background:'#fef08a', padding:'4px 10px', borderRadius:8, border:'1.5px solid #000'}}>
+                  <span style={{fontSize:11, fontWeight:800, color:'#78680a', background:'#fefce8', padding:'4px 10px', borderRadius:8, border: '1px solid #e8df9a'}}>
                     {p.hrs}
                   </span>
                 ) : (
-                  <span style={{fontSize:11, fontWeight:800, color:'#000', background:'#bbf7d0', padding:'4px 10px', borderRadius:8, border:'1.5px solid #000'}}>
+                  <span style={{fontSize:11, fontWeight:800, color:'#000', background:'#bbf7d0', padding:'4px 10px', borderRadius:8, border: '1px solid #e8df9a'}}>
                     Active ●
                   </span>
                 )}
@@ -1876,7 +1928,7 @@ export default function StaffApp(){
             ))}
             <div style={{display:'flex', justifyContent:'space-between', padding:'12px 0 0', alignItems:'center'}}>
               <span style={{fontSize:16, fontWeight:900, color:'#000'}}>Net Payable</span>
-              <span style={{fontSize:22, fontWeight:900, color:'#000', background:'#fef08a', padding:'2px 8px', borderRadius:8, border:'1.5px solid #000'}}>₹18,500</span>
+              <span style={{fontSize:22, fontWeight:900, color:'#78680a', background:'#fefce8', padding:'2px 8px', borderRadius:8, border: '1px solid #e8df9a'}}>₹18,500</span>
             </div>
           </div>
 
@@ -1900,7 +1952,7 @@ export default function StaffApp(){
                 </div>
                 <div style={{display:'flex', alignItems:'center', gap:10}}>
                   <span style={{fontSize:16, fontWeight:900, color:'#000'}}>{s.v}</span>
-                  <button type="button" style={{padding:'6px 10px', background:'#fef08a', border: '1px solid #e2e8f0', borderRadius:8, color:'#000', fontSize:11, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow:'1px 1px 0px #000', display:'flex', alignItems:'center', gap:4}}>
+                  <button type="button" style={{padding:'6px 10px', background:'#fef08a', border: '1px solid #e2e8f0', borderRadius:8, color:'#000', fontSize:11, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow: '0 2px 6px rgba(120, 104, 10, 0.04)', display:'flex', alignItems:'center', gap:4}}>
                     View 👁️
                   </button>
                 </div>
@@ -1954,7 +2006,7 @@ export default function StaffApp(){
                       <p style={{margin:0, fontSize:13, fontWeight:800, color:'#000'}}>{ast.name}</p>
                       <p style={{margin:'2px 0 0', fontSize:11, color:C.muted, fontWeight:600}}>{ast.qty} · Serial: {ast.serial}</p>
                     </div>
-                    <Chip label={ast.cond} color="#000" bg="#fef08a"/>
+                    <Chip label={ast.cond} color="#78680a" bg="#fefce8"/>
                   </div>
                 ))}
               </div>
@@ -1973,7 +2025,7 @@ export default function StaffApp(){
                         {log.type==='expense' ? `To: ${log.party || 'Vendor'}` : `From: ${log.party || 'Payer'}`} · {log.mode} · {log.date}
                       </p>
                       {log.senderUpi && log.receiverUpi && (
-                        <div style={{marginTop:4, padding:'4px 8px', background:'#fef08a', borderRadius:6, border:'1px solid #000', fontSize:10, fontWeight:700, color:'#000'}}>
+                        <div style={{marginTop:4, padding:'4px 8px', background:'#fef08a', borderRadius:6, border: '1px solid #e8df9a', fontSize:10, fontWeight:700, color:'#000'}}>
                           💸 UPI: {log.senderUpi} ➔ {log.receiverUpi}
                         </div>
                       )}

@@ -13,7 +13,7 @@ const Field = ({ icon, placeholder, type = 'text', value, onChange, disabled, ma
   <div style={{ position: 'relative', marginBottom: 16 }}>
     <span className="material-symbols-outlined" style={{
       position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)',
-      color: '#000', fontSize: 20, pointerEvents: 'none'
+      color: '#78680a', fontSize: 20, pointerEvents: 'none'
     }}>{icon}</span>
     <input
       type={type}
@@ -24,10 +24,11 @@ const Field = ({ icon, placeholder, type = 'text', value, onChange, disabled, ma
       maxLength={maxLength}
       style={{
         width: '100%', padding: '14px 14px 14px 44px',
-        border: `2px solid ${disabled ? '#ccc' : '#000'}`,
-        borderRadius: 8, fontSize: 15, fontFamily: "'Hanken Grotesk',sans-serif",
-        background: disabled ? '#f5f5f5' : 'white', color: '#000',
-        outline: 'none', boxSizing: 'border-box'
+        border: `1.5px solid ${disabled ? '#e2e8f0' : '#e8df9a'}`,
+        borderRadius: 12, fontSize: 15, fontFamily: "'Hanken Grotesk',sans-serif",
+        background: disabled ? '#f5f5f5' : 'white', color: '#1a1500',
+        outline: 'none', boxSizing: 'border-box',
+        transition: 'all 0.2s'
       }}
     />
   </div>
@@ -58,24 +59,24 @@ export default function Login() {
   return (
     <div style={{
       minHeight: '100vh', display: 'flex', flexDirection: 'column',
-      backgroundColor: '#fafafa',
+      backgroundColor: '#fffdf0',
       fontFamily: "'Hanken Grotesk',sans-serif", padding: '0 0 40px'
     }}>
       {/* Top branding */}
-      <div style={{ textAlign: 'center', padding: '40px 24px 20px' }}>
+      <div style={{ textAlign: 'center', padding: '50px 24px 24px' }}>
         <div style={{
-          width: 68, height: 68, borderRadius: 16,
-          backgroundColor: '#fef08a', border: '2px solid #000',
+          width: 68, height: 68, borderRadius: 20,
+          backgroundColor: '#fefce8', border: '1px solid #e8df9a',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          margin: '0 auto 14px', boxShadow: '4px 4px 0px #000'
+          margin: '0 auto 14px', boxShadow: '0 4px 12px rgba(120, 104, 10, 0.05)'
         }}>
-          <span className="material-symbols-outlined" style={{ color: '#000', fontSize: 36 }}>badge</span>
+          <span className="material-symbols-outlined" style={{ color: '#78680a', fontSize: 36 }}>badge</span>
         </div>
         <h1 style={{
           fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 800,
-          fontSize: 30, color: '#000', margin: '0 0 4px', letterSpacing: -1
+          fontSize: 32, color: '#1a1500', margin: '0 0 4px', letterSpacing: -1
         }}>febebo</h1>
-        <p style={{ color: '#000', fontSize: 13, margin: 0, fontWeight: 600 }}>
+        <p style={{ color: '#78680a', fontSize: 13, margin: 0, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5 }}>
           Staff Portal
         </p>
       </div>
@@ -83,33 +84,34 @@ export default function Login() {
       {/* Main Container Card */}
       <div style={{
         margin: '0 20px', background: 'white',
-        borderRadius: 16, padding: '24px 20px',
-        border: '2px solid #000',
-        boxShadow: '4px 4px 0px #000'
+        borderRadius: 24, padding: '28px 24px',
+        border: '1px solid #e8df9a',
+        boxShadow: '0 8px 24px rgba(120, 104, 10, 0.06)'
       }}>
         <form onSubmit={handleLogin}>
           <div style={{ marginBottom: 16 }}>
-            <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#000', marginBottom: 8 }}>Staff Role</label>
+            <label style={{ display: 'block', fontSize: 13, fontWeight: 800, color: '#1a1500', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.3 }}>Staff Role</label>
             <div style={{ position: 'relative' }}>
               <select
                 value={selectedRole}
                 onChange={(e) => setSelectedRole(e.target.value)}
                 style={{
-                  width: '100%', padding: '14px 14px 14px 14px',
-                  border: `2px solid #000`,
-                  borderRadius: 8, fontSize: 15, fontFamily: "'Hanken Grotesk',sans-serif",
-                  background: 'white', color: '#000',
-                  outline: 'none', boxSizing: 'border-box', appearance: 'none', fontWeight: 600
+                  width: '100%', padding: '14px 44px 14px 14px',
+                  border: `1.5px solid #e8df9a`,
+                  borderRadius: 12, fontSize: 15, fontFamily: "'Hanken Grotesk',sans-serif",
+                  background: 'white', color: '#1a1500',
+                  outline: 'none', boxSizing: 'border-box', appearance: 'none', fontWeight: 700,
+                  transition: 'all 0.2s'
                 }}
               >
                 {roles.map(r => <option key={r} value={r}>{r}</option>)}
               </select>
-              <span className="material-symbols-outlined" style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', color: '#000', pointerEvents: 'none' }}>expand_more</span>
+              <span className="material-symbols-outlined" style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', color: '#78680a', pointerEvents: 'none' }}>expand_more</span>
             </div>
           </div>
 
           <div style={{ marginBottom: 16 }}>
-            <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#000', marginBottom: 8 }}>Name</label>
+            <label style={{ display: 'block', fontSize: 13, fontWeight: 800, color: '#1a1500', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.3 }}>Name</label>
             <Field 
               icon="person" 
               placeholder="Enter your full name" 
@@ -118,8 +120,8 @@ export default function Login() {
             />
           </div>
 
-          <div style={{ marginBottom: 24 }}>
-            <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#000', marginBottom: 8 }}>Passkey</label>
+          <div style={{ marginBottom: 28 }}>
+            <label style={{ display: 'block', fontSize: 13, fontWeight: 800, color: '#1a1500', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.3 }}>Passkey</label>
             <Field 
               icon="lock" 
               type="password"
@@ -131,19 +133,20 @@ export default function Login() {
           </div>
 
           <button type="submit" style={{
-            width: '100%', padding: '16px', borderRadius: 8,
-            background: '#fef08a',
-            color: '#000', border: '2px solid #000', fontSize: 16, fontWeight: 800,
+            width: '100%', padding: '16px', borderRadius: 12,
+            background: '#fde047',
+            color: '#1a1500', border: '1px solid #e8df9a', fontSize: 16, fontWeight: 800,
             cursor: 'pointer', fontFamily: 'inherit',
-            boxShadow: '2px 2px 0px #000'
+            boxShadow: '0 4px 12px rgba(253, 224, 71, 0.25)',
+            outline: 'none', transition: 'all 0.15s'
           }}>
             Sign In
           </button>
         </form>
       </div>
 
-      <p style={{ textAlign: 'center', fontSize: 12, color: '#000', marginTop: 24, padding: '0 24px', fontWeight: 700 }}>
-        Staff Passkey: 1234
+      <p style={{ textAlign: 'center', fontSize: 12, color: '#78680a', marginTop: 32, padding: '0 24px', fontWeight: 800, letterSpacing: 0.3 }}>
+        🔐 STAFF PASSKEY: 1234
       </p>
     </div>
   );
