@@ -154,6 +154,54 @@ const INIT_ROOMS = [
   {id:6, number:'305', type:'Single AC', status:'Occupied', student:'Ravi Kumar', rent:'₹12,000', due:'2026-08-01'},
 ];
 
+const INIT_VENDORS = [
+  { id: 1, name: 'Sunil Kumar', shop: 'The Local Market', category: 'Groceries', upi: 'sunilkumar@upi', balance: 90, totalSpent: 100 },
+  { id: 2, name: 'Raju Verma', shop: 'Fresh Picks', category: 'Groceries', upi: 'rajuverma@upi', balance: 5000, totalSpent: 85000 },
+  { id: 3, name: 'Lakhan DryCleaners', shop: 'Express Laundry', category: 'Laundry', upi: 'lakhan@upi', balance: 12000, totalSpent: 45000 },
+  { id: 4, name: 'Sanjay Veggies', shop: 'Sabzi Mandi Shop', category: 'Vegetables', upi: 'sanjay@upi', balance: 3500, totalSpent: 30000 },
+  { id: 5, name: 'Krishna Dairy', shop: 'Shree Krishna Milk', category: 'Dairy', upi: 'krishna@upi', balance: 8000, totalSpent: 65000 },
+  { id: 6, name: 'Bisleri Water Supplier', shop: 'Pure Water Agency', category: 'Water', upi: 'bisleri@upi', balance: 4000, totalSpent: 24000 }
+];
+
+const INIT_ITEMS_BY_CATEGORY = {
+  'Groceries': [
+    { name: 'Besan', unit: 'kg', rate: 10 },
+    { name: 'Biscuits', unit: 'packet', rate: 20 },
+    { name: 'Coffee Powder', unit: 'gm', rate: 120 },
+    { name: 'Cooking Oil (Mustard)', unit: 'L', rate: 170 },
+    { name: 'Cooking Oil (Sunflower)', unit: 'L', rate: 140 },
+    { name: 'Coriander Powder', unit: 'gm', rate: 45 },
+    { name: 'Cumin Seeds', unit: 'gm', rate: 90 },
+    { name: 'Sugar', unit: 'kg', rate: 40 },
+    { name: 'Tea Leaves', unit: 'gm', rate: 60 }
+  ],
+  'Laundry': [
+    { name: 'Bedsheet Washing', unit: 'pc', rate: 15 },
+    { name: 'Pillow Cover washing', unit: 'pc', rate: 5 },
+    { name: 'Dry Cleaning Uniform', unit: 'set', rate: 80 }
+  ],
+  'Vegetables': [
+    { name: 'Potatoes', unit: 'kg', rate: 25 },
+    { name: 'Onions', unit: 'kg', rate: 35 },
+    { name: 'Tomatoes', unit: 'kg', rate: 40 },
+    { name: 'Green Chillies', unit: 'kg', rate: 80 }
+  ],
+  'Dairy': [
+    { name: 'Toned Milk', unit: 'L', rate: 54 },
+    { name: 'Full Cream Milk', unit: 'L', rate: 66 },
+    { name: 'Paneer', unit: 'kg', rate: 360 },
+    { name: 'Curd', unit: 'kg', rate: 80 }
+  ],
+  'Water': [
+    { name: '20L Water Can', unit: 'bottle', rate: 30 },
+    { name: 'Water Tanker (1000L)', unit: 'tanker', rate: 800 }
+  ]
+};
+
+const INIT_VENDOR_LEDGER = [
+  { id: 1, vendorId: 1, date: '24 July 2026', type: 'Purchase', amount: 100, desc: 'Purchase: Besan (10 kg)', status: 'Pending', pm: 'UPI -> sunilkumar@upi' }
+];
+
 // ─── Small Reusable UI ────────────────────────────────────────────────────────
 const Chip = ({label,color=C.primary,bg=C.primaryBg})=>(
   <span style={{fontSize:10,fontWeight:800,color,background:bg,padding:'3px 8px',borderRadius:20,whiteSpace:'nowrap'}}>{label}</span>
@@ -274,6 +322,21 @@ export default function StaffApp(){
 
   // Purchase
   const [demands,setDemands]    = useState(INIT_DEMANDS);
+
+  // Vendor system states for Purchase Manager
+  const [vendors, setVendors] = useState(INIT_VENDORS);
+  const [activeVendorCategory, setActiveVendorCategory] = useState('Groceries');
+  const [searchVendorQuery, setSearchVendorQuery] = useState('');
+  const [selectedVendor, setSelectedVendor] = useState(null); 
+  const [vendorLedger, setVendorLedger] = useState(INIT_VENDOR_LEDGER);
+  const [showAddPurchaseModal, setShowAddPurchaseModal] = useState(false);
+  const [showPayVendorModal, setShowPayVendorModal] = useState(false);
+  const [purchaseItemsState, setPurchaseItemsState] = useState([]); 
+  const [purchaseDate, setPurchaseDate] = useState('24-07-2026');
+  const [payAmount, setPayAmount] = useState('');
+  const [payMethod, setPayMethod] = useState('UPI'); 
+  const [paySenderUpi, setPaySenderUpi] = useState('');
+  const [pmTab, setPmTab] = useState('requisitions'); // requisitions | vendors
 
   // Security
   const [visitors,setVisitors]  = useState(INIT_VISITORS);
@@ -1223,22 +1286,183 @@ export default function StaffApp(){
 
           {/* PURCHASE MANAGER */}
           {staffRole === 'Purchase Manager' && (<>
-            <div style={{background:'#fff',borderRadius:18,border: '1px solid #e2e8f0',padding:16}}>
-              <p style={{margin:'0 0 12px',fontSize:15,fontWeight:800,color:C.text}}>🛒 Staff Item Requisitions</p>
-              {demands.map(d=>(
-                <div key={d.id} style={{background:C.bg,border: '1px solid #e2e8f0',borderRadius:14,padding:12,marginBottom:8,display:'flex',justifyContent:'space-between',alignItems:'center',gap:10}}>
-                  <div style={{flex:1}}>
-                    <p style={{margin:0,fontSize:14,fontWeight:800,color:C.text}}>{d.item}</p>
-                    <p style={{margin:'3px 0 0',fontSize:11,color:C.muted}}>Qty: {d.qty} · {d.reqBy} · {d.date}</p>
-                    <p style={{margin:'2px 0 0',fontSize:11,color:C.muted}}>Vendor: {d.vendor}</p>
-                  </div>
-                  {d.status==='Pending'
-                    ? <button onClick={()=>setDemands(p=>p.map(x=>x.id===d.id?{...x,status:'PO Sent'}:x))} style={{padding:'8px 12px',background:meta.accentBg,border:`1.5px solid ${meta.accent}`,borderRadius:10,color:meta.accent,fontSize:12,fontWeight:800,cursor:'pointer',fontFamily:'inherit',whiteSpace:'nowrap'}}>Create PO 📦</button>
-                    : <Chip label="PO Sent ✓" color={C.success} bg={C.successBg}/>
-                  }
-                </div>
-              ))}
+            {/* Tab Navigation */}
+            <div style={{display:'flex', background:'#fff', borderRadius:12, padding:4, border:`1px solid ${C.border}`, boxShadow:'0 2px 8px rgba(15,23,42,0.04)', marginBottom:14}}>
+              <button onClick={()=>setPmTab('requisitions')} style={{flex:1, padding:'10px 0', borderRadius:10, border:'none', background: pmTab==='requisitions' ? '#fde047' : 'transparent', color: pmTab==='requisitions' ? '#78680a' : C.muted, fontSize:13, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}>
+                🛒 Requisitions ({demands.filter(d=>d.status==='Pending').length})
+              </button>
+              <button onClick={()=>setPmTab('vendors')} style={{flex:1, padding:'10px 0', borderRadius:10, border:'none', background: pmTab==='vendors' ? '#fde047' : 'transparent', color: pmTab==='vendors' ? '#78680a' : C.muted, fontSize:13, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}>
+                🏢 Vendors ({vendors.length})
+              </button>
             </div>
+
+            {/* TAB 1: REQUISITIONS */}
+            {pmTab === 'requisitions' && (
+              <div style={{background:'#fff',borderRadius:18,border: `1px solid ${C.border}`,padding:16, boxShadow:'0 4px 12px rgba(120, 104, 10, 0.04)'}}>
+                <p style={{margin:'0 0 12px',fontSize:15,fontWeight:800,color:C.text}}>📋 Staff Item Requisitions</p>
+                {demands.map(d=>(
+                  <div key={d.id} style={{background:C.bg,border: `1px solid ${C.border}`,borderRadius:14,padding:12,marginBottom:8,display:'flex',justifyContent:'space-between',alignItems:'center',gap:10}}>
+                    <div style={{flex:1}}>
+                      <p style={{margin:0,fontSize:14,fontWeight:800,color:C.text}}>{d.item}</p>
+                      <p style={{margin:'3px 0 0',fontSize:11,color:C.muted}}>Qty: {d.qty} · {d.reqBy} · {d.date}</p>
+                      <p style={{margin:'2px 0 0',fontSize:11,color:C.muted}}>Vendor: {d.vendor}</p>
+                    </div>
+                    {d.status==='Pending' ? (
+                      <button onClick={()=>setDemands(p=>p.map(x=>x.id===d.id?{...x,status:'PO Sent'}:x))} style={{padding:'8px 12px',background:meta.accentBg,border:`1.5px solid ${meta.accent}`,borderRadius:10,color:meta.accent,fontSize:12,fontWeight:800,cursor:'pointer',fontFamily:'inherit',whiteSpace:'nowrap'}}>Create PO 📦</button>
+                    ) : (
+                      <Chip label="PO Sent ✓" color={C.success} bg={C.successBg}/>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* TAB 2: VENDOR ACCOUNT & LEDGER GRID */}
+            {pmTab === 'vendors' && !selectedVendor && (
+              <div style={{display:'flex', flexDirection:'column', gap:14}}>
+                {/* Total amount card */}
+                <div style={{background:'#ffffff', border:`1px solid ${C.border}`, borderRadius:18, padding:'16px 20px', boxShadow:'0 4px 12px rgba(120,104,10,0.03)'}}>
+                  <p style={{margin:0, fontSize:12, fontWeight:800, color:C.muted, textTransform:'uppercase', letterSpacing:0.5}}>Total Outstanding Payable</p>
+                  <h2 style={{margin:'4px 0 0', fontSize:32, fontWeight:900, color:'#b91c1c'}}>₹{vendors.reduce((s, v)=>s+v.balance, 0).toLocaleString()}</h2>
+                </div>
+
+                {/* Search Bar */}
+                <div style={{position:'relative', display:'flex', alignItems:'center'}}>
+                  <span className="material-symbols-outlined" style={{position:'absolute', left:14, color:C.muted, fontSize:20}}>search</span>
+                  <input 
+                    type="text"
+                    placeholder="Search Vendor"
+                    value={searchVendorQuery}
+                    onChange={e=>setSearchVendorQuery(e.target.value)}
+                    style={{width:'100%', padding:'12px 14px 12px 42px', border:`1.5px solid ${C.border}`, borderRadius:12, fontSize:14, background:'#fff', color:C.text, outline:'none'}}
+                  />
+                </div>
+
+                {/* Category Selector pills */}
+                <div style={{display:'flex', gap:8, overflowX:'auto', paddingBottom:4, margin:'0 -2px'}}>
+                  {['Groceries', 'Laundry', 'Vegetables', 'Dairy', 'Water'].map(cat => (
+                    <button 
+                      key={cat}
+                      onClick={()=>setActiveVendorCategory(cat)}
+                      style={{
+                        padding:'8px 16px', borderRadius:20, border: activeVendorCategory===cat ? 'none' : `1px solid ${C.border}`,
+                        background: activeVendorCategory===cat ? '#0891b2' : '#fff',
+                        color: activeVendorCategory===cat ? '#fff' : C.text,
+                        fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'inherit', whiteSpace:'nowrap'
+                      }}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Vendor List */}
+                <div style={{display:'flex', flexDirection:'column', gap:10}}>
+                  {vendors
+                    .filter(v => v.category === activeVendorCategory && v.name.toLowerCase().includes(searchVendorQuery.toLowerCase()))
+                    .map(v => (
+                      <div 
+                        key={v.id}
+                        onClick={() => setSelectedVendor(v)}
+                        style={{background:'#fff', border:`1px solid ${C.border}`, borderRadius:18, padding:16, display:'flex', justifyContent:'space-between', alignItems:'center', boxShadow:'0 4px 12px rgba(120,104,10,0.03)', cursor:'pointer'}}
+                      >
+                        <div>
+                          <p style={{margin:0, fontSize:11, fontWeight:800, color:'#0891b2', textTransform:'uppercase'}}>{v.category} · {v.shop}</p>
+                          <h4 style={{margin:'4px 0 2px', fontSize:16, fontWeight:900, color:C.text}}>{v.name}</h4>
+                          <p style={{margin:0, fontSize:12, color:C.muted}}>Outstanding Balance: ₹{v.balance.toLocaleString()}</p>
+                        </div>
+                        <div style={{display:'flex', alignItems:'center', gap:4}}>
+                          <span style={{fontSize:16, fontWeight:900, color:C.text}}>₹{v.balance.toLocaleString()}</span>
+                          <span className="material-symbols-outlined" style={{fontSize:20, color:C.muted}}>chevron_right</span>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
+
+            {/* VENDOR DETAIL PAGE (Screenshot 5 / Ledger layout) */}
+            {pmTab === 'vendors' && selectedVendor && (
+              <div style={{display:'flex', flexDirection:'column', gap:14}}>
+                {/* Back Navigation header */}
+                <div style={{display:'flex', alignItems:'center', gap:12}}>
+                  <button onClick={() => setSelectedVendor(null)} style={{background:'#fff', border:`1px solid ${C.border}`, borderRadius:10, width:36, height:36, display:'flex', alignItems:'center', justifyCenter:'center', cursor:'pointer'}}>
+                    <span className="material-symbols-outlined" style={{fontSize:20}}>arrow_back</span>
+                  </button>
+                  <div>
+                    <h3 style={{margin:0, fontSize:18, fontWeight:900}}>{selectedVendor.name} Account</h3>
+                    <p style={{margin:0, fontSize:11.5, color:C.muted}}>{selectedVendor.shop} · {selectedVendor.category}</p>
+                  </div>
+                </div>
+
+                {/* Warning message card */}
+                {selectedVendor.balance > 0 && (
+                  <div onClick={() => {
+                    setPayAmount(String(selectedVendor.balance));
+                    setShowPayVendorModal(true);
+                  }} style={{background:'#ffe4e6', border:'1px solid #fecaca', borderRadius:14, padding:'12px 14px', display:'flex', justifyContent:'space-between', alignItems:'center', cursor:'pointer'}}>
+                    <div style={{display:'flex', alignItems:'center', gap:8}}>
+                      <span className="material-symbols-outlined" style={{fontSize:18, color:'#dc2626'}}>warning</span>
+                      <span style={{fontSize:12.5, fontWeight:800, color:'#b91c1c'}}>Pending Amount — Tap to Clear</span>
+                    </div>
+                    <span style={{fontSize:13, fontWeight:900, color:'#b91c1c'}}>₹{selectedVendor.balance.toLocaleString()}</span>
+                  </div>
+                )}
+
+                {/* Total amount card */}
+                <div style={{background:'#ffffff', border:`1px solid ${C.border}`, borderRadius:18, padding:'16px 20px', boxShadow:'0 4px 12px rgba(120,104,10,0.03)'}}>
+                  <p style={{margin:0, fontSize:12, fontWeight:800, color:C.muted, textTransform:'uppercase'}}>Total Account Balance</p>
+                  <h2 style={{margin:'4px 0 0', fontSize:32, fontWeight:900, color:C.text}}>₹{selectedVendor.balance.toLocaleString()}</h2>
+                </div>
+
+                {/* Transactions Ledger header */}
+                <p style={{margin:'4px 0 0', fontSize:14, fontWeight:900, color:C.text}}>📄 Statement & Ledger History</p>
+
+                {/* Transaction history list */}
+                <div style={{display:'flex', flexDirection:'column', gap:10}}>
+                  {vendorLedger
+                    .filter(l => l.vendorId === selectedVendor.id)
+                    .map(l => (
+                      <div key={l.id} style={{background:'#fff', border:`1px solid ${C.border}`, borderRadius:16, padding:14, boxShadow:'0 2px 8px rgba(120,104,10,0.03)'}}>
+                        <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:6}}>
+                          <div>
+                            <span style={{fontSize:11, fontWeight:800, background: l.type==='Purchase'?'#fee2e2':'#dcfce7', color: l.type==='Purchase'?'#b91c1c':'#166534', padding:'2px 8px', borderRadius:6}}>{l.type}</span>
+                            <h5 style={{margin:'6px 0 2px', fontSize:14, fontWeight:900, color:C.text}}>{l.desc}</h5>
+                            <p style={{margin:0, fontSize:11, color:C.muted}}>{l.date} · Method: {l.pm}</p>
+                          </div>
+                          <div style={{textAlign:'right'}}>
+                            <p style={{margin:0, fontSize:15, fontWeight:900, color: l.type==='Purchase'?'#b91c1c':'#166534'}}>{l.type==='Purchase'?'+':'-'} ₹{l.amount.toLocaleString()}</p>
+                            <span style={{fontSize:9.5, fontWeight:800, color: l.status==='Approved'?'#166534':'#d97706'}}>{l.status}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+
+                {/* Bottom Action buttons */}
+                <div style={{display:'flex', gap:10, marginTop:10}}>
+                  <button 
+                    onClick={() => {
+                      const items = INIT_ITEMS_BY_CATEGORY[selectedVendor.category] || [];
+                      setPurchaseItemsState(items.map(i => ({...i, qty: 10, checked: false})));
+                      setShowAddPurchaseModal(true);
+                    }} 
+                    style={{flex:1, padding:13, background:'#0891b2', border:'none', borderRadius:12, color:'#fff', fontSize:13, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}
+                  >
+                    🛒 Add Purchase
+                  </button>
+                  <button 
+                    onClick={() => {
+                      setPayAmount(String(selectedVendor.balance));
+                      setShowPayVendorModal(true);
+                    }} 
+                    style={{flex:1, padding:13, background:'#fde047', border:`1px solid ${C.border}`, borderRadius:12, color:'#78680a', fontSize:13, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}
+                  >
+                    💵 Pay Vendor
+                  </button>
+                </div>
+              </div>
+            )}
           </>)}
 
           {/* SECURITY */}
@@ -2270,6 +2494,222 @@ export default function StaffApp(){
       </Sheet>
 
       {/* Sheet 2: Demand Creation Form */}
+      {/* Sheet 3: Add Items Modal (Screenshot 3) */}
+      <Sheet show={showAddPurchaseModal} onClose={()=>setShowAddPurchaseModal(false)} title="Add Items" sub={selectedVendor ? `${selectedVendor.category} · ${selectedVendor.shop}` : ''}>
+        <div style={{display:'flex', flexDirection:'column', gap:12}}>
+          {/* Date Selector */}
+          <div style={{marginBottom:10}}>
+            <label style={{display:'block', fontSize:11, fontWeight:800, color:C.muted, textTransform:'uppercase', marginBottom:6}}>Date</label>
+            <input 
+              type="date" 
+              value={purchaseDate} 
+              onChange={e=>setPurchaseDate(e.target.value)} 
+              style={{width:'100%', padding:12, border:`1.5px solid ${C.border}`, borderRadius:10, fontSize:14, fontFamily:'inherit'}}
+            />
+          </div>
+
+          {/* Items checklist */}
+          <div style={{display:'flex', flexDirection:'column', gap:8, maxHeight:260, overflowY:'auto', paddingRight:4}}>
+            {purchaseItemsState.map((item, idx) => (
+              <div key={item.name} style={{display:'flex', alignItems:'center', justifyContent:'space-between', padding:'8px 10px', background:'#fff', border:`1px solid ${C.border}`, borderRadius:12}}>
+                <div style={{display:'flex', alignItems:'center', gap:8, flex:1.5}}>
+                  <input 
+                    type="checkbox" 
+                    checked={item.checked} 
+                    onChange={e => setPurchaseItemsState(prev => prev.map((x, i) => i === idx ? {...x, checked: e.target.checked} : x))}
+                    style={{width:16, height:16, cursor:'pointer'}}
+                  />
+                  <div>
+                    <p style={{margin:0, fontSize:13, fontWeight:800, color:C.text}}>{item.name}</p>
+                    <span style={{fontSize:10.5, color:C.muted}}>{item.rate} / {item.unit}</span>
+                  </div>
+                </div>
+                
+                {item.checked ? (
+                  <div style={{display:'flex', alignItems:'center', gap:6, flex:2, justifyContent:'flex-end'}}>
+                    <input 
+                      type="number" 
+                      value={item.qty} 
+                      onChange={e => setPurchaseItemsState(prev => prev.map((x, i) => i === idx ? {...x, qty: Number(e.target.value)} : x))}
+                      style={{width:60, padding:'6px 8px', border:`1.5px solid ${C.border}`, borderRadius:8, fontSize:12, textAlign:'center'}}
+                    />
+                    <span style={{fontSize:11.5, color:C.muted}}>{item.unit}</span>
+                    <input 
+                      type="number" 
+                      value={item.rate} 
+                      onChange={e => setPurchaseItemsState(prev => prev.map((x, i) => i === idx ? {...x, rate: Number(e.target.value)} : x))}
+                      style={{width:60, padding:'6px 8px', border:`1.5px solid ${C.border}`, borderRadius:8, fontSize:12, textAlign:'center'}}
+                    />
+                  </div>
+                ) : (
+                  <span style={{fontSize:13, color:C.muted}}>-</span>
+                )}
+
+                <div style={{flex:0.8, textAlign:'right', fontSize:13, fontWeight:900, color:C.text}}>
+                  {item.checked ? `₹${item.qty * item.rate}` : '-'}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Selection summary */}
+          <div style={{background:'#ecfeff', border:'1px solid #cffafe', borderRadius:12, padding:'10px 14px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+            <span style={{fontSize:12.5, fontWeight:800, color:'#0891b2'}}>{purchaseItemsState.filter(i=>i.checked).length} items selected</span>
+            <span style={{fontSize:14, fontWeight:900, color:'#0891b2'}}>₹{purchaseItemsState.filter(i=>i.checked).reduce((s, i) => s + (i.qty * i.rate), 0)}</span>
+          </div>
+
+          {/* Make Purchase Button */}
+          <button 
+            onClick={() => {
+              const selectedItems = purchaseItemsState.filter(i => i.checked);
+              if (selectedItems.length === 0) {
+                alert('Please select at least one item.');
+                return;
+              }
+              const totalCost = selectedItems.reduce((s, i) => s + (i.qty * i.rate), 0);
+              const descStr = `Purchase: ` + selectedItems.map(i => `${i.name} (${i.qty} ${i.unit})`).join(', ');
+              
+              // Add ledger entry
+              const newLedger = {
+                id: Date.now(),
+                vendorId: selectedVendor.id,
+                date: purchaseDate.split('-').reverse().join('-'), // format date nicely
+                type: 'Purchase',
+                amount: totalCost,
+                desc: descStr,
+                status: 'Pending',
+                pm: `UPI -> ${selectedVendor.upi}`
+              };
+              
+              setVendorLedger(prev => [newLedger, ...prev]);
+              
+              // Update Vendor Balance
+              setVendors(prev => prev.map(v => v.id === selectedVendor.id ? {...v, balance: v.balance + totalCost} : v));
+              setSelectedVendor(prev => ({...prev, balance: prev.balance + totalCost}));
+              
+              setShowAddPurchaseModal(false);
+              
+              // Open Pay modal automatically
+              setPayAmount(String(totalCost));
+              setShowPayVendorModal(true);
+            }} 
+            style={{width:'100%', padding:14, background:'#0891b2', border:'none', borderRadius:12, color:'#fff', fontSize:14, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}
+          >
+            Make Purchase
+          </button>
+        </div>
+      </Sheet>
+
+      {/* Sheet 4: Purchase Payment Modal (Screenshot 4) */}
+      <Sheet show={showPayVendorModal} onClose={()=>setShowPayVendorModal(false)} title="Purchase Payment">
+        <div style={{display:'flex', flexDirection:'column', gap:12}}>
+          {/* Summary values card */}
+          <div style={{background:'#fafafa', border:`1px solid ${C.border}`, borderRadius:14, padding:14, display:'flex', flexDirection:'column', gap:6}}>
+            <div style={{display:'flex', justifyContent:'space-between', fontSize:13}}>
+              <span style={{color:C.muted}}>Total Pending</span>
+              <span style={{fontWeight:800, color:C.text}}>₹{selectedVendor?.balance.toLocaleString()}</span>
+            </div>
+            <div style={{display:'flex', justifyContent:'space-between', fontSize:13}}>
+              <span style={{color:C.muted}}>Remaining after payment</span>
+              <span style={{fontWeight:900, color:'#b91c1c'}}>₹{(Number(selectedVendor?.balance || 0) - Number(payAmount || 0)).toLocaleString()}</span>
+            </div>
+          </div>
+
+          {/* Amount field */}
+          <InputField 
+            label="Amount Paying Now (₹)" 
+            type="number" 
+            required 
+            value={payAmount} 
+            onChange={e=>setPayAmount(e.target.value)} 
+            placeholder="e.g. 5000"
+          />
+
+          {/* Toggle payment method */}
+          <div>
+            <label style={{display:'block', fontSize:11, fontWeight:800, color:C.muted, textTransform:'uppercase', marginBottom:6}}>Payment Method</label>
+            <div style={{display:'flex', gap:10}}>
+              <button 
+                type="button"
+                onClick={()=>setPayMethod('Cash')}
+                style={{
+                  flex:1, padding:12, borderRadius:10, border: payMethod==='Cash' ? 'none' : `1px solid ${C.border}`,
+                  background: payMethod==='Cash' ? '#0891b2' : '#fff',
+                  color: payMethod==='Cash' ? '#fff' : C.text,
+                  fontWeight:800, fontSize:13, cursor:'pointer', fontFamily:'inherit'
+                }}
+              >
+                💵 Cash
+              </button>
+              <button 
+                type="button"
+                onClick={()=>setPayMethod('UPI')}
+                style={{
+                  flex:1, padding:12, borderRadius:10, border: payMethod==='UPI' ? 'none' : `1px solid ${C.border}`,
+                  background: payMethod==='UPI' ? '#0891b2' : '#fff',
+                  color: payMethod==='UPI' ? '#fff' : C.text,
+                  fontWeight:800, fontSize:13, cursor:'pointer', fontFamily:'inherit'
+                }}
+              >
+                📲 UPI
+              </button>
+            </div>
+          </div>
+
+          {/* UPI specific detail fields */}
+          {payMethod === 'UPI' && selectedVendor && (
+            <div style={{display:'flex', flexDirection:'column', gap:10}}>
+              <InputField 
+                label="Sender Phone / UPI ID" 
+                value={paySenderUpi} 
+                onChange={e=>setPaySenderUpi(e.target.value)} 
+                placeholder="your.name@upi"
+              />
+              <InputField 
+                label="Receiver Phone / UPI ID" 
+                disabled 
+                value={selectedVendor.upi} 
+                placeholder="vendor@upi"
+              />
+            </div>
+          )}
+
+          {/* Confirm Button */}
+          <button 
+            onClick={() => {
+              const amt = Number(payAmount);
+              if (!amt || amt <= 0) {
+                alert('Please enter a valid payment amount.');
+                return;
+              }
+              
+              // Add ledger entry
+              const newLedger = {
+                id: Date.now(),
+                vendorId: selectedVendor.id,
+                date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+                type: 'Payment',
+                amount: amt,
+                desc: payMethod==='UPI' ? `Paid via UPI to ${selectedVendor.upi}` : 'Paid via Cash',
+                status: 'Approved',
+                pm: payMethod
+              };
+              
+              setVendorLedger(prev => [newLedger, ...prev]);
+              
+              // Update Vendor Balance
+              setVendors(prev => prev.map(v => v.id === selectedVendor.id ? {...v, balance: v.balance - amt} : v));
+              setSelectedVendor(prev => ({...prev, balance: prev.balance - amt}));
+              
+              setShowPayVendorModal(false);
+              alert(`Payment of ₹${amt.toLocaleString()} recorded successfully!`);
+            }} 
+            style={{width:'100%', padding:14, background:'#0891b2', border:'none', borderRadius:12, color:'#fff', fontSize:14, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}
+          >
+            Confirm Payment
+          </button>
+        </div>
+      </Sheet>
       <Sheet show={showDemandForm} onClose={()=>setShowDemandForm(false)} title="Demand Item / Supplies" sub="Submit requisition to admin">
         <form onSubmit={submitDemand} style={{display:'flex',flexDirection:'column',gap:12}}>
           <InputField label="Item Description *" required value={dItem} onChange={e=>setDItem(e.target.value)} placeholder="e.g. Basmati Rice 25kg"/>
