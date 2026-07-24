@@ -3,10 +3,10 @@ import { useAuth } from '../context/AuthContext';
 
 // ─── Design Tokens ────────────────────────────────────────────────────────────
 const C = {
-  bg:'#fafafa', card:'#ffffff', text:'#000000', sub:'#000000', muted:'#333333',
-  border:'#000000', primary:'#fef08a', primaryDk:'#fde047', primaryBg:'#fef08a',
-  success:'#4ade80', successBg:'#bbf7d0', warn:'#facc15', warnBg:'#fef08a',
-  danger:'#f87171', dangerBg:'#fecaca', indigo:'#818cf8', indigoBg:'#e0e7ff',
+  bg:'#f8fafc', card:'#ffffff', text:'#0f172a', sub:'#475569', muted:'#64748b',
+  border:'#e2e8f0', primary:'#6366f1', primaryDk:'#4f46e5', primaryBg:'#eef2ff',
+  success:'#10b981', successBg:'#dcfce7', warn:'#f59e0b', warnBg:'#fef3c7',
+  danger:'#ef4444', dangerBg:'#fee2e2', indigo:'#6366f1', indigoBg:'#eef2ff',
 };
 
 const ROLE_META = {
@@ -126,7 +126,7 @@ const InputField = ({label,textarea=false,...props})=>{
   return (
     <div style={{display:'flex',flexDirection:'column',gap:5}}>
       {label&&<label style={{fontSize:11,fontWeight:700,color:C.muted,textTransform:'uppercase',letterSpacing:.4}}>{label}</label>}
-      <Tag {...props} style={{padding:'11px 14px',border: '2px solid #000',borderRadius: 8,fontSize:14,fontFamily:'inherit',background:'#fff',color:C.text,outline:'none',boxSizing:'border-box',width:'100%',resize:textarea?'vertical':'none',...props.style}}/>
+      <Tag {...props} style={{padding:'11px 14px',border: '1px solid #e2e8f0',borderRadius: 8,fontSize:14,fontFamily:'inherit',background:'#fff',color:C.text,outline:'none',boxSizing:'border-box',width:'100%',resize:textarea?'vertical':'none',...props.style}}/>
     </div>
   );
 };
@@ -134,7 +134,7 @@ const InputField = ({label,textarea=false,...props})=>{
 const SelectField = ({label,children,...props})=>(
   <div style={{display:'flex',flexDirection:'column',gap:5}}>
     {label&&<label style={{fontSize:11,fontWeight:700,color:C.muted,textTransform:'uppercase',letterSpacing:.4}}>{label}</label>}
-    <select {...props} style={{padding:'11px 14px',border: '2px solid #000',borderRadius: 8,fontSize:14,fontFamily:'inherit',background:'#fff',color:C.text,outline:'none',boxSizing:'border-box',width:'100%',...props.style}}>{children}</select>
+    <select {...props} style={{padding:'11px 14px',border: '1px solid #e2e8f0',borderRadius: 8,fontSize:14,fontFamily:'inherit',background:'#fff',color:C.text,outline:'none',boxSizing:'border-box',width:'100%',...props.style}}>{children}</select>
   </div>
 );
 
@@ -143,11 +143,11 @@ const Sheet = ({show,onClose,title,sub,children})=>{
   if(!show)return null;
   return(
     <div style={{position:'fixed',inset:0,background:'rgba(15,23,42,.6)',zIndex:400,display:'flex',alignItems:'flex-end',backdropFilter:'blur(4px)'}} onClick={e=>{if(e.target===e.currentTarget)onClose();}}>
-      <div style={{width:'100%',maxWidth:480,margin:'0 auto',background:'#fff',borderRadius:'24px 24px 0 0',padding:'0 0 36px',boxShadow: '4px 4px 0px #000',animation:'sheetUp .25s ease'}}>
+      <div style={{width:'100%',maxWidth:480,margin:'0 auto',background:'#fff',borderRadius:'24px 24px 0 0',padding:'0 0 36px',boxShadow: '0 4px 16px rgba(15,23,42,0.05)',animation:'sheetUp .25s ease'}}>
         <div style={{display:'flex',justifyContent:'center',padding:'14px 0 0'}}><div style={{width:36,height:4,background:C.border,borderRadius:4}}/></div>
-        <Row style={{padding:'12px 20px 16px',borderBottom: '2px solid #000'}}>
+        <Row style={{padding:'12px 20px 16px',borderBottom: '1px solid #e2e8f0'}}>
           <div><p style={{margin:0,fontSize:16,fontWeight:800,color:C.text}}>{title}</p>{sub&&<p style={{margin:'2px 0 0',fontSize:12,color:C.muted}}>{sub}</p>}</div>
-          <button onClick={onClose} style={{background:C.bg,border:'2px solid #000',borderRadius:10,width:32,height:32,display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',fontSize:18,color:C.muted}}>✕</button>
+          <button onClick={onClose} style={{background:C.bg,border: '1px solid #e2e8f0',borderRadius:10,width:32,height:32,display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',fontSize:18,color:C.muted}}>✕</button>
         </Row>
         <div style={{padding:'16px 20px'}}>{children}</div>
       </div>
@@ -398,25 +398,26 @@ export default function StaffApp(){
 
   // ─── Module tiles on Home ──────────────────────────────────────────────────
   const MODULES = [
-    {id:'work',      label:'My Work',        sub:staffRole,          icon:'home_work',              grad:`#fef08a`},
-    {id:'inventory', label:'Inventory',      sub:'Petty Funds & Assets', icon:'account_balance_wallet', grad:'#fef08a'},
-    {id:'inout',     label:'Attendance',     sub:'Punch In / Out',   icon:'schedule',               grad:'#fef08a'},
-    {id:'salary',    label:'Salary',         sub:'₹18,500 Jul',      icon:'payments',               grad:'#fef08a'},
-    {id:'items',     label:'Item List',      sub:'Store Inventory',  icon:'inventory_2',            grad:'#fef08a'},
-    {id:'chat',      label:'Chat',           sub:'5 Messages',       icon:'forum',                  grad:'#fef08a'},
-    {id:'reports',   label:'Reports',        sub:'Work Logs',        icon:'assessment',             grad:'#fef08a'},
-    {id:'requests',  label:'Requests',       sub:'Leave / Advance',  icon:'approval',               grad:'#fef08a'},
+    {id:'work',      label:'My Work',        sub:staffRole,          icon:'home_work',              grad:'#eef2ff'},
+    {id:'inventory', label:'Inventory',      sub:'Petty Funds & Assets', icon:'account_balance_wallet', grad:'#eef2ff'},
+    {id:'inout',     label:'Attendance',     sub:'Punch In / Out',   icon:'schedule',               grad:'#eef2ff'},
+    {id:'salary',    label:'Salary',         sub:'₹18,500 Jul',      icon:'payments',               grad:'#eef2ff'},
+    {id:'items',     label:'Item List',      sub:'Store Inventory',  icon:'inventory_2',            grad:'#eef2ff'},
+    {id:'chat',      label:'Chat',           sub:'5 Messages',       icon:'forum',                  grad:'#eef2ff'},
+    {id:'reports',   label:'Reports',        sub:'Work Logs',        icon:'assessment',             grad:'#eef2ff'},
+    {id:'requests',  label:'Requests',       sub:'Leave / Advance',  icon:'approval',               grad:'#eef2ff'},
   ];
 
   // ─── Role quick stats ─────────────────────────────────────────────────────
   const roleStats = {
+    'HR':               [{l:'Applicants',v:INIT_CANDIDATES.filter(c=>c.status!=='Hired ✅').length,icon:'group_add'},{l:'Enquiries',v:INIT_ENQUIRIES.length,icon:'contact_phone'},{l:'Staff Hired',v:INIT_CANDIDATES.filter(c=>c.status==='Hired ✅').length,icon:'badge'},{l:'Open Jobs',v:3,icon:'work_outline'}],
     'Cook':             [{l:'Breakfast',v:30,icon:'coffee'},{l:'Lunch',v:28,icon:'lunch_dining'},{l:'Dinner',v:30,icon:'dinner_dining'},{l:'Snacks',v:30,icon:'bakery_dining'}],
     'Cleaner':          [{l:'Pending',v:INIT_CLEANING.filter(c=>!c.done).length,icon:'mop'},{l:'Cleaned',v:INIT_CLEANING.filter(c=>c.done).length,icon:'check_circle'},{l:'Rooms Today',v:4,icon:'room_service'},{l:'Floors',v:3,icon:'stairs'}],
     'Maintenance':      [{l:'Open',v:INIT_TICKETS.filter(t=>t.status==='Open').length,icon:'build'},{l:'In Progress',v:INIT_TICKETS.filter(t=>t.status==='In Progress').length,icon:'construction'},{l:'Resolved',v:8,icon:'check_circle'},{l:'High Priority',v:2,icon:'priority_high'}],
     'Purchase Manager': [{l:'Pending POs',v:INIT_DEMANDS.filter(d=>d.status==='Pending').length,icon:'pending'},{l:'Approved',v:INIT_DEMANDS.filter(d=>d.status==='Approved').length,icon:'verified'},{l:'Items Low',v:2,icon:'inventory_2'},{l:'Out of Stock',v:1,icon:'remove_shopping_cart'}],
     'Security Guard':   [{l:'Visitors In',v:INIT_VISITORS.filter(v=>v.status==='Inside').length,icon:'person'},{l:'Today Total',v:INIT_VISITORS.length,icon:'groups'},{l:'Parcels',v:INIT_PARCELS.filter(p=>p.status==='Pending').length,icon:'package_2'},{l:'Incidents',v:0,icon:'warning'}],
   };
-  const stats = roleStats[staffRole] || roleStats['Cook'];
+  const stats = roleStats[staffRole] || roleStats['HR'];
 
   // Sorting contacts
   const sortedContacts = [...contacts].sort((a, b) => {
@@ -439,15 +440,15 @@ export default function StaffApp(){
       {sidebar && <div onClick={()=>setSidebar(false)} style={{position:'fixed',inset:0,background:'rgba(15,23,42,.55)',zIndex:60,backdropFilter:'blur(3px)'}}/>}
 
       {/* ── Sidebar ─────────────────────────────────────────────────────── */}
-      <aside style={{position:'fixed', top:0, left:sidebar ? 0 : '-300px', width:280, height:'100vh', background:'#fff', borderRight:'2px solid #000', zIndex:70, transition:'left .3s cubic-bezier(.4,0,.2,1)', display:'flex', flexDirection:'column', boxShadow:'4px 0 0px #000'}}>
+      <aside style={{position:'fixed', top:0, left:sidebar ? 0 : '-300px', width:280, height:'100vh', background:'#fff', borderRight: '1px solid #e2e8f0', zIndex:70, transition:'left .3s cubic-bezier(.4,0,.2,1)', display:'flex', flexDirection:'column', boxShadow: '4px 0 16px rgba(15,23,42,0.06)'}}>
         {/* Sidebar top profile */}
-        <div style={{padding:'28px 20px 20px', borderBottom:'2px solid #000'}}>
-          <div style={{width:52, height:52, borderRadius:12, background: meta.accentBg, border:'2px solid #000', display:'flex', alignItems:'center', justifyContent:'center', fontSize:24, marginBottom:12, boxShadow:'2px 2px 0px #000'}}>
+        <div style={{padding:'28px 20px 20px', borderBottom: '1px solid #e2e8f0'}}>
+          <div style={{width:52, height:52, borderRadius:12, background: meta.accentBg, border: '1px solid #e2e8f0', display:'flex', alignItems:'center', justifyContent:'center', fontSize:24, marginBottom:12, boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
             {meta.emoji}
           </div>
           <p style={{fontFamily:"'Bricolage Grotesque',sans-serif", fontSize:20, fontWeight:800, color:'#000', margin:0}}>{staffName}</p>
           <div style={{display:'flex', alignItems:'center', gap:6, marginTop:4}}>
-            <span style={{fontSize:11, fontWeight:800, background:meta.accent, color:'#000', padding:'2px 8px', borderRadius:8, border:'2px solid #000'}}>{staffRole}</span>
+            <span style={{fontSize:11, fontWeight:800, background:meta.accent, color:'#000', padding:'2px 8px', borderRadius:8, border: '1px solid #e2e8f0'}}>{staffRole}</span>
             <span style={{fontSize:12, fontWeight:700, color:C.muted}}>· {meta.dept}</span>
           </div>
         </div>
@@ -486,7 +487,7 @@ export default function StaffApp(){
         </div>
 
         {/* Logout */}
-        <div style={{borderTop:'2px solid #000', padding:'16px 20px', background:'#fafafa'}}>
+        <div style={{borderTop: '1px solid #e2e8f0', padding:'16px 20px', background:'#fafafa'}}>
           <div onClick={logout} style={{display:'flex', alignItems:'center', gap:14, color:C.danger, cursor:'pointer', padding:'8px 0', fontWeight:800}}>
             <span className="material-symbols-outlined" style={{fontSize:20}}>logout</span>
             <span style={{fontSize:14}}>Sign Out</span>
@@ -497,13 +498,13 @@ export default function StaffApp(){
       {/* ── HEADER (always visible) ──────────────────────────────────────── */}
       {view === 'home' ? (
         // Home Hero Header
-        <div style={{background: C.primary, padding:'0 16px 20px', color: C.text, borderBottom: '2px solid #000'}}>
+        <div style={{background: C.primary, padding:'0 16px 20px', color: C.text, borderBottom: '1px solid #e2e8f0'}}>
           <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', height:60}}>
-            <button onClick={()=>setSidebar(true)} style={{background: '#fff', border:'2px solid #000', borderRadius:10, width:38, height:38, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', boxShadow: '2px 2px 0px #000'}}>
+            <button onClick={()=>setSidebar(true)} style={{background: '#fff', border: '1px solid #e2e8f0', borderRadius:10, width:38, height:38, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
               <span className="material-symbols-outlined" style={{fontSize:20, color: '#000'}}>menu</span>
             </button>
             <p style={{fontFamily:"'Bricolage Grotesque',sans-serif", fontSize:24, fontWeight:800, color: '#000', margin:0, letterSpacing:-.5}}>febebo</p>
-            <button onClick={()=>setShowDemand(true)} style={{background: '#fff', border:'2px solid #000', borderRadius:10, padding:'7px 11px', color: '#000', fontSize:12, fontWeight:800, cursor:'pointer', display:'flex', alignItems:'center', gap:4, boxShadow: '2px 2px 0px #000'}}>
+            <button onClick={()=>setShowDemand(true)} style={{background: '#fff', border: '1px solid #e2e8f0', borderRadius:10, padding:'7px 11px', color: '#000', fontSize:12, fontWeight:800, cursor:'pointer', display:'flex', alignItems:'center', gap:4, boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
               <span className="material-symbols-outlined" style={{fontSize:16}}>post_add</span>
               Demand
             </button>
@@ -514,29 +515,29 @@ export default function StaffApp(){
             <p style={{margin:'0 0 4px', fontSize:14, color: C.muted, fontWeight:700}}>{greet}, {firstName} 👋</p>
             <div style={{display:'flex', alignItems:'center', gap:8}}>
               <h2 style={{margin:0, fontSize:26, fontWeight:900, color: '#000', letterSpacing:-.5}}>{meta.dept}</h2>
-              <span style={{fontSize:12, fontWeight:800, background: meta.accent, color: '#000', padding:'4px 10px', borderRadius:8, border: '2px solid #000'}}>{staffRole}</span>
+              <span style={{fontSize:12, fontWeight:800, background: meta.accent, color: '#000', padding:'4px 10px', borderRadius:8, border: '1px solid #e2e8f0'}}>{staffRole}</span>
             </div>
             <p style={{margin:'6px 0 0', fontSize:12, color: C.muted, fontWeight: 700}}>📅 {today} · Febebo PG</p>
           </div>
 
           {/* Punch card */}
-          <div style={{marginTop:18, background: '#fff', border:'2px solid #000', borderRadius:16, padding:'16px', display:'flex', alignItems:'center', justifyContent:'space-between', boxShadow: '4px 4px 0px #000'}}>
+          <div style={{marginTop:18, background: '#fff', border: '1px solid #e2e8f0', borderRadius:16, padding:'16px', display:'flex', alignItems:'center', justifyContent:'space-between', boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
             <div>
               <div style={{display:'flex', alignItems:'center', gap:8, marginBottom:4}}>
-                <span style={{width:10, height:10, borderRadius:'50%', background: clocked ? C.success : C.danger, display:'inline-block', border: '2px solid #000'}}/>
+                <span style={{width:10, height:10, borderRadius:'50%', background: clocked ? C.success : C.danger, display:'inline-block', border: '1px solid #e2e8f0'}}/>
                 <span style={{fontSize:14, fontWeight:800, color: '#000'}}>{clocked ? `On Duty · In at ${clockIn}` : 'Off Shift'}</span>
               </div>
               <p style={{margin:0, fontSize:12, color: C.muted, fontWeight: 600}}>📍 Location verified · {meta.dept}</p>
             </div>
-            <button onClick={punch} style={{padding:'10px 16px', borderRadius:10, border:'2px solid #000', background: clocked ? C.dangerBg : C.successBg, color: '#000', fontSize:14, fontWeight:800, cursor:'pointer', fontFamily:'inherit', whiteSpace:'nowrap', boxShadow: '2px 2px 0px #000'}}>
+            <button onClick={punch} style={{padding:'10px 16px', borderRadius:10, border: '1px solid #e2e8f0', background: clocked ? C.dangerBg : C.successBg, color: '#000', fontSize:14, fontWeight:800, cursor:'pointer', fontFamily:'inherit', whiteSpace:'nowrap', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
               {clocked ? '⏹ Punch Out' : '▶ Punch In'}
             </button>
           </div>
         </div>
       ) : view === 'chat' && activeContact ? (
         // Individual Chat Header
-        <div style={{display:'flex',alignItems:'center',gap:10,padding:'0 16px',height:64,background:'#fff',borderBottom: '2px solid #000',position:'sticky',top:0,zIndex:50,boxShadow: '4px 4px 0px #000'}}>
-          <button onClick={() => setActiveContact(null)} style={{background:C.bg,border:'2px solid #000',borderRadius:10,width:36,height:36,display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',flexShrink:0}}>
+        <div style={{display:'flex',alignItems:'center',gap:10,padding:'0 16px',height:64,background:'#fff',borderBottom: '1px solid #e2e8f0',position:'sticky',top:0,zIndex:50,boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
+          <button onClick={() => setActiveContact(null)} style={{background:C.bg,border: '1px solid #e2e8f0',borderRadius:10,width:36,height:36,display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',flexShrink:0}}>
             <span className="material-symbols-outlined" style={{fontSize:20,color:C.sub}}>arrow_back_ios_new</span>
           </button>
           <div style={{width:40,height:40,borderRadius: 8,background:meta.accentBg,display:'flex',alignItems:'center',justifyContent:'center',fontSize:20}}>{activeContact.avatar}</div>
@@ -550,18 +551,18 @@ export default function StaffApp(){
         </div>
       ) : (
         // Inner page header
-        <div style={{display:'flex',alignItems:'center',gap:10,padding:'0 16px',height:58,background:'#fff',borderBottom: '2px solid #000',position:'sticky',top:0,zIndex:50,boxShadow: '4px 4px 0px #000'}}>
-          <button onClick={()=>setSidebar(true)} style={{background:'#fff',border:'2px solid #000',borderRadius:10,width:36,height:36,display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',flexShrink:0,boxShadow:'2px 2px 0px #000'}}>
+        <div style={{display:'flex',alignItems:'center',gap:10,padding:'0 16px',height:58,background:'#fff',borderBottom: '1px solid #e2e8f0',position:'sticky',top:0,zIndex:50,boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
+          <button onClick={()=>setSidebar(true)} style={{background:'#fff',border: '1px solid #e2e8f0',borderRadius:10,width:36,height:36,display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',flexShrink:0,boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
             <span className="material-symbols-outlined" style={{fontSize:20,color:'#000'}}>menu</span>
           </button>
-          <button onClick={()=>setView('home')} style={{background:'#fff',border:'2px solid #000',borderRadius:10,width:36,height:36,display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',flexShrink:0,boxShadow:'2px 2px 0px #000'}}>
+          <button onClick={()=>setView('home')} style={{background:'#fff',border: '1px solid #e2e8f0',borderRadius:10,width:36,height:36,display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',flexShrink:0,boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
             <span className="material-symbols-outlined" style={{fontSize:20,color:'#000'}}>arrow_back_ios_new</span>
           </button>
           <p style={{flex:1,margin:0,fontSize:18,fontWeight:900,color:'#000'}}>
             {view==='work'?'My Work':view==='inventory'?'Inventory & Petty Cash':view==='inout'?'Attendance':view==='salary'?'Salary & Pay':view==='items'?'Item List':view==='chat'?'Chat':view==='reports'?'Work Reports':'Requests'}
           </p>
           {view==='items' && (
-            <button onClick={()=>setShowDemand(true)} style={{background:C.primary,border:'2px solid #000',borderRadius:10,padding:'6px 10px',color:'#000',fontSize:11,fontWeight:800,cursor:'pointer',display:'flex',alignItems:'center',gap:4,boxShadow:'2px 2px 0px #000'}}>
+            <button onClick={()=>setShowDemand(true)} style={{background:C.primary,border: '1px solid #e2e8f0',borderRadius:10,padding:'6px 10px',color:'#000',fontSize:11,fontWeight:800,cursor:'pointer',display:'flex',alignItems:'center',gap:4,boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
               <span className="material-symbols-outlined" style={{fontSize:15}}>add</span>
               Demand
             </button>
@@ -578,7 +579,7 @@ export default function StaffApp(){
           {/* Quick Stats Row */}
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr 1fr',gap:8,marginBottom:18}}>
             {stats.map((s,i)=>(
-              <div key={i} style={{background:'#fff',borderRadius:14,padding:'10px 8px',textAlign:'center',border: '2px solid #000',boxShadow: '4px 4px 0px #000'}}>
+              <div key={i} style={{background:'#fff',borderRadius:14,padding:'10px 8px',textAlign:'center',border: '1px solid #e2e8f0',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
                 <span className="material-symbols-outlined" style={{fontSize:18,color:meta.accent,display:'block',marginBottom:3}}>{s.icon}</span>
                 <p style={{margin:0,fontSize:20,fontWeight:900,color:C.text}}>{s.v}</p>
                 <p style={{margin:0,fontSize:9,fontWeight:700,color:C.muted,lineHeight:1.2,textTransform:'uppercase'}}>{s.l}</p>
@@ -593,8 +594,8 @@ export default function StaffApp(){
           <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:20}}>
             {MODULES.map((m,i)=>(
               <button key={m.id} onClick={()=>setView(m.id)}
-                style={{display:'flex',flexDirection:'column',alignItems:'center',gap:8,background:'#fff',border: '2px solid #000',borderRadius:18,padding:'16px 4px',cursor:'pointer',boxShadow: '4px 4px 0px #000',minHeight:96}}>
-                <div style={{width:50,height:50,borderRadius:16,background:m.grad,border:'2px solid #000',display:'flex',alignItems:'center',justifyContent:'center',boxShadow: '2px 2px 0px #000'}}>
+                style={{display:'flex',flexDirection:'column',alignItems:'center',gap:8,background:'#fff',border: '1px solid #e2e8f0',borderRadius:18,padding:'16px 4px',cursor:'pointer',boxShadow: '0 4px 16px rgba(15,23,42,0.05)',minHeight:96}}>
+                <div style={{width:50,height:50,borderRadius:16,background:m.grad,border: '1px solid #e2e8f0',display:'flex',alignItems:'center',justifyContent:'center',boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
                   <span className="material-symbols-outlined" style={{fontSize:26,color:'#000'}}>{m.icon}</span>
                 </div>
                 <span style={{fontSize:11,fontWeight:900,color:'#000',textAlign:'center',lineHeight:1.2}}>{m.label}</span>
@@ -607,7 +608,7 @@ export default function StaffApp(){
 
           {/* Cook preview */}
           {staffRole === 'Cook' && (
-            <div onClick={()=>setView('work')} style={{background:'#fff',borderRadius:18,border: '2px solid #000',padding:16,cursor:'pointer',boxShadow: '4px 4px 0px #000'}}>
+            <div onClick={()=>setView('work')} style={{background:'#fff',borderRadius:18,border: '1px solid #e2e8f0',padding:16,cursor:'pointer',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
               <Row>
                 <div style={{display:'flex',alignItems:'center',gap:10}}>
                   <div style={{width:40,height:40,borderRadius:13,background:meta.grad,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>👨‍🍳</div>
@@ -627,7 +628,7 @@ export default function StaffApp(){
 
           {/* Cleaner preview */}
           {staffRole === 'Cleaner' && (
-            <div onClick={()=>setView('work')} style={{background:'#fff',borderRadius:18,border: '2px solid #000',padding:16,cursor:'pointer',boxShadow: '4px 4px 0px #000'}}>
+            <div onClick={()=>setView('work')} style={{background:'#fff',borderRadius:18,border: '1px solid #e2e8f0',padding:16,cursor:'pointer',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
               <Row>
                 <div style={{display:'flex',alignItems:'center',gap:10}}>
                   <div style={{width:40,height:40,borderRadius:13,background:meta.grad,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>🧹</div>
@@ -643,7 +644,7 @@ export default function StaffApp(){
 
           {/* Maintenance preview */}
           {staffRole === 'Maintenance' && (
-            <div onClick={()=>setView('work')} style={{background:'#fff',borderRadius:18,border: '2px solid #000',padding:16,cursor:'pointer',boxShadow: '4px 4px 0px #000'}}>
+            <div onClick={()=>setView('work')} style={{background:'#fff',borderRadius:18,border: '1px solid #e2e8f0',padding:16,cursor:'pointer',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
               <Row>
                 <div style={{display:'flex',alignItems:'center',gap:10}}>
                   <div style={{width:40,height:40,borderRadius:13,background:meta.grad,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>🛠️</div>
@@ -659,7 +660,7 @@ export default function StaffApp(){
 
           {/* Purchase preview */}
           {staffRole === 'Purchase Manager' && (
-            <div onClick={()=>setView('work')} style={{background:'#fff',borderRadius:18,border: '2px solid #000',padding:16,cursor:'pointer',boxShadow: '4px 4px 0px #000'}}>
+            <div onClick={()=>setView('work')} style={{background:'#fff',borderRadius:18,border: '1px solid #e2e8f0',padding:16,cursor:'pointer',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
               <Row>
                 <div style={{display:'flex',alignItems:'center',gap:10}}>
                   <div style={{width:40,height:40,borderRadius:13,background:meta.grad,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>🛒</div>
@@ -675,7 +676,7 @@ export default function StaffApp(){
 
           {/* Security preview */}
           {staffRole === 'Security Guard' && (
-            <div onClick={()=>setView('work')} style={{background:'#fff',borderRadius:18,border: '2px solid #000',padding:16,cursor:'pointer',boxShadow: '4px 4px 0px #000'}}>
+            <div onClick={()=>setView('work')} style={{background:'#fff',borderRadius:18,border: '1px solid #e2e8f0',padding:16,cursor:'pointer',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
               <Row>
                 <div style={{display:'flex',alignItems:'center',gap:10}}>
                   <div style={{width:40,height:40,borderRadius:13,background:meta.grad,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>🛡️</div>
@@ -691,7 +692,7 @@ export default function StaffApp(){
 
           {/* HR preview */}
           {staffRole === 'HR' && (
-            <div onClick={()=>setView('work')} style={{background:'#fff',borderRadius:18,border: '2px solid #000',padding:16,cursor:'pointer',boxShadow: '4px 4px 0px #000'}}>
+            <div onClick={()=>setView('work')} style={{background:'#fff',borderRadius:18,border: '1px solid #e2e8f0',padding:16,cursor:'pointer',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
               <Row>
                 <div style={{display:'flex',alignItems:'center',gap:10}}>
                   <div style={{width:40,height:40,borderRadius:13,background:meta.grad,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>👔</div>
@@ -715,14 +716,14 @@ export default function StaffApp(){
 
           {/* COOK */}
           {staffRole === 'Cook' && (<>
-            <button onClick={()=>setShowBcast(true)} style={{width:'100%',padding:14,background: C.primary,color:'#000',border:'2px solid #000',borderRadius:16,fontSize:14,fontWeight:800,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:8,boxShadow: '4px 4px 0px #000',fontFamily:'inherit'}}>
+            <button onClick={()=>setShowBcast(true)} style={{width:'100%',padding:14,background: C.primary,color:'#000',border: '1px solid #e2e8f0',borderRadius:16,fontSize:14,fontWeight:800,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:8,boxShadow: '0 4px 16px rgba(15,23,42,0.05)',fontFamily:'inherit'}}>
               <span className="material-symbols-outlined" style={{fontSize:20}}>campaign</span>
               Broadcast "Food is Ready!" 📢
             </button>
 
             {/* Calendar & Time Filter Bar */}
             <div style={{display:'flex', gap:10, alignItems:'center', flexWrap:'wrap'}}>
-              <div style={{flex:1, display:'flex', alignItems:'center', gap:8, background:'#fff', padding:'6px 12px', border:'2px solid #000', borderRadius:10, boxShadow:'2px 2px 0px #000'}}>
+              <div style={{flex:1, display:'flex', alignItems:'center', gap:8, background:'#fff', padding:'6px 12px', border: '1px solid #e2e8f0', borderRadius:10, boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
                 <span className="material-symbols-outlined" style={{fontSize:20, color:'#000'}}>calendar_month</span>
                 <input 
                   type="date" 
@@ -733,7 +734,7 @@ export default function StaffApp(){
               </div>
 
               {/* Time Filter Tabs */}
-              <div style={{display:'flex', flex:1, background:'#fff', borderRadius: 10, padding:3, border: '2px solid #000', boxShadow:'2px 2px 0px #000'}}>
+              <div style={{display:'flex', flex:1, background:'#fff', borderRadius: 10, padding:3, border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
                 {['Daily', 'Weekly', 'Monthly'].map(f => (
                   <button key={f} onClick={()=>setTimeFilter(f)} style={{flex:1, padding:'6px 0', borderRadius:8, border:timeFilter===f?'2px solid #000':'2px solid transparent', background:timeFilter===f?C.primary:'transparent', color:'#000', fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit'}}>
                     {f}
@@ -753,12 +754,12 @@ export default function StaffApp(){
             </div>
 
             {/* Menu Display */}
-            <div style={{background:'#fff', borderRadius:16, border: '2px solid #000', padding:14, display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+            <div style={{background:'#fff', borderRadius:16, border: '1px solid #e2e8f0', padding:14, display:'flex', justifyContent:'space-between', alignItems:'center'}}>
               <div>
                 <p style={{margin:0, fontSize:12, fontWeight:800, color:meta.accent, textTransform:'uppercase'}}>Today's {mealTab}</p>
                 <p style={{margin:'4px 0 0', fontSize:14, fontWeight:700, color:C.text}}>{menus[mealTab] || 'No menu set'}</p>
               </div>
-              <button onClick={()=>{setMenuEditVal(menus[mealTab]||''); setShowMenuEdit(true);}} style={{background:C.bg, border: '2px solid #000', borderRadius:10, padding:'8px 12px', fontSize:12, fontWeight:800, color:C.sub, cursor:'pointer'}}>Edit</button>
+              <button onClick={()=>{setMenuEditVal(menus[mealTab]||''); setShowMenuEdit(true);}} style={{background:C.bg, border: '1px solid #e2e8f0', borderRadius:10, padding:'8px 12px', fontSize:12, fontWeight:800, color:C.sub, cursor:'pointer'}}>Edit</button>
             </div>
 
             {/* Stat Cards & Filtered List */}
@@ -796,14 +797,14 @@ export default function StaffApp(){
                    </div>
                    
                    {/* Filtered Student List */}
-                   <div style={{background:'#fff',borderRadius:18,border: '2px solid #000',padding:16, boxShadow:'4px 4px 0px #000'}}>
+                   <div style={{background:'#fff',borderRadius:18,border: '1px solid #e2e8f0',padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
                      <p style={{margin:'0 0 12px',fontSize:15,fontWeight:800,color:'#000'}}>
                        {statCards.find(c=>c.id===selectedStat)?.l} · {mealTab} <span style={{fontSize:12, fontWeight:600, color:C.muted}}>({workDate})</span>
                      </p>
                      
                      <div style={{maxHeight:360,overflowY:'auto',display:'flex',flexDirection:'column',gap:10,paddingRight:4}}>
                        {students.filter(s=>s[mealKey]===selectedStat).map(s=>(
-                         <div key={s.id} style={{background:C.bg,border: '2px solid #000',borderRadius: 12,padding:'12px',display:'flex',justifyContent:'space-between',alignItems:'center', boxShadow:'2px 2px 0px #000'}}>
+                         <div key={s.id} style={{background:C.bg,border: '1px solid #e2e8f0',borderRadius: 12,padding:'12px',display:'flex',justifyContent:'space-between',alignItems:'center', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
                            <div>
                              <span style={{fontSize:14,fontWeight:800,color:'#000'}}>{s.name} </span>
                              <p style={{margin:'2px 0 6px',fontSize:12,color:C.muted,fontWeight:600}}>Rm {s.room} · {s.bed}</p>
@@ -827,21 +828,21 @@ export default function StaffApp(){
                                  setPackVal(currentVal.replace(/\s*\(₹\d+\)/, '')); 
                                  setShowPackEdit(true);
                                }}
-                                 style={{padding:'7px 12px',borderRadius:8,border:'2px solid #000',background:'#fef08a',color:'#000',fontSize:11,fontWeight:800,cursor:'pointer',fontFamily:'inherit',boxShadow:'2px 2px 0px #000'}}>
+                                 style={{padding:'7px 12px',borderRadius:8,border: '1px solid #e2e8f0',background:'#fef08a',color:'#000',fontSize:11,fontWeight:800,cursor:'pointer',fontFamily:'inherit',boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
                                  {s[detailsKey] ? 'Edit Details' : 'Fill Details'}
                                </button>
                              )}
                              
                              {/* Call Option for Students (especially Not Eaten) */}
                              <a href={`tel:${s.phone.replace(/\s+/g, '')}`} 
-                               style={{padding:'6px 10px', borderRadius:8, border:'2px solid #000', background:'#bbf7d0', color:'#000', textDecoration:'none', fontSize:11, fontWeight:800, display:'inline-flex', alignItems:'center', gap:4, boxShadow:'2px 2px 0px #000'}}>
+                               style={{padding:'6px 10px', borderRadius:8, border: '1px solid #e2e8f0', background:'#bbf7d0', color:'#000', textDecoration:'none', fontSize:11, fontWeight:800, display:'inline-flex', alignItems:'center', gap:4, boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
                                📞 Call
                              </a>
 
                              {/* Quick Action button for 'eaten' */}
                              {(selectedStat === 'requested' || selectedStat === 'notEaten') && timeFilter === 'Daily' && (
                                <button onClick={()=>setStudents(p=>p.map(st=>st.id===s.id?{...st,[mealKey]:'eaten'}:st))}
-                                 style={{padding:'6px 12px',borderRadius:8,border: '2px solid #000',background:'#fff',color:'#000',fontSize:12,fontWeight:800,cursor:'pointer',fontFamily:'inherit',boxShadow:'2px 2px 0px #000'}}>
+                                 style={{padding:'6px 12px',borderRadius:8,border: '1px solid #e2e8f0',background:'#fff',color:'#000',fontSize:12,fontWeight:800,cursor:'pointer',fontFamily:'inherit',boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
                                  Mark Eaten
                                </button>
                              )}
@@ -891,7 +892,7 @@ export default function StaffApp(){
                 {/* Header Controls: Calendar & Time Filters */}
                 <div style={{display:'flex', gap:10, alignItems:'center', flexWrap:'wrap'}}>
                   {/* Date Selector */}
-                  <div style={{flex:1, display:'flex', alignItems:'center', gap:8, background:'#fff', padding:'6px 12px', border:'2px solid #000', borderRadius:10, boxShadow:'2px 2px 0px #000'}}>
+                  <div style={{flex:1, display:'flex', alignItems:'center', gap:8, background:'#fff', padding:'6px 12px', border: '1px solid #e2e8f0', borderRadius:10, boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
                     <span className="material-symbols-outlined" style={{fontSize:20, color:'#000'}}>calendar_month</span>
                     <input 
                       type="date" 
@@ -902,7 +903,7 @@ export default function StaffApp(){
                   </div>
 
                   {/* Time Filter Tabs */}
-                  <div style={{display:'flex', flex:1, background:'#fff', borderRadius: 10, padding:3, border: '2px solid #000', boxShadow:'2px 2px 0px #000'}}>
+                  <div style={{display:'flex', flex:1, background:'#fff', borderRadius: 10, padding:3, border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
                     {['Daily', 'Weekly', 'Monthly'].map(f => (
                       <button key={f} onClick={()=>setCleanerTimeFilter(f)} style={{flex:1, padding:'6px 0', borderRadius:8, border:cleanerTimeFilter===f?'2px solid #000':'2px solid transparent', background:cleanerTimeFilter===f?C.primary:'transparent', color:'#000', fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit'}}>
                         {f}
@@ -923,7 +924,7 @@ export default function StaffApp(){
                           padding:'5px 12px', borderRadius:20, fontSize:11, fontWeight:800, cursor:'pointer', fontFamily:'inherit', whiteSpace:'nowrap',
                           background: cleanerTypeFilter === t ? '#fde047' : '#fff',
                           color: '#000',
-                          border: '2px solid #000',
+                          border: '1px solid #e2e8f0',
                           boxShadow: cleanerTypeFilter === t ? '2px 2px 0px #000' : 'none'
                         }}
                       >
@@ -936,25 +937,25 @@ export default function StaffApp(){
                 {/* WEEKLY / MONTHLY DETAILED BREAKDOWN REPORT */}
                 {cleanerTimeFilter !== 'Daily' ? (
                   <div style={{display:'flex', flexDirection:'column', gap:14}}>
-                    <div style={{background:C.primary, borderRadius:16, border:'2px solid #000', padding:'16px', boxShadow:'4px 4px 0px #000'}}>
+                    <div style={{background:C.primary, borderRadius:16, border: '1px solid #e2e8f0', padding:'16px', boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
                       <p style={{margin:0, fontSize:12, fontWeight:800, textTransform:'uppercase'}}>📊 {cleanerTimeFilter} Cleaning Report ({cleanerTypeFilter} Filter)</p>
                       <h3 style={{margin:'4px 0 0', fontSize:22, fontWeight:900}}>Overall Cleaned vs Uncleaned Summary</h3>
                     </div>
 
                     <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:10}}>
-                      <div style={{background:'#bbf7d0', borderRadius:14, border:'2px solid #000', padding:14, textAlign:'center', boxShadow:'2px 2px 0px #000'}}>
+                      <div style={{background:'#bbf7d0', borderRadius:14, border: '1px solid #e2e8f0', padding:14, textAlign:'center', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
                         <p style={{fontSize:28, fontWeight:900, color:'#000', margin:0}}>{completedSlots.length * mult}</p>
                         <p style={{fontSize:12, fontWeight:800, color:'#000', margin:'2px 0 0', textTransform:'uppercase'}}>Total Cleaned</p>
                       </div>
 
-                      <div style={{background:'#fecaca', borderRadius:14, border:'2px solid #000', padding:14, textAlign:'center', boxShadow:'2px 2px 0px #000'}}>
+                      <div style={{background:'#fecaca', borderRadius:14, border: '1px solid #e2e8f0', padding:14, textAlign:'center', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
                         <p style={{fontSize:28, fontWeight:900, color:'#000', margin:0}}>{(cleaning.length - completedSlots.length) * mult}</p>
                         <p style={{fontSize:12, fontWeight:800, color:'#000', margin:'2px 0 0', textTransform:'uppercase'}}>Total Uncleaned</p>
                       </div>
                     </div>
 
                     {/* Cleaned Rooms Section */}
-                    <div style={{background:'#fff', borderRadius:16, border:'2px solid #000', padding:16, boxShadow:'4px 4px 0px #000'}}>
+                    <div style={{background:'#fff', borderRadius:16, border: '1px solid #e2e8f0', padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
                       <p style={{margin:'0 0 6px', fontSize:15, fontWeight:800, color:'#000'}}>✅ Cleaned Rooms Details ({cleanerTimeFilter})</p>
                       
                       {/* Cleaning Type Breakdown Pills */}
@@ -971,7 +972,7 @@ export default function StaffApp(){
 
                       <div style={{display:'flex', flexDirection:'column', gap:8}}>
                         {cleaning.filter(c => c.done && matchesType(c)).map(c => (
-                          <div key={c.id} style={{background:'#f0fdf4', border:'2px solid #000', borderRadius:12, padding:12, display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                          <div key={c.id} style={{background:'#f0fdf4', border: '1px solid #e2e8f0', borderRadius:12, padding:12, display:'flex', justifyContent:'space-between', alignItems:'center'}}>
                             <div>
                               <div style={{display:'flex', alignItems:'center', gap:6}}>
                                 <span style={{fontSize:14, fontWeight:900, color:'#000'}}>Room {c.room}</span>
@@ -986,7 +987,7 @@ export default function StaffApp(){
                     </div>
 
                     {/* Uncleaned Rooms Section */}
-                    <div style={{background:'#fff', borderRadius:16, border:'2px solid #000', padding:16, boxShadow:'4px 4px 0px #000'}}>
+                    <div style={{background:'#fff', borderRadius:16, border: '1px solid #e2e8f0', padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
                       <p style={{margin:'0 0 6px', fontSize:15, fontWeight:800, color:'#000'}}>⏳ Uncleaned / Pending Rooms ({cleanerTimeFilter})</p>
                       
                       {/* Uncleaned Type Breakdown Pills */}
@@ -1003,7 +1004,7 @@ export default function StaffApp(){
 
                       <div style={{display:'flex', flexDirection:'column', gap:8}}>
                         {cleaning.filter(c => !c.done && matchesType(c)).map(c => (
-                          <div key={c.id} style={{background:'#fff1f2', border:'2px solid #000', borderRadius:12, padding:12, display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                          <div key={c.id} style={{background:'#fff1f2', border: '1px solid #e2e8f0', borderRadius:12, padding:12, display:'flex', justifyContent:'space-between', alignItems:'center'}}>
                             <div>
                               <div style={{display:'flex', alignItems:'center', gap:6}}>
                                 <span style={{fontSize:14, fontWeight:900, color:'#000'}}>Room {c.room}</span>
@@ -1021,7 +1022,7 @@ export default function StaffApp(){
                   /* DAILY VIEW */
                   <>
                     {/* Current Active Window Banner */}
-                    <div style={{background:'#fde047', borderRadius:14, border:'2px solid #000', padding:'12px 16px', display:'flex', justifyContent:'space-between', alignItems:'center', boxShadow:'3px 3px 0px #000'}}>
+                    <div style={{background:'#fde047', borderRadius:14, border: '1px solid #e2e8f0', padding:'12px 16px', display:'flex', justifyContent:'space-between', alignItems:'center', boxShadow: '0 3px 12px rgba(15,23,42,0.05)'}}>
                       <div>
                         <span style={{fontSize:11, fontWeight:800, textTransform:'uppercase', color:'#000'}}>⚡ Current 2-Hour Cleaning Slot</span>
                         <h3 style={{margin:'2px 0 0', fontSize:18, fontWeight:900, color:'#000'}}>11:00 AM – 01:00 PM</h3>
@@ -1031,17 +1032,17 @@ export default function StaffApp(){
 
                     {/* Stat summary grid */}
                     <div style={{display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:10}}>
-                      <div onClick={()=>setCleanerSlotFilter('active')} style={{background:cleanerSlotFilter==='active'?'#fef08a':'#fff', borderRadius:14, border: '2px solid #000', padding:12, textAlign:'center', cursor:'pointer', boxShadow:cleanerSlotFilter==='active'?'3px 3px 0px #000':'none'}}>
+                      <div onClick={()=>setCleanerSlotFilter('active')} style={{background:cleanerSlotFilter==='active'?'#fef08a':'#fff', borderRadius:14, border: '1px solid #e2e8f0', padding:12, textAlign:'center', cursor:'pointer', boxShadow:cleanerSlotFilter==='active'?'3px 3px 0px #000':'none'}}>
                         <p style={{fontSize:24, fontWeight:900, color:'#000', margin:0}}>{activeSlots.length}</p>
                         <p style={{fontSize:11, fontWeight:800, color:'#000', margin:'2px 0 0', textTransform:'uppercase'}}>Active Now</p>
                       </div>
 
-                      <div onClick={()=>setCleanerSlotFilter('upcoming')} style={{background:cleanerSlotFilter==='upcoming'?'#cffafe':'#fff', borderRadius:14, border: '2px solid #000', padding:12, textAlign:'center', cursor:'pointer', boxShadow:cleanerSlotFilter==='upcoming'?'3px 3px 0px #000':'none'}}>
+                      <div onClick={()=>setCleanerSlotFilter('upcoming')} style={{background:cleanerSlotFilter==='upcoming'?'#cffafe':'#fff', borderRadius:14, border: '1px solid #e2e8f0', padding:12, textAlign:'center', cursor:'pointer', boxShadow:cleanerSlotFilter==='upcoming'?'3px 3px 0px #000':'none'}}>
                         <p style={{fontSize:24, fontWeight:900, color:'#000', margin:0}}>{upcomingSlots.length}</p>
                         <p style={{fontSize:11, fontWeight:800, color:'#000', margin:'2px 0 0', textTransform:'uppercase'}}>Upcoming</p>
                       </div>
 
-                      <div onClick={()=>setCleanerSlotFilter('completed')} style={{background:cleanerSlotFilter==='completed'?'#bbf7d0':'#fff', borderRadius:14, border: '2px solid #000', padding:12, textAlign:'center', cursor:'pointer', boxShadow:cleanerSlotFilter==='completed'?'3px 3px 0px #000':'none'}}>
+                      <div onClick={()=>setCleanerSlotFilter('completed')} style={{background:cleanerSlotFilter==='completed'?'#bbf7d0':'#fff', borderRadius:14, border: '1px solid #e2e8f0', padding:12, textAlign:'center', cursor:'pointer', boxShadow:cleanerSlotFilter==='completed'?'3px 3px 0px #000':'none'}}>
                         <p style={{fontSize:24, fontWeight:900, color:'#000', margin:0}}>{completedSlots.length}</p>
                         <p style={{fontSize:11, fontWeight:800, color:'#000', margin:'2px 0 0', textTransform:'uppercase'}}>Cleaned</p>
                       </div>
@@ -1062,7 +1063,7 @@ export default function StaffApp(){
                             padding:'6px 12px', borderRadius:20, fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit', whiteSpace:'nowrap',
                             background: cleanerSlotFilter === tab.id ? '#000' : '#fff',
                             color: cleanerSlotFilter === tab.id ? '#fff' : '#000',
-                            border: '2px solid #000',
+                            border: '1px solid #e2e8f0',
                             boxShadow: cleanerSlotFilter === tab.id ? '2px 2px 0px #fde047' : 'none'
                           }}
                         >
@@ -1072,14 +1073,14 @@ export default function StaffApp(){
                     </div>
 
                     {/* Room List */}
-                    <div style={{background:'#fff', borderRadius:18, border: '2px solid #000', padding:16, boxShadow:'4px 4px 0px #000'}}>
+                    <div style={{background:'#fff', borderRadius:18, border: '1px solid #e2e8f0', padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
                       <p style={{margin:'0 0 12px', fontSize:15, fontWeight:800, color:'#000'}}>
                         🧹 Cleaning Schedule <span style={{fontSize:12, fontWeight:600, color:C.muted}}>({cleanerDate})</span>
                       </p>
 
                       <div style={{display:'flex', flexDirection:'column', gap:10}}>
                         {filteredList.map(slot => (
-                          <div key={slot.id} style={{background: slot.done ? '#f0fdf4' : slot.slotStatus==='active' ? '#fefce8' : '#fafafa', border:'2px solid #000', borderRadius:14, padding:14, boxShadow:'2px 2px 0px #000'}}>
+                          <div key={slot.id} style={{background: slot.done ? '#f0fdf4' : slot.slotStatus==='active' ? '#fefce8' : '#fafafa', border: '1px solid #e2e8f0', borderRadius:14, padding:14, boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
                             <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:6}}>
                               <div>
                                 <div style={{display:'flex', alignItems:'center', gap:6}}>
@@ -1108,7 +1109,7 @@ export default function StaffApp(){
 
                             <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginTop:10, paddingTop:8, borderTop:'1px dashed #000'}}>
                               <a href={`tel:${slot.phone.replace(/\s+/g, '')}`} 
-                                style={{padding:'6px 10px', borderRadius:8, border:'2px solid #000', background:'#bbf7d0', color:'#000', textDecoration:'none', fontSize:11, fontWeight:800, display:'inline-flex', alignItems:'center', gap:4, boxShadow:'1px 1px 0px #000'}}>
+                                style={{padding:'6px 10px', borderRadius:8, border: '1px solid #e2e8f0', background:'#bbf7d0', color:'#000', textDecoration:'none', fontSize:11, fontWeight:800, display:'inline-flex', alignItems:'center', gap:4, boxShadow:'1px 1px 0px #000'}}>
                                 📞 Call Student
                               </a>
 
@@ -1117,7 +1118,7 @@ export default function StaffApp(){
                               ) : (
                                 <button 
                                   onClick={() => setCleaning(prev => prev.map(c => c.id === slot.id ? {...c, done:true, slotStatus:'completed'} : c))}
-                                  style={{padding:'8px 14px', borderRadius:10, border:'2px solid #000', background:'#fde047', color:'#000', fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow:'2px 2px 0px #000'}}
+                                  style={{padding:'8px 14px', borderRadius:10, border: '1px solid #e2e8f0', background:'#fde047', color:'#000', fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}
                                 >
                                   Mark Cleaned ✅
                                 </button>
@@ -1143,19 +1144,19 @@ export default function StaffApp(){
           {/* MAINTENANCE */}
           {staffRole === 'Maintenance' && (<>
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
-              <div style={{background:'#fff',borderRadius:14,border: '2px solid #000',padding:14,textAlign:'center'}}>
+              <div style={{background:'#fff',borderRadius:14,border: '1px solid #e2e8f0',padding:14,textAlign:'center'}}>
                 <p style={{fontSize:28,fontWeight:900,color:C.danger,margin:0}}>{tickets.filter(t=>t.status==='Open').length}</p>
                 <p style={{fontSize:12,color:C.muted,margin:'2px 0 0'}}>Open</p>
               </div>
-              <div style={{background:'#fff',borderRadius:14,border: '2px solid #000',padding:14,textAlign:'center'}}>
+              <div style={{background:'#fff',borderRadius:14,border: '1px solid #e2e8f0',padding:14,textAlign:'center'}}>
                 <p style={{fontSize:28,fontWeight:900,color:C.warn,margin:0}}>{tickets.filter(t=>t.status==='In Progress').length}</p>
                 <p style={{fontSize:12,color:C.muted,margin:'2px 0 0'}}>In Progress</p>
               </div>
             </div>
-            <div style={{background:'#fff',borderRadius:18,border: '2px solid #000',padding:16}}>
+            <div style={{background:'#fff',borderRadius:18,border: '1px solid #e2e8f0',padding:16}}>
               <p style={{margin:'0 0 12px',fontSize:15,fontWeight:800,color:C.text}}>🛠️ Repair Tickets</p>
               {tickets.map(t=>(
-                <div key={t.id} style={{background:C.bg,border: '2px solid #000',borderRadius:14,padding:14,marginBottom:10}}>
+                <div key={t.id} style={{background:C.bg,border: '1px solid #e2e8f0',borderRadius:14,padding:14,marginBottom:10}}>
                   <Row style={{marginBottom:8,alignItems:'flex-start'}}>
                     <div>
                       <div style={{display:'flex',gap:6,marginBottom:4}}>
@@ -1169,7 +1170,7 @@ export default function StaffApp(){
                   {t.status !== 'Resolved' && (
                     <div style={{display:'flex',gap:8}}>
                       {t.status==='Open' && <button onClick={()=>setTickets(p=>p.map(x=>x.id===t.id?{...x,status:'In Progress'}:x))} style={{flex:1,padding:9,background:C.indigoBg,border:`1px solid ${C.indigo}`,borderRadius:10,color:C.indigo,fontSize:12,fontWeight:800,cursor:'pointer',fontFamily:'inherit'}}>Start Work 🔧</button>}
-                      <button onClick={()=>setTickets(p=>p.map(x=>x.id===t.id?{...x,status:'Resolved'}:x))} style={{flex:1,padding:9,background: C.primary,border:'2px solid #000',borderRadius:10,color:'#000',fontSize:12,fontWeight:800,cursor:'pointer',fontFamily:'inherit'}}>Mark Resolved ✅</button>
+                      <button onClick={()=>setTickets(p=>p.map(x=>x.id===t.id?{...x,status:'Resolved'}:x))} style={{flex:1,padding:9,background: C.primary,border: '1px solid #e2e8f0',borderRadius:10,color:'#000',fontSize:12,fontWeight:800,cursor:'pointer',fontFamily:'inherit'}}>Mark Resolved ✅</button>
                     </div>
                   )}
                   {t.status==='Resolved' && <Chip label="Resolved ✅" color={C.success} bg={C.successBg}/>}
@@ -1180,10 +1181,10 @@ export default function StaffApp(){
 
           {/* PURCHASE MANAGER */}
           {staffRole === 'Purchase Manager' && (<>
-            <div style={{background:'#fff',borderRadius:18,border: '2px solid #000',padding:16}}>
+            <div style={{background:'#fff',borderRadius:18,border: '1px solid #e2e8f0',padding:16}}>
               <p style={{margin:'0 0 12px',fontSize:15,fontWeight:800,color:C.text}}>🛒 Staff Item Requisitions</p>
               {demands.map(d=>(
-                <div key={d.id} style={{background:C.bg,border: '2px solid #000',borderRadius:14,padding:12,marginBottom:8,display:'flex',justifyContent:'space-between',alignItems:'center',gap:10}}>
+                <div key={d.id} style={{background:C.bg,border: '1px solid #e2e8f0',borderRadius:14,padding:12,marginBottom:8,display:'flex',justifyContent:'space-between',alignItems:'center',gap:10}}>
                   <div style={{flex:1}}>
                     <p style={{margin:0,fontSize:14,fontWeight:800,color:C.text}}>{d.item}</p>
                     <p style={{margin:'3px 0 0',fontSize:11,color:C.muted}}>Qty: {d.qty} · {d.reqBy} · {d.date}</p>
@@ -1201,17 +1202,17 @@ export default function StaffApp(){
           {/* SECURITY */}
           {staffRole === 'Security Guard' && (<>
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
-              <button onClick={()=>setShowVisitor(true)} style={{padding:14,background:meta.grad,color:'#000',border:'2px solid #000',borderRadius:14,fontWeight:800,fontSize:13,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6,fontFamily:'inherit',boxShadow: '4px 4px 0px #000'}}>
+              <button onClick={()=>setShowVisitor(true)} style={{padding:14,background:meta.grad,color:'#000',border: '1px solid #e2e8f0',borderRadius:14,fontWeight:800,fontSize:13,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6,fontFamily:'inherit',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
                 <span className="material-symbols-outlined" style={{fontSize:18}}>person_add</span>Log Visitor
               </button>
-              <button onClick={()=>setShowParcel(true)} style={{padding:14,background: C.primary,color:'#000',border:'2px solid #000',borderRadius:14,fontWeight:800,fontSize:13,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6,fontFamily:'inherit',boxShadow: '4px 4px 0px #000'}}>
+              <button onClick={()=>setShowParcel(true)} style={{padding:14,background: C.primary,color:'#000',border: '1px solid #e2e8f0',borderRadius:14,fontWeight:800,fontSize:13,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6,fontFamily:'inherit',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
                 <span className="material-symbols-outlined" style={{fontSize:18}}>package_2</span>Log Parcel
               </button>
             </div>
-            <div style={{background:'#fff',borderRadius:18,border: '2px solid #000',padding:16}}>
+            <div style={{background:'#fff',borderRadius:18,border: '1px solid #e2e8f0',padding:16}}>
               <Row style={{marginBottom:12}}><p style={{margin:0,fontSize:15,fontWeight:800,color:C.text}}>🛡️ Gate Entry Log</p><Chip label={`${visitors.filter(v=>v.status==='Inside').length} Inside`} color={C.success} bg={C.successBg}/></Row>
               {visitors.map(v=>(
-                <div key={v.id} style={{background:C.bg,border: '2px solid #000',borderRadius:14,padding:12,marginBottom:8,display:'flex',justifyContent:'space-between',alignItems:'center',gap:10}}>
+                <div key={v.id} style={{background:C.bg,border: '1px solid #e2e8f0',borderRadius:14,padding:12,marginBottom:8,display:'flex',justifyContent:'space-between',alignItems:'center',gap:10}}>
                   <div style={{flex:1}}>
                     <div style={{display:'flex',alignItems:'center',gap:6}}><span style={{fontSize:14,fontWeight:800,color:C.text}}>{v.name}</span><span style={{width:6,height:6,borderRadius:'50%',background:v.status==='Inside'?C.success:'#94a3b8',display:'inline-block'}}/></div>
                     <p style={{margin:'3px 0 0',fontSize:11,color:C.muted}}>{v.purpose} · In: {v.inTime}{v.outTime?` | Out: ${v.outTime}`:''}</p>
@@ -1220,10 +1221,10 @@ export default function StaffApp(){
                 </div>
               ))}
             </div>
-            <div style={{background:'#fff',borderRadius:18,border: '2px solid #000',padding:16}}>
+            <div style={{background:'#fff',borderRadius:18,border: '1px solid #e2e8f0',padding:16}}>
               <Row style={{marginBottom:12}}><p style={{margin:0,fontSize:15,fontWeight:800,color:C.text}}>📦 Courier Parcels</p><Chip label={`${parcels.filter(p=>p.status==='Pending').length} unclaimed`} color={C.warn} bg={C.warnBg}/></Row>
               {parcels.map(p=>(
-                <div key={p.id} style={{background:C.bg,border: '2px solid #000',borderRadius:14,padding:12,marginBottom:8,display:'flex',justifyContent:'space-between',alignItems:'center',gap:10}}>
+                <div key={p.id} style={{background:C.bg,border: '1px solid #e2e8f0',borderRadius:14,padding:12,marginBottom:8,display:'flex',justifyContent:'space-between',alignItems:'center',gap:10}}>
                   <div style={{flex:1}}>
                     <p style={{margin:0,fontSize:13,fontWeight:800,color:C.text}}>{p.student} · <span style={{color:C.primary}}>Rm {p.room}</span></p>
                     <p style={{margin:'3px 0 0',fontSize:11,color:C.muted}}>{p.carrier} · {p.tracking} · {p.date}</p>
@@ -1234,7 +1235,7 @@ export default function StaffApp(){
                 </div>
               ))}
             </div>
-            <button onClick={()=>alert('🚨 EMERGENCY ALERT sent to Admin & Security!')} style={{width:'100%',padding:16,background: C.primary,color:'#000',border:'2px solid #000',borderRadius:14,fontSize:15,fontWeight:900,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:8,boxShadow: '4px 4px 0px #000',fontFamily:'inherit'}}>
+            <button onClick={()=>alert('🚨 EMERGENCY ALERT sent to Admin & Security!')} style={{width:'100%',padding:16,background: C.primary,color:'#000',border: '1px solid #e2e8f0',borderRadius:14,fontSize:15,fontWeight:900,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:8,boxShadow: '0 4px 16px rgba(15,23,42,0.05)',fontFamily:'inherit'}}>
               <span className="material-symbols-outlined" style={{fontSize:22}}>warning</span>EMERGENCY SOS ALERT 🚨
             </button>
           </>)}
@@ -1242,7 +1243,7 @@ export default function StaffApp(){
           {/* HR DASHBOARD - HIRING & ENQUIRIES */}
           {staffRole === 'HR' && (<>
             {/* HR Navigation Tabs */}
-            <div style={{display:'flex', background:'#fff', borderRadius:12, padding:4, border: '2px solid #000', boxShadow:'3px 3px 0px #000'}}>
+            <div style={{display:'flex', background:'#fff', borderRadius:12, padding:4, border: '1px solid #e2e8f0', boxShadow: '0 3px 12px rgba(15,23,42,0.05)'}}>
               <button 
                 onClick={()=>setHrTab('hiring')} 
                 style={{
@@ -1268,18 +1269,18 @@ export default function StaffApp(){
               <div style={{display:'flex', flexDirection:'column', gap:14}}>
                 {/* Hiring Stat Header */}
                 <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:10}}>
-                  <div style={{background:'#fef08a', borderRadius:14, border:'2px solid #000', padding:14, textAlign:'center', boxShadow:'3px 3px 0px #000'}}>
+                  <div style={{background:'#fef08a', borderRadius:14, border: '1px solid #e2e8f0', padding:14, textAlign:'center', boxShadow: '0 3px 12px rgba(15,23,42,0.05)'}}>
                     <p style={{fontSize:24, fontWeight:900, margin:0, color:'#000'}}>{candidates.filter(c=>c.status!=='Hired ✅').length}</p>
                     <p style={{fontSize:11, fontWeight:800, margin:'2px 0 0', textTransform:'uppercase', color:'#000'}}>Active Candidates</p>
                   </div>
-                  <div style={{background:'#bbf7d0', borderRadius:14, border:'2px solid #000', padding:14, textAlign:'center', boxShadow:'3px 3px 0px #000'}}>
+                  <div style={{background:'#bbf7d0', borderRadius:14, border: '1px solid #e2e8f0', padding:14, textAlign:'center', boxShadow: '0 3px 12px rgba(15,23,42,0.05)'}}>
                     <p style={{fontSize:24, fontWeight:900, margin:0, color:'#000'}}>{candidates.filter(c=>c.status==='Hired ✅').length}</p>
                     <p style={{fontSize:11, fontWeight:800, margin:'2px 0 0', textTransform:'uppercase', color:'#000'}}>Staff Hired</p>
                   </div>
                 </div>
 
                 {/* Candidate Action Card List */}
-                <div style={{background:'#fff', borderRadius:16, border:'2px solid #000', padding:16, boxShadow:'4px 4px 0px #000'}}>
+                <div style={{background:'#fff', borderRadius:16, border: '1px solid #e2e8f0', padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
                   <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12}}>
                     <p style={{margin:0, fontSize:15, fontWeight:900, color:'#000'}}>👔 Candidate Recruitment Pipeline</p>
                     <button 
@@ -1290,7 +1291,7 @@ export default function StaffApp(){
                           setCandidates(prev => [{id:Date.now(), name, position:pos, experience:'1 Yr', phone:'+91 9800000000', status:'Applied', date:'Just Now', note:'New Applicant'}, ...prev]);
                         }
                       }}
-                      style={{padding:'6px 10px', background:'#fde047', border:'2px solid #000', borderRadius:8, fontSize:11, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}
+                      style={{padding:'6px 10px', background:'#fde047', border: '1px solid #e2e8f0', borderRadius:8, fontSize:11, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}
                     >
                       + Add Candidate
                     </button>
@@ -1298,7 +1299,7 @@ export default function StaffApp(){
 
                   <div style={{display:'flex', flexDirection:'column', gap:10}}>
                     {candidates.map(c => (
-                      <div key={c.id} style={{background:'#fafafa', border:'2px solid #000', borderRadius:12, padding:14, boxShadow:'2px 2px 0px #000'}}>
+                      <div key={c.id} style={{background:'#fafafa', border: '1px solid #e2e8f0', borderRadius:12, padding:14, boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
                         <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
                           <div>
                             <span style={{fontSize:15, fontWeight:900, color:'#000'}}>{c.name}</span>
@@ -1317,14 +1318,14 @@ export default function StaffApp(){
                         )}
 
                         <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginTop:12, paddingTop:8, borderTop:'1px dashed #000'}}>
-                          <a href={`tel:${c.phone}`} style={{padding:'6px 10px', borderRadius:8, border:'2px solid #000', background:'#bbf7d0', color:'#000', textDecoration:'none', fontSize:11, fontWeight:800, boxShadow:'1px 1px 0px #000'}}>
+                          <a href={`tel:${c.phone}`} style={{padding:'6px 10px', borderRadius:8, border: '1px solid #e2e8f0', background:'#bbf7d0', color:'#000', textDecoration:'none', fontSize:11, fontWeight:800, boxShadow:'1px 1px 0px #000'}}>
                             📞 Call Applicant
                           </a>
 
                           {c.status !== 'Hired ✅' && (
                             <button 
                               onClick={() => setCandidates(prev => prev.map(x => x.id === c.id ? {...x, status:'Hired ✅'} : x))}
-                              style={{padding:'7px 12px', background:'#fde047', border:'2px solid #000', borderRadius:8, color:'#000', fontSize:11, fontWeight:900, cursor:'pointer', fontFamily:'inherit', boxShadow:'2px 2px 0px #000'}}
+                              style={{padding:'7px 12px', background:'#fde047', border: '1px solid #e2e8f0', borderRadius:8, color:'#000', fontSize:11, fontWeight:900, cursor:'pointer', fontFamily:'inherit', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}
                             >
                               Hire Staff ✅
                             </button>
@@ -1341,7 +1342,7 @@ export default function StaffApp(){
             {hrTab === 'enquiries' && (
               <div style={{display:'flex', flexDirection:'column', gap:14}}>
                 {/* Enquiries Header Stats */}
-                <div style={{background:'#0f172a', borderRadius:16, border:'2px solid #000', padding:'14px 16px', color:'#fff', boxShadow:'4px 4px 0px #000'}}>
+                <div style={{background:'#0f172a', borderRadius:16, border: '1px solid #e2e8f0', padding:'14px 16px', color:'#fff', boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
                   <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
                     <div>
                       <p style={{margin:0, fontSize:11, fontWeight:800, textTransform:'uppercase', color:'#fde047'}}>🏠 Room Enquiries & Leads</p>
@@ -1354,7 +1355,7 @@ export default function StaffApp(){
                 {/* Enquiries List matching Screenshot 3 */}
                 <div style={{display:'flex', flexDirection:'column', gap:12}}>
                   {enquiries.map(e => (
-                    <div key={e.id} style={{background:'#fff', border:'2px solid #000', borderRadius:14, padding:14, boxShadow:'3px 3px 0px #000'}}>
+                    <div key={e.id} style={{background:'#fff', border: '1px solid #e2e8f0', borderRadius:14, padding:14, boxShadow: '0 3px 12px rgba(15,23,42,0.05)'}}>
                       <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:6}}>
                         <div>
                           <h4 style={{margin:0, fontSize:16, fontWeight:900, color:'#000'}}>{e.name}</h4>
@@ -1376,12 +1377,12 @@ export default function StaffApp(){
                       </p>
 
                       <div style={{display:'flex', gap:8, marginTop:8}}>
-                        <a href={`tel:${e.phone}`} style={{flex:1, textAlign:'center', padding:'8px 0', background:'#bbf7d0', border:'2px solid #000', borderRadius:8, color:'#000', fontSize:11, fontWeight:800, textDecoration:'none', boxShadow:'1px 1px 0px #000'}}>
+                        <a href={`tel:${e.phone}`} style={{flex:1, textAlign:'center', padding:'8px 0', background:'#bbf7d0', border: '1px solid #e2e8f0', borderRadius:8, color:'#000', fontSize:11, fontWeight:800, textDecoration:'none', boxShadow:'1px 1px 0px #000'}}>
                           📞 Call Lead
                         </a>
                         <button 
                           onClick={()=>setEnquiries(prev=>prev.map(x=>x.id===e.id?{...x, status: x.status.includes('Contacted')?'Closed 🟢':'Contacted 🟡'}:x))}
-                          style={{flex:1, padding:'8px 0', background:'#fde047', border:'2px solid #000', borderRadius:8, color:'#000', fontSize:11, fontWeight:900, cursor:'pointer', fontFamily:'inherit', boxShadow:'1px 1px 0px #000'}}
+                          style={{flex:1, padding:'8px 0', background:'#fde047', border: '1px solid #e2e8f0', borderRadius:8, color:'#000', fontSize:11, fontWeight:900, cursor:'pointer', fontFamily:'inherit', boxShadow:'1px 1px 0px #000'}}
                         >
                           {e.status.includes('Contacted') ? 'Mark Closed 🟢' : 'Mark Contacted 🟡'}
                         </button>
@@ -1401,11 +1402,11 @@ export default function StaffApp(){
       {view === 'inout' && (
         <div style={{padding:'14px 14px 32px',display:'flex',flexDirection:'column',gap:14}}>
           {/* Shift Timer */}
-          <div style={{background: C.primary, borderRadius:18, border:'2px solid #000', padding:'20px 18px', color:'#000', boxShadow:'4px 4px 0px #000'}}>
+          <div style={{background: C.primary, borderRadius:18, border: '1px solid #e2e8f0', padding:'20px 18px', color:'#000', boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
             <p style={{margin:0, fontSize:11, fontWeight:800, textTransform:'uppercase', color:'#000', letterSpacing:.5}}>Today's Shift Timer</p>
             <h2 style={{margin:'6px 0 2px', fontSize:36, fontWeight:900, letterSpacing:-1, color:'#000'}}>{clocked?'07 : 45 : 12':'00 : 00 : 00'}</h2>
             <p style={{margin:'0 0 14px', fontSize:12, fontWeight:700, color:'#333'}}>{clocked?`Punched IN at ${clockIn}`:'Not currently punched in'}</p>
-            <button onClick={punch} style={{padding:'10px 20px', background:'#fff', border:'2px solid #000', borderRadius: 10, color:'#000', fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow:'2px 2px 0px #000'}}>
+            <button onClick={punch} style={{padding:'10px 20px', background:'#fff', border: '1px solid #e2e8f0', borderRadius: 10, color:'#000', fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
               {clocked?'⏹ Punch Out Now':'▶ Punch In'}
             </button>
           </div>
@@ -1417,7 +1418,7 @@ export default function StaffApp(){
               {l:'Absent', v:2, bg:'#fecaca'},
               {l:'Leave', v:1, bg:'#fef08a'}
             ].map(s=>(
-              <div key={s.l} style={{background:s.bg, borderRadius:14, border: '2px solid #000', padding:14, textAlign:'center', boxShadow:'2px 2px 0px #000'}}>
+              <div key={s.l} style={{background:s.bg, borderRadius:14, border: '1px solid #e2e8f0', padding:14, textAlign:'center', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
                 <p style={{fontSize:26, fontWeight:900, color:'#000', margin:0}}>{s.v}</p>
                 <p style={{fontSize:11, fontWeight:800, color:'#000', margin:'4px 0 0', textTransform:'uppercase'}}>{s.l}</p>
               </div>
@@ -1425,10 +1426,10 @@ export default function StaffApp(){
           </div>
 
           {/* Punch Log */}
-          <div style={{background:'#fff', borderRadius:18, border: '2px solid #000', padding:16, boxShadow:'4px 4px 0px #000'}}>
+          <div style={{background:'#fff', borderRadius:18, border: '1px solid #e2e8f0', padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
             <p style={{margin:'0 0 12px', fontSize:15, fontWeight:800, color:'#000'}}>📋 Punch Log</p>
             {punchLog.map(p=>(
-              <div key={p.id} style={{background:'#fafafa', border: '2px solid #000', borderRadius: 12, padding:12, marginBottom:10, display:'flex', justifyContent:'space-between', alignItems:'center', boxShadow:'2px 2px 0px #000'}}>
+              <div key={p.id} style={{background:'#fafafa', border: '1px solid #e2e8f0', borderRadius: 12, padding:12, marginBottom:10, display:'flex', justifyContent:'space-between', alignItems:'center', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
                 <div>
                   <p style={{margin:0, fontSize:14, fontWeight:800, color:'#000'}}>{p.date}</p>
                   <p style={{margin:'3px 0 0', fontSize:12, color:C.muted, fontWeight:600}}>In: <b style={{color:'#000'}}>{p.inT}</b> · Out: <b style={{color:'#000'}}>{p.outT||'—'}</b></p>
@@ -1454,14 +1455,14 @@ export default function StaffApp(){
       {view === 'salary' && (
         <div style={{padding:'14px 14px 32px',display:'flex',flexDirection:'column',gap:14}}>
           {/* Main Card */}
-          <div style={{background: C.primary, borderRadius:18, border:'2px solid #000', padding:'20px 18px', color:'#000', boxShadow:'4px 4px 0px #000'}}>
+          <div style={{background: C.primary, borderRadius:18, border: '1px solid #e2e8f0', padding:'20px 18px', color:'#000', boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
             <p style={{margin:0, fontSize:11, color:'#000', fontWeight:800, textTransform:'uppercase', letterSpacing:.5}}>July 2026 · Net Estimated</p>
             <h2 style={{margin:'6px 0 2px', fontSize:36, fontWeight:900, letterSpacing:-1}}>₹18,500</h2>
             <p style={{margin:'4px 0 0', fontSize:12, fontWeight:700, color:'#000'}}>↑ Pay date: 1 Aug 2026 · On Track</p>
           </div>
 
           {/* Breakdown Card */}
-          <div style={{background:'#fff', borderRadius:18, border: '2px solid #000', padding:16, boxShadow:'4px 4px 0px #000'}}>
+          <div style={{background:'#fff', borderRadius:18, border: '1px solid #e2e8f0', padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
             <p style={{margin:'0 0 12px', fontSize:15, fontWeight:800, color:'#000'}}>💰 Salary Breakdown</p>
             {[
               {l:'Base Monthly', v:'₹16,000', c:'#000'},
@@ -1469,7 +1470,7 @@ export default function StaffApp(){
               {l:'Performance Bonus', v:'+₹1,000', c:'#15803d'},
               {l:'Advance Deduction', v:'−₹1,000', c:'#b91c1c'}
             ].map(row=>(
-              <div key={row.l} style={{display:'flex', justifyContent:'space-between', padding:'10px 0', borderBottom: '2px solid #000'}}>
+              <div key={row.l} style={{display:'flex', justifyContent:'space-between', padding:'10px 0', borderBottom: '1px solid #e2e8f0'}}>
                 <span style={{fontSize:13, fontWeight:600, color:'#333'}}>{row.l}</span>
                 <span style={{fontSize:14, fontWeight:900, color:row.c}}>{row.v}</span>
               </div>
@@ -1481,7 +1482,7 @@ export default function StaffApp(){
           </div>
 
           {/* History Card */}
-          <div style={{background:'#fff', borderRadius:18, border: '2px solid #000', padding:16, boxShadow:'4px 4px 0px #000'}}>
+          <div style={{background:'#fff', borderRadius:18, border: '1px solid #e2e8f0', padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
             <p style={{margin:'0 0 4px', fontSize:15, fontWeight:800, color:'#000'}}>📄 Pay Slip History</p>
             <p style={{margin:'0 0 14px', fontSize:12, fontWeight:600, color:C.muted}}>Click any month to view full details or share</p>
 
@@ -1492,7 +1493,7 @@ export default function StaffApp(){
               <div 
                 key={s.m} 
                 onClick={()=>{ setSelectedPaySlip(s); setShowPaySlipModal(true); }}
-                style={{background:'#fafafa', border:'2px solid #000', borderRadius:12, padding:14, display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10, cursor:'pointer', boxShadow:'2px 2px 0px #000', transition:'all 0.15s'}}
+                style={{background:'#fafafa', border: '1px solid #e2e8f0', borderRadius:12, padding:14, display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10, cursor:'pointer', boxShadow: '0 2px 8px rgba(15,23,42,0.04)', transition:'all 0.15s'}}
               >
                 <div>
                   <p style={{margin:0, fontSize:14, fontWeight:800, color:'#000'}}>{s.m}</p>
@@ -1500,7 +1501,7 @@ export default function StaffApp(){
                 </div>
                 <div style={{display:'flex', alignItems:'center', gap:10}}>
                   <span style={{fontSize:16, fontWeight:900, color:'#000'}}>{s.v}</span>
-                  <button type="button" style={{padding:'6px 10px', background:'#fef08a', border:'2px solid #000', borderRadius:8, color:'#000', fontSize:11, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow:'1px 1px 0px #000', display:'flex', alignItems:'center', gap:4}}>
+                  <button type="button" style={{padding:'6px 10px', background:'#fef08a', border: '1px solid #e2e8f0', borderRadius:8, color:'#000', fontSize:11, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow:'1px 1px 0px #000', display:'flex', alignItems:'center', gap:4}}>
                     View 👁️
                   </button>
                 </div>
@@ -1521,7 +1522,7 @@ export default function StaffApp(){
         return (
           <div style={{padding:'14px 14px 32px', display:'flex', flexDirection:'column', gap:14}}>
             {/* Balance Card */}
-            <div style={{background: C.primary, borderRadius:18, border:'2px solid #000', padding:'20px 18px', color:'#000', boxShadow:'4px 4px 0px #000'}}>
+            <div style={{background: C.primary, borderRadius:18, border: '1px solid #e2e8f0', padding:'20px 18px', color:'#000', boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
               <p style={{margin:0, fontSize:11, color:'#000', fontWeight:800, textTransform:'uppercase', letterSpacing:.5}}>Available Petty Cash / Advance Fund</p>
               <h2 style={{margin:'6px 0 2px', fontSize:36, fontWeight:900, letterSpacing:-1}}>₹{currentBalance.toLocaleString()}</h2>
               <p style={{margin:'4px 0 14px', fontSize:12, fontWeight:700, color:'#333'}}>Separate from personal salary · Received from Admin & Students</p>
@@ -1529,13 +1530,13 @@ export default function StaffApp(){
               <div style={{display:'flex', gap:10}}>
                 <button 
                   onClick={()=>setShowExpenseModal(true)} 
-                  style={{flex:1, padding:'10px 12px', background:'#fff', color:'#000', border:'2px solid #000', borderRadius:10, fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow:'2px 2px 0px #000', display:'flex', alignItems:'center', justifyContent:'center', gap:4}}
+                  style={{flex:1, padding:'10px 12px', background:'#fff', color:'#000', border: '1px solid #e2e8f0', borderRadius:10, fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow: '0 2px 8px rgba(15,23,42,0.04)', display:'flex', alignItems:'center', justifyContent:'center', gap:4}}
                 >
                   🛒 Log Expense
                 </button>
                 <button 
                   onClick={()=>setShowAddFundModal(true)} 
-                  style={{flex:1, padding:'10px 12px', background:'#bbf7d0', color:'#000', border:'2px solid #000', borderRadius:10, fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow:'2px 2px 0px #000', display:'flex', alignItems:'center', justifyContent:'center', gap:4}}
+                  style={{flex:1, padding:'10px 12px', background:'#bbf7d0', color:'#000', border: '1px solid #e2e8f0', borderRadius:10, fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow: '0 2px 8px rgba(15,23,42,0.04)', display:'flex', alignItems:'center', justifyContent:'center', gap:4}}
                 >
                   💵 Receive Funds
                 </button>
@@ -1543,13 +1544,13 @@ export default function StaffApp(){
             </div>
 
             {/* Assigned Assets & Items */}
-            <div style={{background:'#fff', borderRadius:18, border: '2px solid #000', padding:16, boxShadow:'4px 4px 0px #000'}}>
+            <div style={{background:'#fff', borderRadius:18, border: '1px solid #e2e8f0', padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
               <p style={{margin:'0 0 4px', fontSize:15, fontWeight:800, color:'#000'}}>🔑 Assigned Assets & Handheld Items</p>
               <p style={{margin:'0 0 12px', fontSize:12, color:C.muted, fontWeight:600}}>Equipment & keys assigned to you</p>
               
               <div style={{display:'flex', flexDirection:'column', gap:8}}>
                 {assignedAssets.map(ast => (
-                  <div key={ast.id} style={{background:'#fafafa', border:'2px solid #000', borderRadius:10, padding:12, display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                  <div key={ast.id} style={{background:'#fafafa', border: '1px solid #e2e8f0', borderRadius:10, padding:12, display:'flex', justifyContent:'space-between', alignItems:'center'}}>
                     <div>
                       <p style={{margin:0, fontSize:13, fontWeight:800, color:'#000'}}>{ast.name}</p>
                       <p style={{margin:'2px 0 0', fontSize:11, color:C.muted, fontWeight:600}}>{ast.qty} · Serial: {ast.serial}</p>
@@ -1561,12 +1562,12 @@ export default function StaffApp(){
             </div>
 
             {/* Fund Transactions Log */}
-            <div style={{background:'#fff', borderRadius:18, border: '2px solid #000', padding:16, boxShadow:'4px 4px 0px #000'}}>
+            <div style={{background:'#fff', borderRadius:18, border: '1px solid #e2e8f0', padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
               <p style={{margin:'0 0 12px', fontSize:15, fontWeight:800, color:'#000'}}>📜 Cash Transactions Log</p>
               
               <div style={{display:'flex', flexDirection:'column', gap:10}}>
                 {pettyCashLogs.map(log => (
-                  <div key={log.id} style={{background:'#fafafa', border:'2px solid #000', borderRadius:10, padding:12, display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
+                  <div key={log.id} style={{background:'#fafafa', border: '1px solid #e2e8f0', borderRadius:10, padding:12, display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
                     <div>
                       <span style={{fontSize:13, fontWeight:800, color:'#000'}}>{log.title}</span>
                       <p style={{margin:'2px 0 0', fontSize:11, color:C.muted, fontWeight:700}}>
@@ -1595,7 +1596,7 @@ export default function StaffApp(){
       {view === 'items' && (
         <div style={{padding:'14px 14px 32px',display:'flex',flexDirection:'column',gap:12}}>
           {STORE_ITEMS.map(item=>(
-            <div key={item.id} style={{background:'#fff',borderRadius:16,border: '2px solid #000',padding:14,display:'flex',justifyContent:'space-between',alignItems:'center',boxShadow: '4px 4px 0px #000'}}>
+            <div key={item.id} style={{background:'#fff',borderRadius:16,border: '1px solid #e2e8f0',padding:14,display:'flex',justifyContent:'space-between',alignItems:'center',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
               <div>
                 <p style={{margin:0,fontSize:14,fontWeight:800,color:C.text}}>{item.name}</p>
                 <p style={{margin:'3px 0 0',fontSize:11,color:C.muted}}>{item.cat} · Min: {item.min}</p>
@@ -1609,7 +1610,7 @@ export default function StaffApp(){
           {myDemands.length>0 && (<>
             <p style={{margin:'8px 0 6px',fontSize:13,fontWeight:800,color:C.text}}>📋 My Demands</p>
             {myDemands.map(d=>(
-              <div key={d.id} style={{background:'#fff',borderRadius:14,border: '2px solid #000',padding:12,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+              <div key={d.id} style={{background:'#fff',borderRadius:14,border: '1px solid #e2e8f0',padding:12,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
                 <div><p style={{margin:0,fontSize:13,fontWeight:800,color:C.text}}>{d.item}</p><p style={{margin:'2px 0 0',fontSize:11,color:C.muted}}>Qty: {d.qty} · {d.date}</p></div>
                 <Chip label={d.status} color={d.status==='Approved'?C.success:C.warn} bg={d.status==='Approved'?C.successBg:C.warnBg}/>
               </div>
@@ -1628,7 +1629,7 @@ export default function StaffApp(){
             // Contacts List View
             <div style={{flex:1, overflowY:'auto', background:'#fff'}}>
               {sortedContacts.map(c => (
-                <div key={c.id} onClick={() => setActiveContact(c)} style={{display:'flex',alignItems:'center',padding:'14px 16px',borderBottom: '2px solid #000',cursor:'pointer',transition:'background .15s',gap:14}} onMouseEnter={e=>e.currentTarget.style.background=C.bg} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+                <div key={c.id} onClick={() => setActiveContact(c)} style={{display:'flex',alignItems:'center',padding:'14px 16px',borderBottom: '1px solid #e2e8f0',cursor:'pointer',transition:'background .15s',gap:14}} onMouseEnter={e=>e.currentTarget.style.background=C.bg} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
                   <div style={{position:'relative'}}>
                     <div style={{width:48,height:48,borderRadius:'50%',background:meta.accentBg,display:'flex',alignItems:'center',justifyContent:'center',fontSize:24}}>
                       {c.avatar}
@@ -1660,7 +1661,7 @@ export default function StaffApp(){
                   </div>
                   <div style={{display:'flex',gap:8}}>
                     <button onClick={openReminder} style={{background:'#fffbeb',border:'1px solid #fde68a',color:'#b45309',borderRadius:6,padding:'2px 8px',fontSize:11,fontWeight:800,cursor:'pointer'}}>Edit</button>
-                    <button onClick={clearReminder} style={{background:'none',border:'2px solid #000',color:'#d97706',fontSize:12,fontWeight:800,cursor:'pointer'}}>Clear</button>
+                    <button onClick={clearReminder} style={{background:'none',border: '1px solid #e2e8f0',color:'#d97706',fontSize:12,fontWeight:800,cursor:'pointer'}}>Clear</button>
                   </div>
                 </div>
               )}
@@ -1685,10 +1686,10 @@ export default function StaffApp(){
               </div>
 
               {/* Input Bar */}
-              <form onSubmit={sendMsg} style={{display:'flex',gap:8,padding:'12px 14px',background:'#fff',borderTop: '2px solid #000',flexShrink:0}}>
+              <form onSubmit={sendMsg} style={{display:'flex',gap:8,padding:'12px 14px',background:'#fff',borderTop: '1px solid #e2e8f0',flexShrink:0}}>
                 <input value={chatInput} onChange={e=>setChatInput(e.target.value)} placeholder="Type a message…"
-                  style={{flex:1,padding:'12px 16px',border: '2px solid #000',borderRadius: 16,fontSize:14,outline:'none',fontFamily:'inherit',background:C.bg,color:C.text}}/>
-                <button type="submit" style={{width:46,height:46,background:meta.grad,border:'2px solid #000',borderRadius:'50%',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',boxShadow: '4px 4px 0px #000',flexShrink:0}}>
+                  style={{flex:1,padding:'12px 16px',border: '1px solid #e2e8f0',borderRadius: 16,fontSize:14,outline:'none',fontFamily:'inherit',background:C.bg,color:C.text}}/>
+                <button type="submit" style={{width:46,height:46,background:meta.grad,border: '1px solid #e2e8f0',borderRadius:'50%',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',boxShadow: '0 4px 16px rgba(15,23,42,0.05)',flexShrink:0}}>
                   <span className="material-symbols-outlined" style={{fontSize:20,color:'#000'}}>send</span>
                 </button>
               </form>
@@ -1702,17 +1703,17 @@ export default function StaffApp(){
          ══════════════════════════════════════════════════════════════════════ */}
       {view === 'reports' && (
         <div style={{padding:'14px 14px 32px',display:'flex',flexDirection:'column',gap:14}}>
-          <div style={{background:'#fff',borderRadius:18,border: '2px solid #000',padding:16}}>
+          <div style={{background:'#fff',borderRadius:18,border: '1px solid #e2e8f0',padding:16}}>
             <p style={{margin:'0 0 12px',fontSize:15,fontWeight:800,color:C.text}}>📝 Submit Today's Report</p>
             <form onSubmit={submitReport} style={{display:'flex',flexDirection:'column',gap:12}}>
               <InputField label="Work Summary *" textarea required rows={4} value={rptText} onChange={e=>setRptText(e.target.value)} placeholder="Tasks completed, issues found, items needed…"/>
-              <button type="submit" style={{padding:13,background:meta.grad,color:'#000',border:'2px solid #000',borderRadius:14,fontSize:14,fontWeight:800,cursor:'pointer',fontFamily:'inherit',boxShadow: '4px 4px 0px #000'}}>Submit Report 🚀</button>
+              <button type="submit" style={{padding:13,background:meta.grad,color:'#000',border: '1px solid #e2e8f0',borderRadius:14,fontSize:14,fontWeight:800,cursor:'pointer',fontFamily:'inherit',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>Submit Report 🚀</button>
             </form>
           </div>
-          <div style={{background:'#fff',borderRadius:18,border: '2px solid #000',padding:16}}>
+          <div style={{background:'#fff',borderRadius:18,border: '1px solid #e2e8f0',padding:16}}>
             <p style={{margin:'0 0 12px',fontSize:15,fontWeight:800,color:C.text}}>📋 Past Reports</p>
             {rptHist.map(r=>(
-              <div key={r.id} style={{background:C.bg,border: '2px solid #000',borderRadius: 8,padding:12,marginBottom:8}}>
+              <div key={r.id} style={{background:C.bg,border: '1px solid #e2e8f0',borderRadius: 8,padding:12,marginBottom:8}}>
                 <Row style={{marginBottom:6}}><span style={{fontSize:12,fontWeight:800,color:C.text}}>{r.date}</span><Chip label={r.status} color={r.status.includes('Reviewed')?C.success:C.warn} bg={r.status.includes('Reviewed')?C.successBg:C.warnBg}/></Row>
                 <p style={{margin:0,fontSize:13,color:C.sub,lineHeight:1.5}}>{r.summary}</p>
               </div>
@@ -1726,7 +1727,7 @@ export default function StaffApp(){
          ══════════════════════════════════════════════════════════════════════ */}
       {view === 'requests' && (
         <div style={{padding:'14px 14px 32px',display:'flex',flexDirection:'column',gap:14}}>
-          <div style={{background:'#fff',borderRadius:18,border: '2px solid #000',padding:16}}>
+          <div style={{background:'#fff',borderRadius:18,border: '1px solid #e2e8f0',padding:16}}>
             <p style={{margin:'0 0 12px',fontSize:15,fontWeight:800,color:C.text}}>📬 New Request</p>
             <form onSubmit={submitRequest} style={{display:'flex',flexDirection:'column',gap:12}}>
               <SelectField label="Request Type" value={reqType} onChange={e=>setReqType(e.target.value)}>
@@ -1736,13 +1737,13 @@ export default function StaffApp(){
               </SelectField>
               {reqType==='Advance' && <InputField label="Amount Needed (₹)" type="number" value={reqAmt} onChange={e=>setReqAmt(e.target.value)} placeholder="e.g. 2000"/>}
               <InputField label="Reason / Details *" required value={reqReason} onChange={e=>setReqReason(e.target.value)} placeholder="Briefly explain your request…"/>
-              <button type="submit" style={{padding:13,background:meta.grad,color:'#000',border:'2px solid #000',borderRadius:14,fontSize:14,fontWeight:800,cursor:'pointer',fontFamily:'inherit',boxShadow: '4px 4px 0px #000'}}>Submit Request 🚀</button>
+              <button type="submit" style={{padding:13,background:meta.grad,color:'#000',border: '1px solid #e2e8f0',borderRadius:14,fontSize:14,fontWeight:800,cursor:'pointer',fontFamily:'inherit',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>Submit Request 🚀</button>
             </form>
           </div>
-          <div style={{background:'#fff',borderRadius:18,border: '2px solid #000',padding:16}}>
+          <div style={{background:'#fff',borderRadius:18,border: '1px solid #e2e8f0',padding:16}}>
             <p style={{margin:'0 0 12px',fontSize:15,fontWeight:800,color:C.text}}>📋 My Requests</p>
             {myReqs.map(r=>(
-              <div key={r.id} style={{background:C.bg,border: '2px solid #000',borderRadius: 8,padding:12,display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+              <div key={r.id} style={{background:C.bg,border: '1px solid #e2e8f0',borderRadius: 8,padding:12,display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
                 <div><p style={{margin:0,fontSize:13,fontWeight:800,color:C.text}}>{r.type}</p><p style={{margin:'3px 0 0',fontSize:11,color:C.muted}}>{r.date}{r.amt!=='-'?` · ${r.amt}`:''}</p></div>
                 <Chip label={r.status} color={r.status==='Approved'?C.success:r.status==='Pending'?C.warn:C.danger} bg={r.status==='Approved'?C.successBg:r.status==='Pending'?C.warnBg:C.dangerBg}/>
               </div>
@@ -1757,7 +1758,7 @@ export default function StaffApp(){
           <InputField label="Item Description *" required value={dItem} onChange={e=>setDItem(e.target.value)} placeholder="e.g. Basmati Rice 25kg"/>
           <InputField label="Quantity" value={dQty} onChange={e=>setDQty(e.target.value)} placeholder="e.g. 2 bags"/>
           <InputField label="Note / Urgency" value={dNote} onChange={e=>setDNote(e.target.value)} placeholder="e.g. Needed for tonight"/>
-          <button type="submit" style={{padding:14,background:meta.grad,color:'#000',border:'2px solid #000',borderRadius:14,fontSize:14,fontWeight:800,cursor:'pointer',fontFamily:'inherit',boxShadow: '4px 4px 0px #000'}}>Submit Demand 🚀</button>
+          <button type="submit" style={{padding:14,background:meta.grad,color:'#000',border: '1px solid #e2e8f0',borderRadius:14,fontSize:14,fontWeight:800,cursor:'pointer',fontFamily:'inherit',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>Submit Demand 🚀</button>
         </form>
       </Sheet>
 
@@ -1785,7 +1786,7 @@ export default function StaffApp(){
             <option>Dinner</option>
           </SelectField>
           <InputField label="Message" textarea rows={3} value={bMsg} onChange={e=>setBMsg(e.target.value)}/>
-          <button type="submit" style={{padding:14,background: C.primary,color:'#000',border:'2px solid #000',borderRadius:14,fontSize:14,fontWeight:800,cursor:'pointer',fontFamily:'inherit',boxShadow: '4px 4px 0px #000'}}>Send Notification 📢</button>
+          <button type="submit" style={{padding:14,background: C.primary,color:'#000',border: '1px solid #e2e8f0',borderRadius:14,fontSize:14,fontWeight:800,cursor:'pointer',fontFamily:'inherit',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>Send Notification 📢</button>
         </form>
       </Sheet>
 
@@ -1796,7 +1797,7 @@ export default function StaffApp(){
           setShowMenuEdit(false);
         }} style={{display:'flex',flexDirection:'column',gap:12}}>
           <InputField label="Food Items" textarea rows={3} required value={menuEditVal} onChange={e=>setMenuEditVal(e.target.value)} placeholder="e.g. 4 Roti, Dal, Rice, Salad"/>
-          <button type="submit" style={{padding:14,background:meta.grad,color:'#000',border:'2px solid #000',borderRadius:14,fontSize:14,fontWeight:800,cursor:'pointer',fontFamily:'inherit',boxShadow: '4px 4px 0px #000'}}>Save Menu</button>
+          <button type="submit" style={{padding:14,background:meta.grad,color:'#000',border: '1px solid #e2e8f0',borderRadius:14,fontSize:14,fontWeight:800,cursor:'pointer',fontFamily:'inherit',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>Save Menu</button>
         </form>
       </Sheet>
 
@@ -1812,7 +1813,7 @@ export default function StaffApp(){
           {selectedStat === 'extra' && (
             <InputField label="Extra Plate Charge / Money (₹)" type="number" value={packPriceVal} onChange={e=>setPackPriceVal(e.target.value)} placeholder="e.g. 60"/>
           )}
-          <button type="submit" style={{padding:14,background:C.primary,color:'#000',border:'2px solid #000',borderRadius:14,fontSize:14,fontWeight:800,cursor:'pointer',fontFamily:'inherit',boxShadow: '4px 4px 0px #000'}}>Save Details</button>
+          <button type="submit" style={{padding:14,background:C.primary,color:'#000',border: '1px solid #e2e8f0',borderRadius:14,fontSize:14,fontWeight:800,cursor:'pointer',fontFamily:'inherit',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>Save Details</button>
         </form>
       </Sheet>
 
@@ -1822,7 +1823,7 @@ export default function StaffApp(){
           <InputField label="Visitor Full Name *" required value={vName} onChange={e=>setVName(e.target.value)} placeholder="e.g. Rajesh Malhotra"/>
           <InputField label="Mobile Number" value={vPhone} onChange={e=>setVPhone(e.target.value)} placeholder="+91 98000 11122"/>
           <InputField label="Purpose & Room #" value={vPurp} onChange={e=>setVPurp(e.target.value)} placeholder="e.g. Parent visit – Rm 104"/>
-          <button type="submit" style={{padding:14,background:meta.grad,color:'#000',border:'2px solid #000',borderRadius:14,fontSize:14,fontWeight:800,cursor:'pointer',fontFamily:'inherit',boxShadow: '4px 4px 0px #000'}}>Check-In Visitor ✅</button>
+          <button type="submit" style={{padding:14,background:meta.grad,color:'#000',border: '1px solid #e2e8f0',borderRadius:14,fontSize:14,fontWeight:800,cursor:'pointer',fontFamily:'inherit',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>Check-In Visitor ✅</button>
         </form>
       </Sheet>
 
@@ -1832,7 +1833,7 @@ export default function StaffApp(){
           <InputField label="Room Number" value={pRoom} onChange={e=>setPRoom(e.target.value)} placeholder="e.g. 101"/>
           <SelectField label="Carrier" value={pCarr} onChange={e=>setPCarr(e.target.value)}><option>Amazon</option><option>Flipkart</option><option>BlueDart</option><option>Courier Express</option><option>India Post</option></SelectField>
           <InputField label="Tracking / AWB #" value={pTrk} onChange={e=>setPTrk(e.target.value)} placeholder="e.g. AMZ-88910"/>
-          <button type="submit" style={{padding:14,background: C.primary,color:'#000',border:'2px solid #000',borderRadius:14,fontSize:14,fontWeight:800,cursor:'pointer',fontFamily:'inherit',boxShadow: '4px 4px 0px #000'}}>Log Parcel 📦</button>
+          <button type="submit" style={{padding:14,background: C.primary,color:'#000',border: '1px solid #e2e8f0',borderRadius:14,fontSize:14,fontWeight:800,cursor:'pointer',fontFamily:'inherit',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>Log Parcel 📦</button>
         </form>
       </Sheet>
 
@@ -1840,13 +1841,13 @@ export default function StaffApp(){
       <Sheet show={showPaySlipModal} onClose={() => setShowPaySlipModal(false)} title={`${selectedPaySlip?.m || ''} Pay Slip`} sub="Detailed Salary Statement">
         {selectedPaySlip && (
           <div style={{display:'flex', flexDirection:'column', gap:14}}>
-            <div style={{background:'#fde047', padding:'14px 16px', borderRadius:12, border:'2px solid #000', boxShadow:'2px 2px 0px #000'}}>
+            <div style={{background:'#fde047', padding:'14px 16px', borderRadius:12, border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
               <p style={{margin:0, fontSize:12, fontWeight:800, color:'#000', textTransform:'uppercase'}}>Net Disbursed Amount</p>
               <h3 style={{margin:'4px 0 0', fontSize:30, fontWeight:900, color:'#000'}}>{selectedPaySlip.v}</h3>
               <p style={{margin:'4px 0 0', fontSize:12, fontWeight:700, color:'#15803d'}}>✓ {selectedPaySlip.d} · {selectedPaySlip.bank}</p>
             </div>
 
-            <div style={{background:'#fff', border:'2px solid #000', borderRadius:12, padding:'14px'}}>
+            <div style={{background:'#fff', border: '1px solid #e2e8f0', borderRadius:12, padding:'14px'}}>
               <p style={{margin:'0 0 10px', fontSize:13, fontWeight:800, color:'#000', textTransform:'uppercase'}}>Earnings & Deductions</p>
               <div style={{display:'flex', justifyContent:'space-between', padding:'6px 0', borderBottom:'1px solid #eee', fontSize:13}}>
                 <span style={{color:C.muted}}>Base Salary</span>
@@ -1870,7 +1871,7 @@ export default function StaffApp(){
               </div>
             </div>
 
-            <div style={{background:'#f5f5f5', border:'2px solid #000', borderRadius:12, padding:'12px', fontSize:11, fontWeight:700, color:'#333'}}>
+            <div style={{background:'#f5f5f5', border: '1px solid #e2e8f0', borderRadius:12, padding:'12px', fontSize:11, fontWeight:700, color:'#333'}}>
               <p style={{margin:0}}>Reference TXN: {selectedPaySlip.txn}</p>
               <p style={{margin:'4px 0 0'}}>Employee: {staffName} ({staffRole})</p>
             </div>
@@ -1880,7 +1881,7 @@ export default function StaffApp(){
               <button 
                 type="button" 
                 onClick={() => alert(`Downloading PDF for ${selectedPaySlip.m}...`)} 
-                style={{flex:1, padding:13, background:'#fff', color:'#000', border:'2px solid #000', borderRadius:12, fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow:'2px 2px 0px #000', display:'flex', alignItems:'center', justifyContent:'center', gap:6}}
+                style={{flex:1, padding:13, background:'#fff', color:'#000', border: '1px solid #e2e8f0', borderRadius:12, fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow: '0 2px 8px rgba(15,23,42,0.04)', display:'flex', alignItems:'center', justifyContent:'center', gap:6}}
               >
                 <span>📥</span> PDF
               </button>
@@ -1895,7 +1896,7 @@ export default function StaffApp(){
                     alert('Pay Slip summary copied to clipboard! You can share it to any platform.');
                   }
                 }} 
-                style={{flex:2, padding:13, background:'#fef08a', color:'#000', border:'2px solid #000', borderRadius:12, fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow:'2px 2px 0px #000', display:'flex', alignItems:'center', justifyContent:'center', gap:6}}
+                style={{flex:2, padding:13, background:'#fef08a', color:'#000', border: '1px solid #e2e8f0', borderRadius:12, fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow: '0 2px 8px rgba(15,23,42,0.04)', display:'flex', alignItems:'center', justifyContent:'center', gap:6}}
               >
                 <span>📤</span> Share Pay Slip
               </button>
@@ -1935,14 +1936,14 @@ export default function StaffApp(){
           </SelectField>
 
           {expMode === 'UPI / GPay' && (
-            <div style={{background:'#fafafa', border:'2px solid #000', borderRadius:10, padding:12, display:'flex', flexDirection:'column', gap:10}}>
+            <div style={{background:'#fafafa', border: '1px solid #e2e8f0', borderRadius:10, padding:12, display:'flex', flexDirection:'column', gap:10}}>
               <p style={{margin:0, fontSize:12, fontWeight:800, color:'#000'}}>📲 UPI Transaction IDs</p>
               <InputField label="Sender UPI ID (Staff - Prefilled)" value={expSenderUpi} onChange={e=>setExpSenderUpi(e.target.value)} placeholder="your.name@upi"/>
               <InputField label="Receiver UPI ID (Vendor)" value={expReceiverUpi} onChange={e=>setExpReceiverUpi(e.target.value)} placeholder="e.g. rameshveg@okaxis"/>
             </div>
           )}
 
-          <button type="submit" style={{padding:14, background:C.primary, color:'#000', border:'2px solid #000', borderRadius:14, fontSize:14, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow:'4px 4px 0px #000'}}>
+          <button type="submit" style={{padding:14, background:C.primary, color:'#000', border: '1px solid #e2e8f0', borderRadius:14, fontSize:14, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
             Save Expense 🛒
           </button>
         </form>
@@ -1992,14 +1993,14 @@ export default function StaffApp(){
           </SelectField>
 
           {fundMode === 'UPI' && (
-            <div style={{background:'#fafafa', border:'2px solid #000', borderRadius:10, padding:12, display:'flex', flexDirection:'column', gap:10}}>
+            <div style={{background:'#fafafa', border: '1px solid #e2e8f0', borderRadius:10, padding:12, display:'flex', flexDirection:'column', gap:10}}>
               <p style={{margin:0, fontSize:12, fontWeight:800, color:'#000'}}>📲 UPI Transaction IDs</p>
               <InputField label="Sender UPI ID (Payer)" value={fundSenderUpi} onChange={e=>setFundSenderUpi(e.target.value)} placeholder="payer@upi"/>
               <InputField label="Receiver UPI ID (Staff - Prefilled)" value={fundReceiverUpi} onChange={e=>setFundReceiverUpi(e.target.value)} placeholder="your.name@upi"/>
             </div>
           )}
 
-          <button type="submit" style={{padding:14, background:'#bbf7d0', color:'#000', border:'2px solid #000', borderRadius:14, fontSize:14, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow:'4px 4px 0px #000'}}>
+          <button type="submit" style={{padding:14, background:'#bbf7d0', color:'#000', border: '1px solid #e2e8f0', borderRadius:14, fontSize:14, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
             Record Received Funds 💵
           </button>
         </form>
