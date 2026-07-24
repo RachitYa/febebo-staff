@@ -498,38 +498,38 @@ export default function StaffApp(){
       {/* ── HEADER (always visible) ──────────────────────────────────────── */}
       {view === 'home' ? (
         // Home Hero Header
-        <div style={{background: C.primary, padding:'0 16px 20px', color: C.text, borderBottom: '1px solid #e2e8f0'}}>
+        <div style={{background: 'linear-gradient(135deg, #4338ca 0%, #6366f1 100%)', padding:'0 16px 20px', color: '#ffffff', borderBottom: '1px solid #c7d2fe'}}>
           <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', height:60}}>
-            <button onClick={()=>setSidebar(true)} style={{background: '#fff', border: '1px solid #e2e8f0', borderRadius:10, width:38, height:38, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
-              <span className="material-symbols-outlined" style={{fontSize:20, color: '#000'}}>menu</span>
+            <button onClick={()=>setSidebar(true)} style={{background: 'rgba(255,255,255,0.18)', backdropFilter:'blur(4px)', border: '1px solid rgba(255,255,255,0.3)', borderRadius:10, width:38, height:38, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer'}}>
+              <span className="material-symbols-outlined" style={{fontSize:20, color: '#ffffff'}}>menu</span>
             </button>
-            <p style={{fontFamily:"'Bricolage Grotesque',sans-serif", fontSize:24, fontWeight:800, color: '#000', margin:0, letterSpacing:-.5}}>febebo</p>
-            <button onClick={()=>setShowDemand(true)} style={{background: '#fff', border: '1px solid #e2e8f0', borderRadius:10, padding:'7px 11px', color: '#000', fontSize:12, fontWeight:800, cursor:'pointer', display:'flex', alignItems:'center', gap:4, boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
-              <span className="material-symbols-outlined" style={{fontSize:16}}>post_add</span>
+            <p style={{fontFamily:"'Hanken Grotesk',sans-serif", fontSize:24, fontWeight:900, color: '#ffffff', margin:0, letterSpacing:-.5}}>febebo</p>
+            <button onClick={()=>setShowDemand(true)} style={{background: '#ffffff', border: 'none', borderRadius:10, padding:'7px 14px', color: '#0f172a', fontSize:12, fontWeight:800, cursor:'pointer', display:'flex', alignItems:'center', gap:6, boxShadow: '0 2px 8px rgba(0,0,0,0.15)'}}>
+              <span className="material-symbols-outlined" style={{fontSize:16, color: '#4f46e5'}}>post_add</span>
               Demand
             </button>
           </div>
 
           {/* Greeting card */}
-          <div style={{marginTop:12}}>
-            <p style={{margin:'0 0 4px', fontSize:14, color: C.muted, fontWeight:700}}>{greet}, {firstName} 👋</p>
+          <div style={{marginTop:14}}>
+            <p style={{margin:'0 0 4px', fontSize:14, color: '#ffffff', fontWeight:800, textShadow:'0 1px 2px rgba(0,0,0,0.3)'}}>{greet}, {firstName} 👋</p>
             <div style={{display:'flex', alignItems:'center', gap:8}}>
-              <h2 style={{margin:0, fontSize:26, fontWeight:900, color: '#000', letterSpacing:-.5}}>{meta.dept}</h2>
-              <span style={{fontSize:12, fontWeight:800, background: meta.accent, color: '#000', padding:'4px 10px', borderRadius:8, border: '1px solid #e2e8f0'}}>{staffRole}</span>
+              <h2 style={{margin:0, fontSize:24, fontWeight:900, color: '#ffffff', letterSpacing:-.5, textShadow:'0 1px 2px rgba(0,0,0,0.3)'}}>{meta.dept}</h2>
+              <span style={{fontSize:11, fontWeight:900, background: '#f472b6', color: '#ffffff', padding:'4px 10px', borderRadius:20, border: '1px solid #f472b6', boxShadow:'0 2px 6px rgba(0,0,0,0.15)'}}>{staffRole}</span>
             </div>
-            <p style={{margin:'6px 0 0', fontSize:12, color: C.muted, fontWeight: 700}}>📅 {today} · Febebo PG</p>
+            <p style={{margin:'6px 0 0', fontSize:12, color: '#ffffff', fontWeight: 800, textShadow:'0 1px 2px rgba(0,0,0,0.3)'}}>📅 {today} · Febebo PG</p>
           </div>
 
           {/* Punch card */}
-          <div style={{marginTop:18, background: '#fff', border: '1px solid #e2e8f0', borderRadius:16, padding:'16px', display:'flex', alignItems:'center', justifyContent:'space-between', boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
+          <div style={{marginTop:18, background: '#ffffff', border: '1px solid #e2e8f0', borderRadius:16, padding:'16px', display:'flex', alignItems:'center', justifyContent:'space-between', boxShadow: '0 10px 25px -5px rgba(15,23,42,0.12)'}}>
             <div>
               <div style={{display:'flex', alignItems:'center', gap:8, marginBottom:4}}>
-                <span style={{width:10, height:10, borderRadius:'50%', background: clocked ? C.success : C.danger, display:'inline-block', border: '1px solid #e2e8f0'}}/>
-                <span style={{fontSize:14, fontWeight:800, color: '#000'}}>{clocked ? `On Duty · In at ${clockIn}` : 'Off Shift'}</span>
+                <span style={{width:10, height:10, borderRadius:'50%', background: clocked ? '#10b981' : '#ef4444', display:'inline-block'}}/>
+                <span style={{fontSize:14, fontWeight:900, color: '#0f172a'}}>{clocked ? `On Duty · In at ${clockIn}` : 'Off Shift'}</span>
               </div>
-              <p style={{margin:0, fontSize:12, color: C.muted, fontWeight: 600}}>📍 Location verified · {meta.dept}</p>
+              <p style={{margin:0, fontSize:12, color: '#475569', fontWeight: 700}}>📍 Location verified · {meta.dept}</p>
             </div>
-            <button onClick={punch} style={{padding:'10px 16px', borderRadius:10, border: '1px solid #e2e8f0', background: clocked ? C.dangerBg : C.successBg, color: '#000', fontSize:14, fontWeight:800, cursor:'pointer', fontFamily:'inherit', whiteSpace:'nowrap', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
+            <button onClick={punch} style={{padding:'10px 16px', borderRadius:10, border: 'none', background: clocked ? '#fee2e2' : '#dcfce7', color: clocked ? '#991b1b' : '#166534', fontSize:13, fontWeight:900, cursor:'pointer', fontFamily:'inherit', whiteSpace:'nowrap', boxShadow: '0 2px 6px rgba(0,0,0,0.06)'}}>
               {clocked ? '⏹ Punch Out' : '▶ Punch In'}
             </button>
           </div>
