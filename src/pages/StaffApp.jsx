@@ -171,49 +171,6 @@ const InputField = ({label,textarea=false,...props})=>{
     <div style={{display:'flex',flexDirection:'column',gap:5}}>
       {label&&<label style={{fontSize:11,fontWeight:700,color:C.muted,textTransform:'uppercase',letterSpacing:.4}}>{label}</label>}
       <Tag {...props} style={{padding:'11px 14px',border: '1px solid #e2e8f0',borderRadius: 8,fontSize:14,fontFamily:'inherit',background:'#fff',color:C.text,outline:'none',boxSizing:'border-box',width:'100%',resize:textarea?'vertical':'none',...props.style}}/>
-      {/* Fixed Bottom Navigation Bar (Android/iOS Mock layout matching screenshots) */}
-      <div style={{
-        position: 'fixed',
-        bottom: 0,
-        left: '50%',
-        transform: 'translateX(-50%)',
-        width: '100%',
-        maxWidth: 480,
-        height: 68,
-        background: '#ffffff',
-        borderTop: `1.5px solid ${C.border}`,
-        display: 'flex',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        zIndex: 100,
-        boxShadow: '0 -4px 16px rgba(120, 104, 10, 0.05)'
-      }}>
-        {[
-          { id: 'home', label: 'Dashboard', icon: 'home' },
-          { id: 'work', label: 'My Work', icon: 'home_work' },
-          { id: 'chat', label: 'Chat', icon: 'forum' },
-          { id: 'profile_view', label: 'Profile', icon: 'person' }
-        ].map(item => {
-          const active = view === item.id;
-          return (
-            <div key={item.id} onClick={() => { setView(item.id); setActiveContact(null); }} style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              padding: '6px 12px',
-              color: active ? '#ca8a04' : '#78680a',
-              transition: 'color 0.2s',
-              flex: 1
-            }}>
-              <span className={`material-symbols-outlined ${active ? 'filled' : ''}`} style={{ fontSize: 24, marginBottom: 2 }}>{item.icon}</span>
-              <span style={{ fontSize: 10, fontWeight: active ? 800 : 600 }}>{item.label}</span>
-            </div>
-          );
-        })}
-      </div>
-
     </div>
   );
 };
