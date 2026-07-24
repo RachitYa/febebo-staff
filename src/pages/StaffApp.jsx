@@ -459,6 +459,7 @@ export default function StaffApp(){
     {id:'chat',      label:'Chat',           sub:'5 Messages',       icon:'forum',                  grad:'#eef2ff'},
     {id:'reports',   label:'Reports',        sub:'Work Logs',        icon:'assessment',             grad:'#eef2ff'},
     {id:'requests',  label:'Requests',       sub:'Leave / Advance',  icon:'approval',               grad:'#eef2ff'},
+    {id:'profile_view', label:'My Profile',   sub:'ID, Docs & Details', icon:'person',                 grad:'#eef2ff'},
   ];
 
   // ─── Role quick stats ─────────────────────────────────────────────────────
@@ -502,7 +503,7 @@ export default function StaffApp(){
       {/* ── Sidebar ─────────────────────────────────────────────────────── */}
       <aside style={{position:'fixed', top:0, left:sidebar ? 0 : '-300px', width:280, height:'100vh', background:'#fff', borderRight: '1px solid #e2e8f0', zIndex:70, transition:'left .3s cubic-bezier(.4,0,.2,1)', display:'flex', flexDirection:'column', boxShadow: '4px 0 16px rgba(15,23,42,0.06)'}}>
         {/* Sidebar top profile */}
-        <div style={{padding:'28px 20px 20px', borderBottom: '1px solid #e2e8f0'}}>
+        <div onClick={()=>{setView('profile_view');setSidebar(false);}} style={{padding:'28px 20px 20px', borderBottom: '1px solid #e2e8f0', cursor:'pointer'}}>
           <div style={{width:52, height:52, borderRadius:12, background: meta.accentBg, border: '1px solid #e2e8f0', display:'flex', alignItems:'center', justifyContent:'center', fontSize:24, marginBottom:12, boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
             {meta.emoji}
           </div>
@@ -525,6 +526,7 @@ export default function StaffApp(){
             {id:'chat',      icon:'forum',                  label:'Chat'},
             {id:'reports',   icon:'assessment',             label:'Work Reports'},
             {id:'requests',  icon:'approval',               label:'Requests'},
+            {id:'profile_view', icon:'person',              label:'My Profile'},
           ].map(item => {
             const active = view === item.id;
             return (
@@ -619,7 +621,7 @@ export default function StaffApp(){
             <span className="material-symbols-outlined" style={{fontSize:20,color:'#000'}}>arrow_back_ios_new</span>
           </button>
           <p style={{flex:1,margin:0,fontSize:18,fontWeight:900,color:'#000'}}>
-            {view==='work'?'My Work':view==='inventory'?'Inventory & Petty Cash':view==='inout'?'Attendance':view==='salary'?'Salary & Pay':view==='items'?'Item List':view==='chat'?'Chat':view==='reports'?'Work Reports':'Requests'}
+            {view==='work'?'My Work':view==='inventory'?'Inventory & Petty Cash':view==='inout'?'Attendance':view==='salary'?'Salary & Pay':view==='items'?'Item List':view==='chat'?'Chat':view==='reports'?'Work Reports':view==='requests'?'Requests':'My Profile'}
           </p>
           {view==='items' && (
             <button onClick={()=>setShowDemand(true)} style={{background:C.primary,border: '1px solid #e2e8f0',borderRadius:10,padding:'6px 10px',color:'#000',fontSize:11,fontWeight:800,cursor:'pointer',display:'flex',alignItems:'center',gap:4,boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
@@ -2146,6 +2148,102 @@ export default function StaffApp(){
                 <Chip label={r.status} color={r.status==='Approved'?C.success:r.status==='Pending'?C.warn:C.danger} bg={r.status==='Approved'?C.successBg:r.status==='Pending'?C.warnBg:C.dangerBg}/>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          MY PROFILE VIEW
+         ══════════════════════════════════════════════════════════════════════ */}
+      {view === 'profile_view' && (
+        <div style={{padding:'14px 14px 32px', display:'flex', flexDirection:'column', gap:14}}>
+          {/* Main Card: Avatar & Status */}
+          <div style={{background:'#fff', borderRadius:18, border:'1px solid #e8df9a', padding:'20px 16px', display:'flex', flexDirection:'column', alignItems:'center', textAlign:'center', boxShadow:'0 4px 16px rgba(120, 104, 10, 0.05)'}}>
+            <div style={{width:80, height:80, borderRadius:50, background:meta.accentBg, border:'2px solid #e8df9a', display:'flex', alignItems:'center', justifyContent:'center', fontSize:36, marginBottom:12, boxShadow:'0 4px 12px rgba(0,0,0,0.06)'}}>
+              {meta.emoji}
+            </div>
+            <h3 style={{margin:'0 0 4px', fontSize:22, fontWeight:900, color:'#000'}}>{staffName}</h3>
+            <div style={{display:'flex', alignItems:'center', gap:6, marginBottom:12}}>
+              <span style={{fontSize:11, fontWeight:800, background:meta.accent, color:'#000', padding:'2px 8px', borderRadius:8, border:'1.5px solid #e8df9a'}}>{staffRole}</span>
+              <span style={{fontSize:12, fontWeight:700, color:C.muted}}>· {meta.dept}</span>
+            </div>
+            <div style={{background:'#f0fdf4', border:'1px solid #bbf7d0', borderRadius:12, padding:'6px 12px', display:'flex', alignItems:'center', gap:6}}>
+              <span className="material-symbols-outlined" style={{fontSize:16, color:'#166534'}}>verified</span>
+              <span style={{fontSize:12, fontWeight:800, color:'#166534'}}>Verified Staff Member</span>
+            </div>
+          </div>
+
+          {/* Section: Personal Detailing */}
+          <div style={{background:'#fff', borderRadius:18, border:'1px solid #e8df9a', padding:16, display:'flex', flexDirection:'column', gap:12, boxShadow:'0 4px 16px rgba(120, 104, 10, 0.05)'}}>
+            <p style={{margin:0, fontSize:14, fontWeight:900, color:'#000', borderBottom:'1px solid #f1f5f9', paddingBottom:8, display:'flex', alignItems:'center', gap:6}}>
+              <span className="material-symbols-outlined" style={{fontSize:18, color:'#78680a'}}>person</span>
+              Personal Details
+            </p>
+            <div style={{display:'grid', gridTemplateColumns:'1fr', gap:10}}>
+              {[
+                {label:'Phone Number', val: user?.mobile || '+91 98000 12345'},
+                {label:'Email Address', val: `${staffName.toLowerCase().replace(/\s+/g, '.')}@febebo.com`},
+                {label:'Permanent Address', val: 'H-42, Block C, Sector 62, Noida, UP - 201301'},
+                {label:'Emergency Contact', val: 'Pooja Devi (Wife) · +91 98111 22233'},
+              ].map(item => (
+                <div key={item.label} style={{display:'flex', flexDirection:'column', gap:2}}>
+                  <span style={{fontSize:10, fontWeight:800, color:C.muted, textTransform:'uppercase'}}>{item.label}</span>
+                  <span style={{fontSize:13, fontWeight:700, color:'#000'}}>{item.val}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Section: Professional Detailing */}
+          <div style={{background:'#fff', borderRadius:18, border:'1px solid #e8df9a', padding:16, display:'flex', flexDirection:'column', gap:12, boxShadow:'0 4px 16px rgba(120, 104, 10, 0.05)'}}>
+            <p style={{margin:0, fontSize:14, fontWeight:900, color:'#000', borderBottom:'1px solid #f1f5f9', paddingBottom:8, display:'flex', alignItems:'center', gap:6}}>
+              <span className="material-symbols-outlined" style={{fontSize:18, color:'#78680a'}}>badge</span>
+              Professional Details
+            </p>
+            <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
+              {[
+                {label:'Staff ID', val:`FEB-2026-ST0${(user?.id || 1042) % 1000}`},
+                {label:'Designated Role', val:staffRole},
+                {label:'Monthly Salary', val:'₹18,500'},
+                {label:'Date of Joining', val:'15th Jan 2025'},
+                {label:'Shift Timing', val:'09:00 AM - 06:00 PM'},
+                {label:'Duty Status', val:'On Duty ✅'},
+              ].map(item => (
+                <div key={item.label} style={{display:'flex', flexDirection:'column', gap:2}}>
+                  <span style={{fontSize:10, fontWeight:800, color:C.muted, textTransform:'uppercase'}}>{item.label}</span>
+                  <span style={{fontSize:13, fontWeight:700, color:'#000'}}>{item.val}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Section: Documents */}
+          <div style={{background:'#fff', borderRadius:18, border:'1px solid #e8df9a', padding:16, display:'flex', flexDirection:'column', gap:12, boxShadow:'0 4px 16px rgba(120, 104, 10, 0.05)'}}>
+            <p style={{margin:0, fontSize:14, fontWeight:900, color:'#000', borderBottom:'1px solid #f1f5f9', paddingBottom:8, display:'flex', alignItems:'center', gap:6}}>
+              <span className="material-symbols-outlined" style={{fontSize:18, color:'#78680a'}}>folder_shared</span>
+              Documents & Verification
+            </p>
+            <div style={{display:'flex', flexDirection:'column', gap:8}}>
+              {[
+                {name:'Aadhar Card', desc:'Verification Complete', icon:'badge', no:'XXXX XXXX 8892'},
+                {name:'PAN Card', desc:'Verification Complete', icon:'credit_card', no:'ABCDE1234F'},
+                {name:'Employment Agreement', desc:'Signed on 15 Jan 2025', icon:'description', no:'Signed PDF'},
+              ].map(doc => (
+                <div key={doc.name} style={{background:C.bg, borderRadius:12, padding:'10px 12px', border:'1px solid #e8df9a', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                  <div style={{display:'flex', alignItems:'center', gap:10}}>
+                    <span className="material-symbols-outlined" style={{fontSize:22, color:'#78680a'}}>{doc.icon}</span>
+                    <div>
+                      <p style={{margin:0, fontSize:12, fontWeight:800, color:'#000'}}>{doc.name}</p>
+                      <p style={{margin:0, fontSize:10, color:C.muted}}>{doc.no} · {doc.desc}</p>
+                    </div>
+                  </div>
+                  <div style={{display:'flex', alignItems:'center', gap:4, background:'#dcfce7', padding:'4px 8px', borderRadius:8}}>
+                    <span className="material-symbols-outlined" style={{fontSize:12, color:'#166534'}}>check_circle</span>
+                    <span style={{fontSize:9, fontWeight:800, color:'#166534'}}>Verified</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}
