@@ -629,7 +629,7 @@ export default function StaffApp(){
                 <div style={{display:'flex',alignItems:'center',gap:10}}>
                   <div style={{width:40,height:40,borderRadius:13,background:meta.grad,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>🛠️</div>
                   <div>
-                    <p style={{margin:0,fontSize:14,fontWeight:800,color:C.text}>Repair Tickets</p>
+                    <p style={{margin:0,fontSize:14,fontWeight:800,color:C.text}}>Repair Tickets</p>
                     <p style={{margin:'2px 0 0',fontSize:12,color:C.muted}}>{tickets.filter(t=>t.status!=='Resolved').length} active · {tickets.filter(t=>t.priority==='High'&&t.status!=='Resolved').length} high priority</p>
                   </div>
                 </div>
@@ -645,7 +645,7 @@ export default function StaffApp(){
                 <div style={{display:'flex',alignItems:'center',gap:10}}>
                   <div style={{width:40,height:40,borderRadius:13,background:meta.grad,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>🛒</div>
                   <div>
-                    <p style={{margin:0,fontSize:14,fontWeight:800,color:C.text}>Requisitions Queue</p>
+                    <p style={{margin:0,fontSize:14,fontWeight:800,color:C.text}}>Requisitions Queue</p>
                     <p style={{margin:'2px 0 0',fontSize:12,color:C.muted}}>{demands.filter(d=>d.status==='Pending').length} pending POs to action</p>
                   </div>
                 </div>
@@ -661,7 +661,7 @@ export default function StaffApp(){
                 <div style={{display:'flex',alignItems:'center',gap:10}}>
                   <div style={{width:40,height:40,borderRadius:13,background:meta.grad,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>🛡️</div>
                   <div>
-                    <p style={{margin:0,fontSize:14,fontWeight:800,color:C.text}>Gate Security Log</p>
+                    <p style={{margin:0,fontSize:14,fontWeight:800,color:C.text}}>Gate Security Log</p>
                     <p style={{margin:'2px 0 0',fontSize:12,color:C.muted}}>{visitors.filter(v=>v.status==='Inside').length} visitors inside · {parcels.filter(p=>p.status==='Pending').length} parcels unclaimed</p>
                   </div>
                 </div>
