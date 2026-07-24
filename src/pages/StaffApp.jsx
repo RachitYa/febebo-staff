@@ -507,26 +507,26 @@ export default function StaffApp(){
       {/* ── HEADER (always visible) ──────────────────────────────────────── */}
       {view === 'home' ? (
         // Home Hero Header
-        <div style={{background: 'linear-gradient(135deg, #4338ca 0%, #6366f1 100%)', padding:'0 16px 20px', color: '#ffffff', borderBottom: '1px solid #c7d2fe'}}>
+        <div style={{background: 'linear-gradient(135deg, #ca8a04 0%, #f59e0b 100%)', padding:'0 16px 20px', color: '#ffffff', borderBottom: '1px solid #fcd34d'}}>
           <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', height:60}}>
-            <button onClick={()=>setSidebar(true)} style={{background: 'rgba(255,255,255,0.18)', backdropFilter:'blur(4px)', border: '1px solid rgba(255,255,255,0.3)', borderRadius:10, width:38, height:38, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer'}}>
-              <span className="material-symbols-outlined" style={{fontSize:20, color: '#ffffff'}}>menu</span>
+            <button onClick={()=>setSidebar(true)} style={{background: 'rgba(255,255,255,0.45)', backdropFilter:'blur(4px)', border: '1px solid rgba(255,255,255,0.5)', borderRadius:10, width:38, height:38, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer'}}>
+              <span className="material-symbols-outlined" style={{fontSize:20, color: '#78350f'}}>menu</span>
             </button>
-            <p style={{fontFamily:"'Hanken Grotesk',sans-serif", fontSize:24, fontWeight:900, color: '#ffffff', margin:0, letterSpacing:-.5}}>febebo</p>
+            <p style={{fontFamily:"'Hanken Grotesk',sans-serif", fontSize:24, fontWeight:900, color: '#1a1200', margin:0, letterSpacing:-.5}}>febebo</p>
             <button onClick={()=>setShowDemand(true)} style={{background: '#ffffff', border: 'none', borderRadius:10, padding:'7px 14px', color: '#0f172a', fontSize:12, fontWeight:800, cursor:'pointer', display:'flex', alignItems:'center', gap:6, boxShadow: '0 2px 8px rgba(0,0,0,0.15)'}}>
-              <span className="material-symbols-outlined" style={{fontSize:16, color: '#4f46e5'}}>post_add</span>
+              <span className="material-symbols-outlined" style={{fontSize:16, color: '#92400e'}}>post_add</span>
               Demand
             </button>
           </div>
 
           {/* Greeting card */}
           <div style={{marginTop:14}}>
-            <p style={{margin:'0 0 4px', fontSize:14, color: '#ffffff', fontWeight:800, textShadow:'0 1px 2px rgba(0,0,0,0.3)'}}>{greet}, {firstName} 👋</p>
+            <p style={{margin:'0 0 4px', fontSize:14, color: '#78350f', fontWeight:800}}>{greet}, {firstName} 👋</p>
             <div style={{display:'flex', alignItems:'center', gap:8}}>
-              <h2 style={{margin:0, fontSize:24, fontWeight:900, color: '#ffffff', letterSpacing:-.5, textShadow:'0 1px 2px rgba(0,0,0,0.3)'}}>{meta.dept}</h2>
-              <span style={{fontSize:11, fontWeight:900, background: '#f472b6', color: '#ffffff', padding:'4px 10px', borderRadius:20, border: '1px solid #f472b6', boxShadow:'0 2px 6px rgba(0,0,0,0.15)'}}>{staffRole}</span>
+              <h2 style={{margin:0, fontSize:24, fontWeight:900, color: '#1a1200', letterSpacing:-.5}}>{meta.dept}</h2>
+              <span style={{fontSize:11, fontWeight:900, background: 'rgba(255,255,255,0.55)', color: '#78350f', padding:'4px 10px', borderRadius:20, border: '1px solid #f472b6', boxShadow:'0 2px 6px rgba(0,0,0,0.15)'}}>{staffRole}</span>
             </div>
-            <p style={{margin:'6px 0 0', fontSize:12, color: '#ffffff', fontWeight: 800, textShadow:'0 1px 2px rgba(0,0,0,0.3)'}}>📅 {today} · Febebo PG</p>
+            <p style={{margin:'6px 0 0', fontSize:12, color: '#92400e', fontWeight: 800}}>📅 {today} · Febebo PG</p>
           </div>
 
           {/* Punch card */}
@@ -820,7 +820,7 @@ export default function StaffApp(){
                              <div style={{display:'flex', gap:6, flexWrap:'wrap', alignItems:'center'}}>
                                <Chip label={s.phone} color="#000" bg="#fef08a"/>
                                {(selectedStat === 'pack' || selectedStat === 'extra') && s[detailsKey] && (
-                                 <span style={{fontSize:11, fontWeight:800, color:'#000', background:'#fde047', padding:'4px 8px', borderRadius:8, border:'1px solid #000'}}>
+                                 <span style={{fontSize:11, fontWeight:800, color:'#000', background:'#fef08a', padding:'4px 8px', borderRadius:8, border:'1px solid #000'}}>
                                    {s[detailsKey]}
                                  </span>
                                )}
@@ -1031,7 +1031,7 @@ export default function StaffApp(){
                   /* DAILY VIEW */
                   <>
                     {/* Current Active Window Banner */}
-                    <div style={{background:'#fde047', borderRadius:14, border: '1px solid #e2e8f0', padding:'12px 16px', display:'flex', justifyContent:'space-between', alignItems:'center', boxShadow: '0 3px 12px rgba(15,23,42,0.05)'}}>
+                    <div style={{background:'#fef08a', borderRadius:14, border: '1px solid #e2e8f0', padding:'12px 16px', display:'flex', justifyContent:'space-between', alignItems:'center', boxShadow: '0 3px 12px rgba(15,23,42,0.05)'}}>
                       <div>
                         <span style={{fontSize:11, fontWeight:800, textTransform:'uppercase', color:'#000'}}>⚡ Current 2-Hour Cleaning Slot</span>
                         <h3 style={{margin:'2px 0 0', fontSize:18, fontWeight:900, color:'#000'}}>11:00 AM – 01:00 PM</h3>
@@ -1127,7 +1127,7 @@ export default function StaffApp(){
                               ) : (
                                 <button 
                                   onClick={() => setCleaning(prev => prev.map(c => c.id === slot.id ? {...c, done:true, slotStatus:'completed'} : c))}
-                                  style={{padding:'8px 14px', borderRadius:10, border: '1px solid #e2e8f0', background:'#fde047', color:'#000', fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}
+                                  style={{padding:'8px 14px', borderRadius:10, border: '1px solid #e2e8f0', background:'#fef08a', color:'#000', fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}
                                 >
                                   Mark Cleaned ✅
                                 </button>
@@ -1303,7 +1303,7 @@ export default function StaffApp(){
 
           {/* PLUMBER WORK QUEUE */}
           {staffRole === 'Plumber' && (<>
-            <div style={{background:'linear-gradient(135deg,#2563eb,#60a5fa)', borderRadius:16, padding:'14px 16px', color:'#fff', boxShadow:'0 8px 20px rgba(37,99,235,0.2)'}}>
+            <div style={{background:'linear-gradient(135deg,#d97706,#fbbf24)', borderRadius:16, padding:'14px 16px', color:'#fff', boxShadow:'0 8px 20px rgba(217,119,6,0.2)'}}>
               <p style={{margin:0, fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:0.5, color:'#bfdbfe'}}>🔧 Plumbing & Water Systems</p>
               <h3 style={{margin:'4px 0 2px', fontSize:20, fontWeight:900}}>Job Work Queue</h3>
               <p style={{margin:0, fontSize:12, color:'#bfdbfe', fontWeight:700}}>{plumbingJobs.filter(j=>j.status==='Open').length} open · {plumbingJobs.filter(j=>j.status==='In Progress').length} in progress · {plumbingJobs.filter(j=>j.priority==='High').length} urgent</p>
@@ -1425,10 +1425,10 @@ export default function StaffApp(){
           {staffRole === 'Sales Manager' && (<>
             {/* Tab nav */}
             <div style={{display:'flex', background:'#fff', borderRadius:12, padding:4, border:'1px solid #e2e8f0', boxShadow:'0 2px 8px rgba(15,23,42,0.04)'}}>
-              <button onClick={()=>setSalesTab('leads')} style={{flex:1, padding:'10px 0', borderRadius:10, border:'none', background: salesTab==='leads' ? '#dcfce7' : 'transparent', color: salesTab==='leads' ? '#166534' : C.muted, fontSize:13, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}>
+              <button onClick={()=>setSalesTab('leads')} style={{flex:1, padding:'10px 0', borderRadius:10, border:'none', background: salesTab==='leads' ? '#fde047' : 'transparent', color: salesTab==='leads' ? '#78350f' : C.muted, fontSize:13, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}>
                 📞 Leads ({enquiries.length})
               </button>
-              <button onClick={()=>setSalesTab('rooms')} style={{flex:1, padding:'10px 0', borderRadius:10, border:'none', background: salesTab==='rooms' ? '#eef2ff' : 'transparent', color: salesTab==='rooms' ? '#4338ca' : C.muted, fontSize:13, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}>
+              <button onClick={()=>setSalesTab('rooms')} style={{flex:1, padding:'10px 0', borderRadius:10, border:'none', background: salesTab==='rooms' ? '#fef3c7' : 'transparent', color: salesTab==='rooms' ? '#92400e' : C.muted, fontSize:13, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}>
                 🛏 Rooms ({rooms.length})
               </button>
             </div>
@@ -1461,7 +1461,7 @@ export default function StaffApp(){
                       <span style={{fontSize:11, fontWeight:800, padding:'4px 10px', borderRadius:20, background: e.status.includes('Closed')?'#dcfce7':e.status.includes('Contacted')?'#fef3c7':'#fee2e2', color: e.status.includes('Closed')?'#166534':e.status.includes('Contacted')?'#92400e':'#b91c1c'}}>{e.status}</span>
                     </div>
                     <div style={{display:'flex', gap:6, flexWrap:'wrap', marginBottom:8}}>
-                      <Chip label={e.requirement} color="#4338ca" bg="#eef2ff"/>
+                      <Chip label={e.requirement} color="#4338ca" bg="#fefce8"/>
                       <Chip label={e.budget} color="#166534" bg="#dcfce7"/>
                       <Chip label={e.source} color="#475569" bg="#f1f5f9"/>
                     </div>
@@ -1470,7 +1470,7 @@ export default function StaffApp(){
                       <a href={`tel:${e.phone}`} style={{flex:1, textAlign:'center', padding:'9px 0', background:'#dcfce7', border:'1px solid #86efac', borderRadius:10, color:'#166534', fontSize:12, fontWeight:800, textDecoration:'none'}}>
                         📞 Call
                       </a>
-                      <button onClick={()=>setEnquiries(prev=>prev.map(x=>x.id===e.id?{...x,status:x.status.includes('Contacted')?'Closed 🟢':'Contacted 🟡'}:x))} style={{flex:2, padding:'9px 0', background:'#eef2ff', border:'1px solid #c7d2fe', borderRadius:10, color:'#4338ca', fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit'}}>
+                      <button onClick={()=>setEnquiries(prev=>prev.map(x=>x.id===e.id?{...x,status:x.status.includes('Contacted')?'Closed 🟢':'Contacted 🟡'}:x))} style={{flex:2, padding:'9px 0', background:'#fefce8', border:'1px solid #fcd34d', borderRadius:10, color:'#78350f', fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit'}}>
                         {e.status.includes('Contacted') ? '✓ Mark Converted' : '📲 Mark Contacted'}
                       </button>
                     </div>
@@ -1497,7 +1497,7 @@ export default function StaffApp(){
                   <div>
                     <div style={{display:'flex', alignItems:'center', gap:6, marginBottom:4}}>
                       <span style={{fontSize:15, fontWeight:900, color:C.text}}>Room {r.number}</span>
-                      <Chip label={r.type} color="#4338ca" bg="#eef2ff"/>
+                      <Chip label={r.type} color="#4338ca" bg="#fefce8"/>
                       <span style={{fontSize:11, fontWeight:800, padding:'2px 8px', borderRadius:20, background: r.status==='Vacant'?'#fef3c7':'#dcfce7', color: r.status==='Vacant'?'#92400e':'#166534'}}>{r.status}</span>
                     </div>
                     <p style={{margin:0, fontSize:11, color:C.muted}}>{r.status==='Occupied'?r.student:'Available now'} · Rent: {r.rent}</p>
@@ -1515,16 +1515,16 @@ export default function StaffApp(){
           {/* MANAGER OPERATIONS OVERVIEW */}
           {staffRole === 'Manager' && (<>
             {/* Command Center Header */}
-            <div style={{background:'linear-gradient(135deg,#312e81,#818cf8)', borderRadius:16, padding:'14px 16px', color:'#fff', boxShadow:'0 8px 20px rgba(49,46,129,0.25)'}}>
-              <p style={{margin:0, fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:0.5, color:'#c7d2fe'}}>🏢 Command Center</p>
+            <div style={{background:'linear-gradient(135deg,#92400e,#d97706)', borderRadius:16, padding:'14px 16px', color:'#fff', boxShadow:'0 8px 20px rgba(146,64,14,0.18)'}}>
+              <p style={{margin:0, fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:0.5, color:'#fef3c7'}}>🏢 Command Center</p>
               <h3 style={{margin:'4px 0 2px', fontSize:20, fontWeight:900}}>Operations Overview</h3>
-              <p style={{margin:0, fontSize:12, color:'#a5b4fc', fontWeight:700}}>Febebo PG — All departments</p>
+              <p style={{margin:0, fontSize:12, color:'#fde68a', fontWeight:700}}>Febebo PG — All departments</p>
             </div>
 
             {/* Department KPI Grid */}
             <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:10}}>
               {[
-                {label:'Staff On Duty', value:'12 / 15', icon:'groups', bg:'#eef2ff', color:'#4338ca', sub:'3 on leave'},
+                {label:'Staff On Duty', value:'12 / 15', icon:'groups', bg:'#eef2ff', color:'#78350f', sub:'3 on leave'},
                 {label:'Open Tickets', value: String(tickets.filter(t=>t.status!=='Resolved').length + plumbingJobs.filter(j=>j.status==='Open').length + electricalJobs.filter(j=>j.status==='Open').length + carpenterJobs.filter(j=>j.status==='Open').length), icon:'confirmation_number', bg:'#fee2e2', color:'#b91c1c', sub:'Across all depts'},
                 {label:'Vacant Rooms', value: String(rooms.filter(r=>r.status==='Vacant').length), icon:'meeting_room', bg:'#fef3c7', color:'#92400e', sub:'Fill immediately'},
                 {label:'Pending POs', value: String(demands.filter(d=>d.status==='Pending').length), icon:'pending_actions', bg:'#f0fdf4', color:'#166534', sub:'Supplier action needed'},
@@ -1590,7 +1590,7 @@ export default function StaffApp(){
                 onClick={()=>setHrTab('hiring')} 
                 style={{
                   flex:1, padding:'10px 0', borderRadius:10, border: hrTab==='hiring'?'2px solid #000':'2px solid transparent',
-                  background: hrTab==='hiring' ? C.primary : 'transparent', color: '#000', fontSize:13, fontWeight:900, cursor:'pointer', fontFamily:'inherit'
+                  background: hrTab==='hiring' ? '#fde047' : 'transparent', color: '#000', fontSize:13, fontWeight:900, cursor:'pointer', fontFamily:'inherit'
                 }}
               >
                 👥 Hiring & Candidates ({candidates.length})
@@ -1599,7 +1599,7 @@ export default function StaffApp(){
                 onClick={()=>setHrTab('enquiries')} 
                 style={{
                   flex:1, padding:'10px 0', borderRadius:10, border: hrTab==='enquiries'?'2px solid #000':'2px solid transparent',
-                  background: hrTab==='enquiries' ? C.primary : 'transparent', color: '#000', fontSize:13, fontWeight:900, cursor:'pointer', fontFamily:'inherit'
+                  background: hrTab==='enquiries' ? '#fde047' : 'transparent', color: '#000', fontSize:13, fontWeight:900, cursor:'pointer', fontFamily:'inherit'
                 }}
               >
                 📋 Room Enquiries ({enquiries.length})
@@ -1633,7 +1633,7 @@ export default function StaffApp(){
                           setCandidates(prev => [{id:Date.now(), name, position:pos, experience:'1 Yr', phone:'+91 9800000000', status:'Applied', date:'Just Now', note:'New Applicant'}, ...prev]);
                         }
                       }}
-                      style={{padding:'6px 10px', background:'#fde047', border: '1px solid #e2e8f0', borderRadius:8, fontSize:11, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}
+                      style={{padding:'6px 10px', background:'#fef08a', border: '1px solid #e2e8f0', borderRadius:8, fontSize:11, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}
                     >
                       + Add Candidate
                     </button>
@@ -1667,7 +1667,7 @@ export default function StaffApp(){
                           {c.status !== 'Hired ✅' && (
                             <button 
                               onClick={() => setCandidates(prev => prev.map(x => x.id === c.id ? {...x, status:'Hired ✅'} : x))}
-                              style={{padding:'7px 12px', background:'#fde047', border: '1px solid #e2e8f0', borderRadius:8, color:'#000', fontSize:11, fontWeight:900, cursor:'pointer', fontFamily:'inherit', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}
+                              style={{padding:'7px 12px', background:'#fef08a', border: '1px solid #e2e8f0', borderRadius:8, color:'#000', fontSize:11, fontWeight:900, cursor:'pointer', fontFamily:'inherit', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}
                             >
                               Hire Staff ✅
                             </button>
@@ -1684,13 +1684,13 @@ export default function StaffApp(){
             {hrTab === 'enquiries' && (
               <div style={{display:'flex', flexDirection:'column', gap:14}}>
                 {/* Enquiries Header Stats - Minimalist Blended Header */}
-                <div style={{background:'#eef2ff', borderRadius:16, border: '1px solid #c7d2fe', padding:'16px', color:'#0f172a', boxShadow: '0 4px 16px rgba(99,102,241,0.08)'}}>
+                <div style={{background:'#fefce8', borderRadius:16, border: '1px solid #fcd34d', padding:'16px', color:'#0f172a', boxShadow: '0 4px 16px rgba(202,138,4,0.1)'}}>
                   <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
                     <div>
-                      <p style={{margin:0, fontSize:11, fontWeight:800, textTransform:'uppercase', color:'#4f46e5', letterSpacing:0.5}}>🏠 Room Enquiries & Leads</p>
+                      <p style={{margin:0, fontSize:11, fontWeight:800, textTransform:'uppercase', color:'#92400e', letterSpacing:0.5}}>🏠 Room Enquiries & Leads</p>
                       <h3 style={{margin:'2px 0 0', fontSize:19, fontWeight:900, color:'#0f172a'}}>Tenant Leads Management</h3>
                     </div>
-                    <Chip label={`${enquiries.length} Active Leads`} color="#4f46e5" bg="#ffffff"/>
+                    <Chip label={`${enquiries.length} Active Leads`} color="#92400e" bg="#fffde7"/>
                   </div>
                 </div>
 
@@ -1716,7 +1716,7 @@ export default function StaffApp(){
                       <div style={{display:'flex', gap:6, margin:'6px 0'}}>
                         <Chip label={e.requirement} color="#000" bg="#cffafe"/>
                         <Chip label={`Budget: ${e.budget}`} color="#000" bg="#fef08a"/>
-                        <Chip label={e.source} color="#000" bg="#e0e7ff"/>
+                        <Chip label={e.source} color="#000" bg="#fef9c3"/>
                       </div>
 
                       <p style={{margin:'6px 0 10px', fontSize:12, fontWeight:700, color:'#333', background:'#f8fafc', padding:'8px 10px', borderRadius:8, border:'1px solid #000'}}>
@@ -1729,7 +1729,7 @@ export default function StaffApp(){
                         </a>
                         <button 
                           onClick={()=>setEnquiries(prev=>prev.map(x=>x.id===e.id?{...x, status: x.status.includes('Contacted')?'Closed 🟢':'Contacted 🟡'}:x))}
-                          style={{flex:1, padding:'8px 0', background:'#fde047', border: '1px solid #e2e8f0', borderRadius:8, color:'#000', fontSize:11, fontWeight:900, cursor:'pointer', fontFamily:'inherit', boxShadow:'1px 1px 0px #000'}}
+                          style={{flex:1, padding:'8px 0', background:'#fef08a', border: '1px solid #e2e8f0', borderRadius:8, color:'#000', fontSize:11, fontWeight:900, cursor:'pointer', fontFamily:'inherit', boxShadow:'1px 1px 0px #000'}}
                         >
                           {e.status.includes('Contacted') ? 'Mark Closed 🟢' : 'Mark Contacted 🟡'}
                         </button>
@@ -1824,7 +1824,7 @@ export default function StaffApp(){
             ))}
             <div style={{display:'flex', justifyContent:'space-between', padding:'12px 0 0', alignItems:'center'}}>
               <span style={{fontSize:16, fontWeight:900, color:'#000'}}>Net Payable</span>
-              <span style={{fontSize:22, fontWeight:900, color:'#000', background:'#fde047', padding:'2px 8px', borderRadius:8, border:'1.5px solid #000'}}>₹18,500</span>
+              <span style={{fontSize:22, fontWeight:900, color:'#000', background:'#fef08a', padding:'2px 8px', borderRadius:8, border:'1.5px solid #000'}}>₹18,500</span>
             </div>
           </div>
 
@@ -2188,7 +2188,7 @@ export default function StaffApp(){
       <Sheet show={showPaySlipModal} onClose={() => setShowPaySlipModal(false)} title={`${selectedPaySlip?.m || ''} Pay Slip`} sub="Detailed Salary Statement">
         {selectedPaySlip && (
           <div style={{display:'flex', flexDirection:'column', gap:14}}>
-            <div style={{background:'#fde047', padding:'14px 16px', borderRadius:12, border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
+            <div style={{background:'#fef08a', padding:'14px 16px', borderRadius:12, border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
               <p style={{margin:0, fontSize:12, fontWeight:800, color:'#000', textTransform:'uppercase'}}>Net Disbursed Amount</p>
               <h3 style={{margin:'4px 0 0', fontSize:30, fontWeight:900, color:'#000'}}>{selectedPaySlip.v}</h3>
               <p style={{margin:'4px 0 0', fontSize:12, fontWeight:700, color:'#15803d'}}>✓ {selectedPaySlip.d} · {selectedPaySlip.bank}</p>
