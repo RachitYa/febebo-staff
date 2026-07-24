@@ -284,7 +284,8 @@ export default function StaffApp(){
   const [pStu,setPStu]=useState('');   const [pRoom,setPRoom]=useState('');   const [pCarr,setPCarr]=useState('Amazon'); const [pTrk,setPTrk]=useState('');
 
   // Demand/Requisition (shared)
-  const [showDemand,setShowDemand]=useState(false);
+  const [showDemandList, setShowDemandList] = useState(false);
+  const [showDemandForm, setShowDemandForm] = useState(false);
   const [dItem,setDItem]=useState(''); const [dQty,setDQty]=useState(''); const [dNote,setDNote]=useState('');
   const [myDemands,setMyDemands]=useState([{id:1,item:'Basmati Rice 25kg',qty:'2 Bags',date:'22 Jul',status:'Approved'}]);
 
@@ -427,9 +428,19 @@ export default function StaffApp(){
   const submitDemand = e=>{
     e.preventDefault();
     if(!dItem.trim()) return;
-    setMyDemands(p=>[{id:Date.now(),item:dItem.trim(),qty:dQty||'1 unit',date:new Date().toLocaleDateString('en-GB'),status:'Pending'},...p]);
+    const newD = {
+      id: Date.now(),
+      item: dItem.trim(),
+      qty: dQty || '1 unit',
+      reqBy: `${staffName} (${staffRole})`,
+      vendor: 'Pending Admin Assignment',
+      date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }),
+      status: 'Pending'
+    };
+    setMyDemands(p=>[newD, ...p]);
+    setDemands(p=>[newD, ...p]);
     setDItem(''); setDQty(''); setDNote('');
-    setShowDemand(false);
+    setShowDemandForm(false);
     alert('Requisition submitted to Admin!');
   };
 
@@ -565,7 +576,7 @@ export default function StaffApp(){
               <span className="material-symbols-outlined" style={{fontSize:20, color: '#78350f'}}>menu</span>
             </button>
             <p style={{fontFamily:"'Hanken Grotesk',sans-serif", fontSize:24, fontWeight:900, color: '#1a1200', margin:0, letterSpacing:-.5}}>febebo</p>
-            <button onClick={()=>setShowDemand(true)} style={{background: '#ffffff', border: 'none', borderRadius:10, padding:'7px 14px', color: '#0f172a', fontSize:12, fontWeight:800, cursor:'pointer', display:'flex', alignItems:'center', gap:6, boxShadow: '0 2px 8px rgba(0,0,0,0.15)'}}>
+            <button onClick={()=>setShowDemandList(true)} style={{background: '#ffffff', border: 'none', borderRadius:10, padding:'7px 14px', color: '#0f172a', fontSize:12, fontWeight:800, cursor:'pointer', display:'flex', alignItems:'center', gap:6, boxShadow: '0 2px 8px rgba(0,0,0,0.15)'}}>
               <span className="material-symbols-outlined" style={{fontSize:16, color: '#92400e'}}>post_add</span>
               Demand
             </button>
@@ -623,7 +634,7 @@ export default function StaffApp(){
             {view==='work'?'My Work':view==='inventory'?'Inventory & Petty Cash':view==='inout'?'Attendance':view==='salary'?'Salary & Pay':view==='items'?'Item List':view==='chat'?'Chat':view==='reports'?'Work Reports':view==='requests'?'Requests':'My Profile'}
           </p>
           {view==='items' && (
-            <button onClick={()=>setShowDemand(true)} style={{background:C.primary,border: '1px solid #e2e8f0',borderRadius:10,padding:'6px 10px',color:'#000',fontSize:11,fontWeight:800,cursor:'pointer',display:'flex',alignItems:'center',gap:4,boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
+            <button onClick={()=>setShowDemandForm(true)} style={{background:C.primary,border: `1.5px solid ${C.border}`,borderRadius:10,padding:'6px 10px',color:'#000',fontSize:11,fontWeight:800,cursor:'pointer',display:'flex',alignItems:'center',gap:4,boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
               <span className="material-symbols-outlined" style={{fontSize:15}}>add</span>
               Demand
             </button>
@@ -665,7 +676,7 @@ export default function StaffApp(){
           </div>
 
           {/* Need Supplies Card */}
-          <div onClick={() => setShowDemand(true)} style={{
+          <div onClick={() => setShowDemandForm(true)} style={{
             background: '#ffffff',
             border: `1px solid ${C.border}`,
             borderRadius: 18,
@@ -1437,7 +1448,7 @@ export default function StaffApp(){
             </div>
 
             {/* Material Request */}
-            <button onClick={()=>setShowDemand(true)} style={{width:'100%', padding:14, background:'#fef3c7', border:'1px solid #fde68a', borderRadius:14, fontSize:13, fontWeight:900, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:8, color:'#78350f', fontFamily:'inherit', boxShadow:'0 3px 10px rgba(120,53,15,0.1)'}}>
+            <button onClick={() => setShowDemandForm(true)} style={{width:'100%', padding:14, background:'#fef3c7', border:'1px solid #fde68a', borderRadius:14, fontSize:13, fontWeight:900, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:8, color:'#78350f', fontFamily:'inherit', boxShadow:'0 3px 10px rgba(120,53,15,0.1)'}}>
               <span className="material-symbols-outlined" style={{fontSize:18}}>add_shopping_cart</span>
               Request Materials / Tools
             </button>
@@ -2218,12 +2229,53 @@ export default function StaffApp(){
       )}
 
       {/* ── MODALS ────────────────────────────────────────────────────────── */}
-      <Sheet show={showDemand} onClose={()=>setShowDemand(false)} title="Demand Item / Supplies" sub="Submit requisition to admin">
+      {/* Sheet 1: Demands List (Asked by other staff members) */}
+      <Sheet show={showDemandList} onClose={()=>setShowDemandList(false)} title="Staff Requisitions Queue" sub="Item demands raised by staff members">
+        <div style={{display:'flex', flexDirection:'column', gap:14}}>
+          <button onClick={()=>{ setShowDemandForm(true); setShowDemandList(false); }} style={{width:'100%', padding:12, background:C.primaryBg, border:`1.5px solid ${C.border}`, borderRadius:12, color:C.primaryDk, fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'inherit'}}>
+            ➕ Create New Demand / Requisition
+          </button>
+
+          <div style={{display:'flex', flexDirection:'column', gap:10, maxHeight:360, overflowY:'auto', paddingRight:4}}>
+            {demands.length === 0 ? (
+              <p style={{textAlign:'center', padding:'20px 0', fontSize:13, color:C.muted}}>No demands in queue</p>
+            ) : (
+              demands.map(d => (
+                <div key={d.id} style={{background:'#fff', border:`1px solid ${C.border}`, borderRadius:14, padding:14, boxShadow:'0 2px 8px rgba(120,104,10,0.03)'}}>
+                  <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:8}}>
+                    <div>
+                      <h4 style={{margin:0, fontSize:14, fontWeight:800, color:C.text}}>{d.item}</h4>
+                      <p style={{margin:'2px 0 0', fontSize:11.5, color:C.muted}}>Qty: {d.qty} · By: {d.reqBy}</p>
+                      <p style={{margin:'2px 0 0', fontSize:10.5, color:C.muted}}>📅 {d.date} · Vendor: {d.vendor}</p>
+                    </div>
+                    <Chip label={d.status} color={d.status==='Approved'?C.success:d.status==='Pending'?'#d97706':C.danger} bg={d.status==='Approved'?C.successBg:d.status==='Pending'?'#fef3c7':C.dangerBg}/>
+                  </div>
+                  
+                  {/* Approvals for Managers / Purchase Managers / Admin */}
+                  {d.status === 'Pending' && (['Manager', 'Purchase Manager', 'HR'].includes(staffRole)) && (
+                    <div style={{display:'flex', gap:8, marginTop:10}}>
+                      <button onClick={() => setDemands(prev => prev.map(x => x.id === d.id ? {...x, status:'Approved'} : x))} style={{flex:1, padding:'6px 0', background:C.successBg, border:'none', borderRadius:8, color:C.success, fontSize:11.5, fontWeight:800, cursor:'pointer'}}>
+                        ✓ Approve
+                      </button>
+                      <button onClick={() => setDemands(prev => prev.map(x => x.id === d.id ? {...x, status:'Rejected'} : x))} style={{flex:1, padding:'6px 0', background:C.dangerBg, border:'none', borderRadius:8, color:C.danger, fontSize:11.5, fontWeight:800, cursor:'pointer'}}>
+                        ✕ Reject
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </Sheet>
+
+      {/* Sheet 2: Demand Creation Form */}
+      <Sheet show={showDemandForm} onClose={()=>setShowDemandForm(false)} title="Demand Item / Supplies" sub="Submit requisition to admin">
         <form onSubmit={submitDemand} style={{display:'flex',flexDirection:'column',gap:12}}>
           <InputField label="Item Description *" required value={dItem} onChange={e=>setDItem(e.target.value)} placeholder="e.g. Basmati Rice 25kg"/>
           <InputField label="Quantity" value={dQty} onChange={e=>setDQty(e.target.value)} placeholder="e.g. 2 bags"/>
           <InputField label="Note / Urgency" value={dNote} onChange={e=>setDNote(e.target.value)} placeholder="e.g. Needed for tonight"/>
-          <button type="submit" style={{padding:14,background:meta.grad,color:'#000',border: '1px solid #e2e8f0',borderRadius:14,fontSize:14,fontWeight:800,cursor:'pointer',fontFamily:'inherit',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>Submit Demand 🚀</button>
+          <button type="submit" style={{padding:14,background:C.primary,color:C.text,border:`1.5px solid ${C.border}`,borderRadius:14,fontSize:14,fontWeight:800,cursor:'pointer',fontFamily:'inherit',boxShadow:'0 4px 16px rgba(15,23,42,0.05)'}}>Submit Demand 🚀</button>
         </form>
       </Sheet>
 
