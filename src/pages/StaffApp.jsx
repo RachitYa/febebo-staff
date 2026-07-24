@@ -219,6 +219,15 @@ export default function StaffApp(){
   const [enquiries, setEnquiries]   = useState(INIT_ENQUIRIES);
   const [hrTab, setHrTab]           = useState('hiring'); // hiring | enquiries
 
+  // Helper / Plumber / Electrician / Carpenter / Sales / Manager state
+  const [tasks, setTasks]               = useState(INIT_TASKS);
+  const [isAvailable, setIsAvailable]   = useState(true);
+  const [plumbingJobs, setPlumbingJobs] = useState(INIT_PLUMBING);
+  const [electricalJobs, setElectricalJobs] = useState(INIT_ELECTRICAL);
+  const [carpenterJobs, setCarpenterJobs]   = useState(INIT_CARPENTER);
+  const [rooms]                             = useState(INIT_ROOMS);
+  const [salesTab, setSalesTab]             = useState('leads'); // leads | rooms
+
   // Purchase
   const [demands,setDemands]    = useState(INIT_DEMANDS);
 
@@ -1238,6 +1247,339 @@ export default function StaffApp(){
             <button onClick={()=>alert('🚨 EMERGENCY ALERT sent to Admin & Security!')} style={{width:'100%',padding:16,background: C.primary,color:'#000',border: '1px solid #e2e8f0',borderRadius:14,fontSize:15,fontWeight:900,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:8,boxShadow: '0 4px 16px rgba(15,23,42,0.05)',fontFamily:'inherit'}}>
               <span className="material-symbols-outlined" style={{fontSize:22}}>warning</span>EMERGENCY SOS ALERT 🚨
             </button>
+          </>)}
+
+          {/* HELPER / OTHERS TASK DASHBOARD */}
+          {(staffRole === 'Helper' || staffRole === 'Others') && (<>
+            {/* Availability Toggle */}
+            <div style={{background: isAvailable ? '#dcfce7' : '#fee2e2', borderRadius:16, border: `1px solid ${isAvailable ? '#86efac' : '#fca5a5'}`, padding:'14px 18px', display:'flex', justifyContent:'space-between', alignItems:'center', boxShadow:'0 4px 12px rgba(15,23,42,0.05)'}}>
+              <div>
+                <p style={{margin:0, fontSize:13, fontWeight:900, color: isAvailable ? '#166534' : '#991b1b'}}>
+                  {isAvailable ? '✅ You are Available' : '🔴 Marked Unavailable'}
+                </p>
+                <p style={{margin:'2px 0 0', fontSize:11, fontWeight:700, color: isAvailable ? '#15803d' : '#b91c1c'}}>
+                  {isAvailable ? 'Admin can assign you tasks' : 'Toggle to go back on duty'}
+                </p>
+              </div>
+              <button onClick={()=>setIsAvailable(p=>!p)} style={{padding:'8px 16px', borderRadius:10, border:'none', background: isAvailable ? '#16a34a' : '#dc2626', color:'#fff', fontSize:12, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}>
+                {isAvailable ? 'Go Off Duty' : 'Go On Duty'}
+              </button>
+            </div>
+
+            {/* Task List */}
+            <div style={{background:'#fff', borderRadius:16, border:'1px solid #e2e8f0', padding:16, boxShadow:'0 4px 16px rgba(15,23,42,0.05)'}}>
+              <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:14}}>
+                <div>
+                  <p style={{margin:0, fontSize:15, fontWeight:900, color:C.text}}>📋 My Tasks Today</p>
+                  <p style={{margin:'2px 0 0', fontSize:11, color:C.muted}}>{tasks.filter(t=>t.status==='Pending').length} pending · {tasks.filter(t=>t.status==='Done').length} done</p>
+                </div>
+                <div style={{display:'flex', gap:4}}>
+                  <span style={{fontSize:11, fontWeight:800, padding:'4px 10px', borderRadius:20, background:'#fef3c7', color:'#92400e'}}>{tasks.filter(t=>t.priority==='High').length} High</span>
+                </div>
+              </div>
+
+              <div style={{display:'flex', flexDirection:'column', gap:10}}>
+                {tasks.map(t => (
+                  <div key={t.id} style={{background: t.status==='Done' ? '#f0fdf4' : '#fafafa', border: `1px solid ${t.status==='Done' ? '#bbf7d0' : '#e2e8f0'}`, borderRadius:12, padding:14, display:'flex', justifyContent:'space-between', alignItems:'center', gap:12}}>
+                    <div style={{flex:1}}>
+                      <div style={{display:'flex', alignItems:'center', gap:6, marginBottom:4}}>
+                        <span style={{fontSize:13, fontWeight:900, color: t.status==='Done' ? '#15803d' : C.text, textDecoration: t.status==='Done' ? 'line-through' : 'none'}}>{t.title}</span>
+                      </div>
+                      <div style={{display:'flex', gap:6, flexWrap:'wrap'}}>
+                        <Chip label={t.priority} color={t.priority==='High'?'#991b1b':'#475569'} bg={t.priority==='High'?'#fee2e2':'#f1f5f9'}/>
+                        <Chip label={`⏰ ${t.time}`} color="#475569" bg="#f1f5f9"/>
+                        <Chip label={`📍 ${t.room}`} color="#475569" bg="#f1f5f9"/>
+                      </div>
+                      <p style={{margin:'4px 0 0', fontSize:11, color:C.muted}}>Assigned by: {t.assignedBy}</p>
+                    </div>
+                    <button onClick={()=>setTasks(prev=>prev.map(x=>x.id===t.id?{...x,status:x.status==='Done'?'Pending':'Done'}:x))} style={{padding:'8px 12px', borderRadius:10, border:'none', background: t.status==='Done' ? '#dcfce7' : meta.accentBg, color: t.status==='Done' ? '#166534' : meta.accent, fontSize:11, fontWeight:900, cursor:'pointer', fontFamily:'inherit', whiteSpace:'nowrap', minWidth:60}}>
+                      {t.status==='Done' ? '↩ Undo' : '✓ Done'}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>)}
+
+          {/* PLUMBER WORK QUEUE */}
+          {staffRole === 'Plumber' && (<>
+            <div style={{background:'linear-gradient(135deg,#2563eb,#60a5fa)', borderRadius:16, padding:'14px 16px', color:'#fff', boxShadow:'0 8px 20px rgba(37,99,235,0.2)'}}>
+              <p style={{margin:0, fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:0.5, color:'#bfdbfe'}}>🔧 Plumbing & Water Systems</p>
+              <h3 style={{margin:'4px 0 2px', fontSize:20, fontWeight:900}}>Job Work Queue</h3>
+              <p style={{margin:0, fontSize:12, color:'#bfdbfe', fontWeight:700}}>{plumbingJobs.filter(j=>j.status==='Open').length} open · {plumbingJobs.filter(j=>j.status==='In Progress').length} in progress · {plumbingJobs.filter(j=>j.priority==='High').length} urgent</p>
+            </div>
+
+            <div style={{display:'flex', flexDirection:'column', gap:12}}>
+              {plumbingJobs.map(j => (
+                <div key={j.id} style={{background:'#fff', border:`1px solid ${j.priority==='High' ? '#fca5a5' : '#e2e8f0'}`, borderRadius:14, padding:16, boxShadow:'0 4px 14px rgba(15,23,42,0.04)'}}>
+                  <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:8}}>
+                    <div style={{flex:1}}>
+                      <div style={{display:'flex', alignItems:'center', gap:6, marginBottom:4}}>
+                        <span style={{fontSize:14, fontWeight:900, color:C.primary}}>Room {j.room}</span>
+                        <span style={{fontSize:11, fontWeight:800, padding:'2px 8px', borderRadius:20, background: j.priority==='High'?'#fee2e2':'#f1f5f9', color: j.priority==='High'?'#b91c1c':'#475569'}}>{j.priority}</span>
+                      </div>
+                      <p style={{margin:0, fontSize:13, fontWeight:800, color:C.text}}>{j.issue}</p>
+                      <p style={{margin:'3px 0 0', fontSize:11, color:C.muted}}>👤 {j.student} · 🕐 {j.date}</p>
+                      {j.note && <p style={{margin:'4px 0 0', fontSize:11, color:'#7c3aed', fontWeight:700, background:'#f5f3ff', padding:'4px 8px', borderRadius:6}}>📝 {j.note}</p>}
+                    </div>
+                    <span style={{fontSize:11, fontWeight:800, padding:'4px 10px', borderRadius:20, background: j.status==='Resolved'?'#dcfce7':j.status==='In Progress'?'#fef3c7':'#eff6ff', color: j.status==='Resolved'?'#166534':j.status==='In Progress'?'#92400e':'#1d4ed8'}}>{j.status}</span>
+                  </div>
+                  <div style={{display:'flex', gap:8}}>
+                    {j.status !== 'Resolved' && (
+                      <button onClick={()=>setPlumbingJobs(prev=>prev.map(x=>x.id===j.id?{...x,status:x.status==='Open'?'In Progress':'Resolved'}:x))} style={{flex:1, padding:'8px 0', borderRadius:10, border:'none', background: j.status==='Open'?'#eff6ff':'#dcfce7', color: j.status==='Open'?'#1d4ed8':'#166534', fontSize:12, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}>
+                        {j.status==='Open' ? '▶ Start Job' : '✓ Mark Resolved'}
+                      </button>
+                    )}
+                    <a href={`tel:${INIT_VISITORS[0]?.phone || '+91 9800000000'}`} style={{padding:'8px 14px', borderRadius:10, background:'#f0fdf4', border:'1px solid #86efac', color:'#166534', fontSize:12, fontWeight:800, textDecoration:'none'}}>
+                      📞 Call Student
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>)}
+
+          {/* ELECTRICIAN WORK QUEUE */}
+          {staffRole === 'Electrician' && (<>
+            <div style={{background:'linear-gradient(135deg,#ca8a04,#facc15)', borderRadius:16, padding:'14px 16px', color:'#000', boxShadow:'0 8px 20px rgba(202,138,4,0.2)'}}>
+              <p style={{margin:0, fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:0.5, color:'#713f12'}}>⚡ Electrical & Wiring</p>
+              <h3 style={{margin:'4px 0 2px', fontSize:20, fontWeight:900, color:'#000'}}>Job Work Queue</h3>
+              <p style={{margin:0, fontSize:12, color:'#713f12', fontWeight:700}}>{electricalJobs.filter(j=>j.status==='Open').length} open · {electricalJobs.filter(j=>j.priority==='High').length} high voltage danger</p>
+            </div>
+
+            {/* Safety Banner for High Priority */}
+            {electricalJobs.some(j=>j.priority==='High' && j.status!=='Resolved') && (
+              <div style={{background:'#fff1f2', border:'1px solid #fca5a5', borderRadius:12, padding:'10px 14px', display:'flex', alignItems:'center', gap:10}}>
+                <span className="material-symbols-outlined" style={{fontSize:20, color:'#dc2626'}}>warning</span>
+                <p style={{margin:0, fontSize:12, fontWeight:800, color:'#991b1b'}}>⚠️ High voltage / sparking issue reported — use PPE before starting work!</p>
+              </div>
+            )}
+
+            <div style={{display:'flex', flexDirection:'column', gap:12}}>
+              {electricalJobs.map(j => (
+                <div key={j.id} style={{background:'#fff', border:`1px solid ${j.priority==='High' ? '#fde047' : '#e2e8f0'}`, borderRadius:14, padding:16, boxShadow:'0 4px 14px rgba(15,23,42,0.04)'}}>
+                  <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:8}}>
+                    <div style={{flex:1}}>
+                      <div style={{display:'flex', alignItems:'center', gap:6, marginBottom:4}}>
+                        <span style={{fontSize:14, fontWeight:900, color:C.primary}}>Room {j.room}</span>
+                        <span style={{fontSize:11, fontWeight:800, padding:'2px 8px', borderRadius:20, background: j.priority==='High'?'#fef9c3':'#f1f5f9', color: j.priority==='High'?'#713f12':'#475569'}}>{j.priority}</span>
+                      </div>
+                      <p style={{margin:0, fontSize:13, fontWeight:800, color:C.text}}>{j.issue}</p>
+                      <p style={{margin:'3px 0 0', fontSize:11, color:C.muted}}>👤 {j.student} · 🕐 {j.date}</p>
+                      {j.note && <p style={{margin:'4px 0 0', fontSize:11, color:'#92400e', fontWeight:700, background:'#fef3c7', padding:'4px 8px', borderRadius:6}}>📝 {j.note}</p>}
+                    </div>
+                    <span style={{fontSize:11, fontWeight:800, padding:'4px 10px', borderRadius:20, background: j.status==='Resolved'?'#dcfce7':j.status==='In Progress'?'#fef3c7':'#fefce8', color: j.status==='Resolved'?'#166534':j.status==='In Progress'?'#92400e':'#713f12'}}>{j.status}</span>
+                  </div>
+                  {j.status !== 'Resolved' && (
+                    <div style={{display:'flex', gap:8}}>
+                      <button onClick={()=>setElectricalJobs(prev=>prev.map(x=>x.id===j.id?{...x,status:x.status==='Open'?'In Progress':'Resolved'}:x))} style={{flex:1, padding:'8px 0', borderRadius:10, border:'none', background: j.status==='Open'?'#fefce8':'#dcfce7', color: j.status==='Open'?'#713f12':'#166534', fontSize:12, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}>
+                        {j.status==='Open' ? '▶ Start Job' : '✓ Mark Resolved'}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </>)}
+
+          {/* CARPENTER WORK QUEUE */}
+          {staffRole === 'Carpenter' && (<>
+            <div style={{background:'linear-gradient(135deg,#78350f,#d97706)', borderRadius:16, padding:'14px 16px', color:'#fff', boxShadow:'0 8px 20px rgba(120,53,15,0.2)'}}>
+              <p style={{margin:0, fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:0.5, color:'#fde68a'}}>🪚 Carpentry & Fixtures</p>
+              <h3 style={{margin:'4px 0 2px', fontSize:20, fontWeight:900}}>Job Work Queue</h3>
+              <p style={{margin:0, fontSize:12, color:'#fef3c7', fontWeight:700}}>{carpenterJobs.filter(j=>j.status==='Open').length} open jobs · {carpenterJobs.filter(j=>j.priority==='High').length} urgent</p>
+            </div>
+
+            <div style={{display:'flex', flexDirection:'column', gap:12}}>
+              {carpenterJobs.map(j => (
+                <div key={j.id} style={{background:'#fff', border:`1px solid ${j.priority==='High' ? '#fde68a' : '#e2e8f0'}`, borderRadius:14, padding:16, boxShadow:'0 4px 14px rgba(15,23,42,0.04)'}}>
+                  <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:8}}>
+                    <div style={{flex:1}}>
+                      <div style={{display:'flex', alignItems:'center', gap:6, marginBottom:4}}>
+                        <span style={{fontSize:14, fontWeight:900, color:C.primary}}>Room {j.room}</span>
+                        <span style={{fontSize:11, fontWeight:800, padding:'2px 8px', borderRadius:20, background: j.priority==='High'?'#fef3c7':'#f1f5f9', color: j.priority==='High'?'#92400e':'#475569'}}>{j.priority}</span>
+                      </div>
+                      <p style={{margin:0, fontSize:13, fontWeight:800, color:C.text}}>{j.issue}</p>
+                      <p style={{margin:'3px 0 0', fontSize:11, color:C.muted}}>👤 {j.student} · 🕐 {j.date}</p>
+                      {j.note && <p style={{margin:'4px 0 0', fontSize:11, color:'#78350f', fontWeight:700, background:'#fef3c7', padding:'4px 8px', borderRadius:6}}>📝 {j.note}</p>}
+                    </div>
+                    <span style={{fontSize:11, fontWeight:800, padding:'4px 10px', borderRadius:20, background: j.status==='Resolved'?'#dcfce7':j.status==='In Progress'?'#fef3c7':'#fefce8', color: j.status==='Resolved'?'#166534':j.status==='In Progress'?'#92400e':'#78350f'}}>{j.status}</span>
+                  </div>
+                  {j.status !== 'Resolved' && (
+                    <button onClick={()=>setCarpenterJobs(prev=>prev.map(x=>x.id===j.id?{...x,status:x.status==='Open'?'In Progress':'Resolved'}:x))} style={{width:'100%', padding:'9px 0', borderRadius:10, border:'none', background: j.status==='Open'?'#fef3c7':'#dcfce7', color: j.status==='Open'?'#78350f':'#166534', fontSize:12, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}>
+                      {j.status==='Open' ? '▶ Start Job' : '✓ Mark Resolved'}
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Material Request */}
+            <button onClick={()=>setShowDemand(true)} style={{width:'100%', padding:14, background:'#fef3c7', border:'1px solid #fde68a', borderRadius:14, fontSize:13, fontWeight:900, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:8, color:'#78350f', fontFamily:'inherit', boxShadow:'0 3px 10px rgba(120,53,15,0.1)'}}>
+              <span className="material-symbols-outlined" style={{fontSize:18}}>add_shopping_cart</span>
+              Request Materials / Tools
+            </button>
+          </>)}
+
+          {/* SALES MANAGER DASHBOARD */}
+          {staffRole === 'Sales Manager' && (<>
+            {/* Tab nav */}
+            <div style={{display:'flex', background:'#fff', borderRadius:12, padding:4, border:'1px solid #e2e8f0', boxShadow:'0 2px 8px rgba(15,23,42,0.04)'}}>
+              <button onClick={()=>setSalesTab('leads')} style={{flex:1, padding:'10px 0', borderRadius:10, border:'none', background: salesTab==='leads' ? '#dcfce7' : 'transparent', color: salesTab==='leads' ? '#166534' : C.muted, fontSize:13, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}>
+                📞 Leads ({enquiries.length})
+              </button>
+              <button onClick={()=>setSalesTab('rooms')} style={{flex:1, padding:'10px 0', borderRadius:10, border:'none', background: salesTab==='rooms' ? '#eef2ff' : 'transparent', color: salesTab==='rooms' ? '#4338ca' : C.muted, fontSize:13, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}>
+                🛏 Rooms ({rooms.length})
+              </button>
+            </div>
+
+            {/* LEADS TAB */}
+            {salesTab === 'leads' && (<>
+              {/* Pipeline summary */}
+              <div style={{display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:10}}>
+                {[
+                  {l:'New', v:enquiries.filter(e=>e.status.includes('New')).length, bg:'#fee2e2', c:'#b91c1c'},
+                  {l:'Contacted', v:enquiries.filter(e=>e.status.includes('Contacted')).length, bg:'#fef3c7', c:'#92400e'},
+                  {l:'Converted', v:enquiries.filter(e=>e.status.includes('Closed')).length, bg:'#dcfce7', c:'#166534'},
+                ].map(s => (
+                  <div key={s.l} style={{background:s.bg, borderRadius:14, border:'1px solid #e2e8f0', padding:12, textAlign:'center', boxShadow:'0 2px 8px rgba(15,23,42,0.04)'}}>
+                    <p style={{fontSize:26, fontWeight:900, margin:0, color:s.c}}>{s.v}</p>
+                    <p style={{fontSize:11, fontWeight:800, margin:'2px 0 0', color:s.c, textTransform:'uppercase'}}>{s.l}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Lead cards */}
+              <div style={{display:'flex', flexDirection:'column', gap:12}}>
+                {enquiries.map(e => (
+                  <div key={e.id} style={{background:'#fff', border:'1px solid #e2e8f0', borderRadius:14, padding:14, boxShadow:'0 4px 14px rgba(15,23,42,0.04)'}}>
+                    <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:8}}>
+                      <div>
+                        <h4 style={{margin:0, fontSize:15, fontWeight:900, color:C.text}}>{e.name}</h4>
+                        <p style={{margin:'2px 0 0', fontSize:12, color:C.muted}}>{e.phone}</p>
+                      </div>
+                      <span style={{fontSize:11, fontWeight:800, padding:'4px 10px', borderRadius:20, background: e.status.includes('Closed')?'#dcfce7':e.status.includes('Contacted')?'#fef3c7':'#fee2e2', color: e.status.includes('Closed')?'#166534':e.status.includes('Contacted')?'#92400e':'#b91c1c'}}>{e.status}</span>
+                    </div>
+                    <div style={{display:'flex', gap:6, flexWrap:'wrap', marginBottom:8}}>
+                      <Chip label={e.requirement} color="#4338ca" bg="#eef2ff"/>
+                      <Chip label={e.budget} color="#166534" bg="#dcfce7"/>
+                      <Chip label={e.source} color="#475569" bg="#f1f5f9"/>
+                    </div>
+                    <p style={{margin:'0 0 10px', fontSize:12, color:'#334155', background:'#f8fafc', padding:'8px 10px', borderRadius:8, border:'1px solid #e2e8f0'}}>"{e.text}"</p>
+                    <div style={{display:'flex', gap:8}}>
+                      <a href={`tel:${e.phone}`} style={{flex:1, textAlign:'center', padding:'9px 0', background:'#dcfce7', border:'1px solid #86efac', borderRadius:10, color:'#166534', fontSize:12, fontWeight:800, textDecoration:'none'}}>
+                        📞 Call
+                      </a>
+                      <button onClick={()=>setEnquiries(prev=>prev.map(x=>x.id===e.id?{...x,status:x.status.includes('Contacted')?'Closed 🟢':'Contacted 🟡'}:x))} style={{flex:2, padding:'9px 0', background:'#eef2ff', border:'1px solid #c7d2fe', borderRadius:10, color:'#4338ca', fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit'}}>
+                        {e.status.includes('Contacted') ? '✓ Mark Converted' : '📲 Mark Contacted'}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>)}
+
+            {/* ROOMS TAB */}
+            {salesTab === 'rooms' && (<>
+              <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginBottom:4}}>
+                <div style={{background:'#dcfce7', borderRadius:14, border:'1px solid #86efac', padding:14, textAlign:'center'}}>
+                  <p style={{fontSize:26, fontWeight:900, margin:0, color:'#166534'}}>{rooms.filter(r=>r.status==='Occupied').length}</p>
+                  <p style={{fontSize:11, fontWeight:800, margin:'2px 0 0', color:'#166534', textTransform:'uppercase'}}>Occupied</p>
+                </div>
+                <div style={{background:'#fef3c7', borderRadius:14, border:'1px solid #fde68a', padding:14, textAlign:'center'}}>
+                  <p style={{fontSize:26, fontWeight:900, margin:0, color:'#92400e'}}>{rooms.filter(r=>r.status==='Vacant').length}</p>
+                  <p style={{fontSize:11, fontWeight:800, margin:'2px 0 0', color:'#92400e', textTransform:'uppercase'}}>Vacant — Available</p>
+                </div>
+              </div>
+
+              {rooms.map(r => (
+                <div key={r.id} style={{background:'#fff', border:`1px solid ${r.status==='Vacant'?'#fde68a':'#e2e8f0'}`, borderRadius:14, padding:14, display:'flex', justifyContent:'space-between', alignItems:'center', boxShadow:'0 3px 10px rgba(15,23,42,0.04)'}}>
+                  <div>
+                    <div style={{display:'flex', alignItems:'center', gap:6, marginBottom:4}}>
+                      <span style={{fontSize:15, fontWeight:900, color:C.text}}>Room {r.number}</span>
+                      <Chip label={r.type} color="#4338ca" bg="#eef2ff"/>
+                      <span style={{fontSize:11, fontWeight:800, padding:'2px 8px', borderRadius:20, background: r.status==='Vacant'?'#fef3c7':'#dcfce7', color: r.status==='Vacant'?'#92400e':'#166534'}}>{r.status}</span>
+                    </div>
+                    <p style={{margin:0, fontSize:11, color:C.muted}}>{r.status==='Occupied'?r.student:'Available now'} · Rent: {r.rent}</p>
+                  </div>
+                  {r.status === 'Vacant' && (
+                    <button style={{padding:'8px 12px', borderRadius:10, border:'none', background:'#fef3c7', color:'#92400e', fontSize:11, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}>
+                      Share
+                    </button>
+                  )}
+                </div>
+              ))}
+            </>)}
+          </>)}
+
+          {/* MANAGER OPERATIONS OVERVIEW */}
+          {staffRole === 'Manager' && (<>
+            {/* Command Center Header */}
+            <div style={{background:'linear-gradient(135deg,#312e81,#818cf8)', borderRadius:16, padding:'14px 16px', color:'#fff', boxShadow:'0 8px 20px rgba(49,46,129,0.25)'}}>
+              <p style={{margin:0, fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:0.5, color:'#c7d2fe'}}>🏢 Command Center</p>
+              <h3 style={{margin:'4px 0 2px', fontSize:20, fontWeight:900}}>Operations Overview</h3>
+              <p style={{margin:0, fontSize:12, color:'#a5b4fc', fontWeight:700}}>Febebo PG — All departments</p>
+            </div>
+
+            {/* Department KPI Grid */}
+            <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:10}}>
+              {[
+                {label:'Staff On Duty', value:'12 / 15', icon:'groups', bg:'#eef2ff', color:'#4338ca', sub:'3 on leave'},
+                {label:'Open Tickets', value: String(tickets.filter(t=>t.status!=='Resolved').length + plumbingJobs.filter(j=>j.status==='Open').length + electricalJobs.filter(j=>j.status==='Open').length + carpenterJobs.filter(j=>j.status==='Open').length), icon:'confirmation_number', bg:'#fee2e2', color:'#b91c1c', sub:'Across all depts'},
+                {label:'Vacant Rooms', value: String(rooms.filter(r=>r.status==='Vacant').length), icon:'meeting_room', bg:'#fef3c7', color:'#92400e', sub:'Fill immediately'},
+                {label:'Pending POs', value: String(demands.filter(d=>d.status==='Pending').length), icon:'pending_actions', bg:'#f0fdf4', color:'#166534', sub:'Supplier action needed'},
+                {label:'New Leads', value: String(enquiries.filter(e=>e.status.includes('New')).length), icon:'contact_phone', bg:'#ecfdf5', color:'#065f46', sub:'Room enquiries'},
+                {label:'Mess Covers', value:'28 / 30', icon:'restaurant', bg:'#ede9fe', color:'#7c3aed', sub:'Today lunch'},
+              ].map(k => (
+                <div key={k.label} style={{background:k.bg, borderRadius:14, border:'1px solid #e2e8f0', padding:14, boxShadow:'0 3px 10px rgba(15,23,42,0.04)'}}>
+                  <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
+                    <div>
+                      <p style={{fontSize:11, fontWeight:800, color:k.color, margin:0, textTransform:'uppercase', letterSpacing:0.3}}>{k.label}</p>
+                      <p style={{fontSize:24, fontWeight:900, color:k.color, margin:'4px 0 2px'}}>{k.value}</p>
+                      <p style={{fontSize:10, fontWeight:700, color:k.color, margin:0, opacity:0.7}}>{k.sub}</p>
+                    </div>
+                    <span className="material-symbols-outlined" style={{fontSize:22, color:k.color, opacity:0.5}}>{k.icon}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Open Issues Summary by Department */}
+            <div style={{background:'#fff', borderRadius:16, border:'1px solid #e2e8f0', padding:16, boxShadow:'0 4px 16px rgba(15,23,42,0.05)'}}>
+              <p style={{margin:'0 0 12px', fontSize:14, fontWeight:900, color:C.text}}>🔎 Open Issues by Department</p>
+              {[
+                {dept:'Maintenance', count: tickets.filter(t=>t.status!=='Resolved').length, icon:'build', high: tickets.filter(t=>t.priority==='High'&&t.status!=='Resolved').length, color:'#fda4af', bg:'#fff1f2'},
+                {dept:'Plumbing', count: plumbingJobs.filter(j=>j.status==='Open').length, icon:'plumbing', high: plumbingJobs.filter(j=>j.priority==='High'&&j.status==='Open').length, color:'#60a5fa', bg:'#eff6ff'},
+                {dept:'Electrical', count: electricalJobs.filter(j=>j.status==='Open').length, icon:'bolt', high: electricalJobs.filter(j=>j.priority==='High'&&j.status==='Open').length, color:'#facc15', bg:'#fefce8'},
+                {dept:'Carpentry', count: carpenterJobs.filter(j=>j.status==='Open').length, icon:'carpenter', high: carpenterJobs.filter(j=>j.priority==='High'&&j.status==='Open').length, color:'#d97706', bg:'#fef3c7'},
+              ].map(d => (
+                <div key={d.dept} style={{background:d.bg, border:`1px solid ${d.color}40`, borderRadius:12, padding:'10px 14px', marginBottom:8, display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                  <div style={{display:'flex', alignItems:'center', gap:10}}>
+                    <span className="material-symbols-outlined" style={{fontSize:18, color:d.color}}>{d.icon}</span>
+                    <div>
+                      <p style={{margin:0, fontSize:13, fontWeight:800, color:C.text}}>{d.dept}</p>
+                      {d.high > 0 && <p style={{margin:0, fontSize:11, color:'#b91c1c', fontWeight:700}}>{d.high} High Priority ⚠️</p>}
+                    </div>
+                  </div>
+                  <span style={{fontSize:20, fontWeight:900, color:d.count>0?'#b91c1c':'#166534'}}>{d.count}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Attendance Quick View */}
+            <div style={{background:'#fff', borderRadius:16, border:'1px solid #e2e8f0', padding:16, boxShadow:'0 4px 16px rgba(15,23,42,0.05)'}}>
+              <p style={{margin:'0 0 12px', fontSize:14, fontWeight:900, color:C.text}}>👥 Staff On Duty Today</p>
+              {['Cook (2)', 'Cleaner (3)', 'Maintenance (2)', 'Security (2)', 'Helper (3)'].map(s => (
+                <div key={s} style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'8px 0', borderBottom:'1px solid #f1f5f9'}}>
+                  <span style={{fontSize:13, fontWeight:700, color:C.text}}>{s}</span>
+                  <Chip label="On Duty ✅" color="#166534" bg="#dcfce7"/>
+                </div>
+              ))}
+              <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'8px 0'}}>
+                <span style={{fontSize:13, fontWeight:700, color:C.text}}>HR (1)</span>
+                <Chip label="On Leave" color="#b91c1c" bg="#fee2e2"/>
+              </div>
+            </div>
           </>)}
 
           {/* HR DASHBOARD - HIRING & ENQUIRIES */}
