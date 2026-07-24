@@ -680,19 +680,6 @@ export default function StaffApp(){
       {view === 'home' && (
         <div style={{padding:'16px 14px', paddingBottom:96}}>
 
-          {/* Quick Stats Grid */}
-          <div style={{display:'grid', gridTemplateColumns:'repeat(4, 1fr)', gap:8, marginBottom:20}}>
-            {stats.map((s, i) => (
-              <div key={i} style={{background:'#fff', borderRadius:16, padding:'12px 6px', textAlign:'center', border:`1px solid ${C.border}`, boxShadow:'0 4px 12px rgba(120, 104, 10, 0.04)'}}>
-                <div style={{width:32, height:32, borderRadius:50, background:meta.accentBg, display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 6px'}}>
-                  <span className="material-symbols-outlined" style={{fontSize:18, color:meta.accent}}>{s.icon}</span>
-                </div>
-                <p style={{margin:0, fontSize:18, fontWeight:900, color:C.text}}>{s.v}</p>
-                <p style={{margin:0, fontSize:9, fontWeight:800, color:C.muted, lineHeight:1.2, textTransform:'uppercase', letterSpacing:0.3}}>{s.l}</p>
-              </div>
-            ))}
-          </div>
-
           {/* Modules Grid */}
           <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12}}>
             <p style={{margin:0, fontSize:15, fontWeight:900, color:C.text}}>Modules</p>
