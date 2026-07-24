@@ -701,24 +701,21 @@ export default function StaffApp(){
 
           <div style={{display:'grid', gridTemplateColumns:'repeat(4, 1fr)', gap:10, marginBottom:20}}>
             {[
-              {id:'work',      label:'My Work',        sub:staffRole,          icon:'home_work',              bg:'#eef2ff', c:'#6366f1'},
-              {id:'inventory', label:'Inventory',      sub:'Petty Cash',       icon:'account_balance_wallet', bg:'#fdf2f8', c:'#ec4899'},
-              {id:'inout',     label:'Attendance',     sub:'Punch In/Out',     icon:'schedule',               bg:'#f0fdf4', c:'#10b981'},
-              {id:'salary',    label:'Salary',         sub:'Statement',        icon:'payments',               bg:'#fefce8', c:'#eab308'},
-              {id:'items',     label:'Item List',      sub:'Store Stock',      icon:'inventory_2',            bg:'#fff7ed', c:'#f97316'},
-              {id:'chat',      label:'Chat',           sub:'Messages',         icon:'forum',                  bg:'#f0f9ff', c:'#0ea5e9'},
-              {id:'reports',   label:'Reports',        sub:'Work Logs',        icon:'assessment',             bg:'#fff1f2', c:'#f43f5e'},
-              {id:'requests',  label:'Requests',       sub:'Leave/Advance',    icon:'approval',               bg:'#f5f3ff', c:'#8b5cf6'},
+              {id:'work',      label:'My Work',        icon:'home_work',              bg:'#eef2ff', c:'#6366f1'},
+              {id:'inventory', label:'Inventory',      icon:'account_balance_wallet', bg:'#fdf2f8', c:'#ec4899'},
+              {id:'inout',     label:'Attendance',     icon:'schedule',               bg:'#f0fdf4', c:'#10b981'},
+              {id:'salary',    label:'Salary',         icon:'payments',               bg:'#fefce8', c:'#eab308'},
+              {id:'items',     label:'Item List',      icon:'inventory_2',            bg:'#fff7ed', c:'#f97316'},
+              {id:'chat',      label:'Chat',           icon:'forum',                  bg:'#f0f9ff', c:'#0ea5e9'},
+              {id:'reports',   label:'Reports',        icon:'assessment',             bg:'#fff1f2', c:'#f43f5e'},
+              {id:'requests',  label:'Requests',       icon:'approval',               bg:'#f5f3ff', c:'#8b5cf6'},
             ].map(m => (
               <button key={m.id} onClick={() => setView(m.id)}
-                style={{display:'flex', flexDirection:'column', alignItems:'center', gap:8, background:'#fff', border:`1px solid ${C.border}`, borderRadius:20, padding:'14px 4px 10px', cursor:'pointer', boxShadow:'0 4px 12px rgba(120, 104, 10, 0.04)', minHeight:94, outline:'none', transition:'all 0.15s'}}>
+                style={{display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:6, background:'#fff', border:`1px solid ${C.border}`, borderRadius:20, padding:'12px 4px 10px', cursor:'pointer', boxShadow:'0 4px 12px rgba(120, 104, 10, 0.04)', minHeight:88, outline:'none', transition:'all 0.15s'}}>
                 <div style={{width:44, height:44, borderRadius:14, background:m.bg, display:'flex', alignItems:'center', justifyContent:'center'}}>
                   <span className="material-symbols-outlined" style={{fontSize:22, color:m.c}}>{m.icon}</span>
                 </div>
-                <div style={{display:'flex', flexDirection:'column', alignItems:'center', gap:1}}>
-                  <span style={{fontSize:11.5, fontWeight:800, color:C.text, textAlign:'center', lineHeight:1.1}}>{m.label}</span>
-                  <span style={{fontSize:8.5, fontWeight:700, color:C.muted, textAlign:'center'}}>{m.sub}</span>
-                </div>
+                <span style={{fontSize:11.5, fontWeight:800, color:C.text, textAlign:'center', lineHeight:1.1}}>{m.label}</span>
               </button>
             ))}
           </div>
