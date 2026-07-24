@@ -1341,27 +1341,32 @@ export default function StaffApp(){
             {/* ROOM ENQUIRIES TAB */}
             {hrTab === 'enquiries' && (
               <div style={{display:'flex', flexDirection:'column', gap:14}}>
-                {/* Enquiries Header Stats */}
-                <div style={{background:'#0f172a', borderRadius:16, border: '1px solid #e2e8f0', padding:'14px 16px', color:'#fff', boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
+                {/* Enquiries Header Stats - Minimalist Blended Header */}
+                <div style={{background:'#eef2ff', borderRadius:16, border: '1px solid #c7d2fe', padding:'16px', color:'#0f172a', boxShadow: '0 4px 16px rgba(99,102,241,0.08)'}}>
                   <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
                     <div>
-                      <p style={{margin:0, fontSize:11, fontWeight:800, textTransform:'uppercase', color:'#fde047'}}>🏠 Room Enquiries & Leads</p>
-                      <h3 style={{margin:'2px 0 0', fontSize:20, fontWeight:900}}>Tenant Leads Management</h3>
+                      <p style={{margin:0, fontSize:11, fontWeight:800, textTransform:'uppercase', color:'#4f46e5', letterSpacing:0.5}}>🏠 Room Enquiries & Leads</p>
+                      <h3 style={{margin:'2px 0 0', fontSize:19, fontWeight:900, color:'#0f172a'}}>Tenant Leads Management</h3>
                     </div>
-                    <Chip label={`${enquiries.length} Leads`} color="#000" bg="#fde047"/>
+                    <Chip label={`${enquiries.length} Active Leads`} color="#4f46e5" bg="#ffffff"/>
                   </div>
                 </div>
 
-                {/* Enquiries List matching Screenshot 3 */}
+                {/* Enquiries List */}
                 <div style={{display:'flex', flexDirection:'column', gap:12}}>
                   {enquiries.map(e => (
-                    <div key={e.id} style={{background:'#fff', border: '1px solid #e2e8f0', borderRadius:14, padding:14, boxShadow: '0 3px 12px rgba(15,23,42,0.05)'}}>
-                      <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:6}}>
+                    <div key={e.id} style={{background:'#fff', border: '1px solid #e2e8f0', borderRadius:16, padding:16, boxShadow: '0 4px 14px rgba(15,23,42,0.04)'}}>
+                      <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:8}}>
                         <div>
-                          <h4 style={{margin:0, fontSize:16, fontWeight:900, color:'#000'}}>{e.name}</h4>
-                          <p style={{margin:'2px 0 0', fontSize:12, fontWeight:800, color:C.muted}}>{e.phone}</p>
+                          <h4 style={{margin:0, fontSize:15, fontWeight:900, color:'#0f172a'}}>{e.name}</h4>
+                          <p style={{margin:'2px 0 0', fontSize:12, fontWeight:700, color:C.muted}}>{e.phone}</p>
                         </div>
-                        <span style={{fontSize:11, fontWeight:800, padding:'3px 8px', borderRadius:8, border:'1.5px solid #000', background: e.status.includes('Closed')?'#bbf7d0':e.status.includes('Contacted')?'#fde047':'#fecaca', color:'#000'}}>
+                        <span style={{
+                          fontSize:11, fontWeight:800, padding:'4px 10px', borderRadius:20,
+                          background: e.status.includes('Closed')?'#dcfce7':e.status.includes('Contacted')?'#fef3c7':'#fee2e2',
+                          color: e.status.includes('Closed')?'#15803d':e.status.includes('Contacted')?'#b45309':'#b91c1c',
+                          border: `1px solid ${e.status.includes('Closed')?'#86efac':e.status.includes('Contacted')?'#fde68a':'#fca5a5'}`
+                        }}>
                           {e.status}
                         </span>
                       </div>
