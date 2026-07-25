@@ -906,11 +906,11 @@ export default function StaffApp(){
             <div style={{position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', zIndex:5, pointerEvents:'none'}}>
               <p style={{fontFamily:"'Hanken Grotesk',sans-serif", fontSize:24, fontWeight:900, color: '#1a1500', margin:0, letterSpacing:-.5, pointerEvents:'auto'}}>febebo</p>
             </div>
-            <button onClick={()=>setView('profile_view')} style={{background: '#fefce8', border: '1.5px solid #e8df9a', borderRadius:12, width:38, height:38, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', position:'relative', zIndex:10, overflow:'hidden', padding:0}}>
+            <button onClick={()=>setView('profile_view')} style={{background: '#fefce8', border: '1.5px solid #e8df9a', borderRadius:50, width:44, height:44, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', position:'relative', zIndex:10, overflow:'hidden', padding:0}}>
               {profilePic ? (
                 <img src={profilePic} alt="Profile" style={{width:'100%', height:'100%', objectFit:'cover'}} />
               ) : (
-                <span className="material-symbols-outlined" style={{fontSize:20, color: '#ca8a04'}}>person</span>
+                <span className="material-symbols-outlined" style={{fontSize:24, color: '#ca8a04'}}>person</span>
               )}
             </button>
           </div>
