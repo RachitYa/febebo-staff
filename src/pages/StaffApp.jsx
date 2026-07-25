@@ -2573,310 +2573,64 @@ export default function StaffApp(){
       {/* ══════════════════════════════════════════════════════════════════════
           SALARY
          ══════════════════════════════════════════════════════════════════════ */}
-      {view === 'salary' && (() => {
-        const salaryMonths = [
-          {
-            m:'July 2026', v:'₹18,500', d:'Due 1 Aug', txn:'TXN-PENDING', base:16000,
-            overtime:2500, overtimeHrs:15, bonus:1000, bonusReason:'July Performance Target Met',
-            advance:-1000, advanceDate:'15 Jul', tds:0, lateDeduction:0,
-            bank:'HDFC Bank (****4821)',
-            events:[
-              {day:1, type:'credit', label:'Base Salary Advance', amt:5000},
-              {day:5, type:'debit', label:'Advance Deduction', amt:1000},
-              {day:10, type:'credit', label:'Overtime Pay (5 hrs)', amt:833},
-              {day:15, type:'credit', label:'Overtime Pay (5 hrs)', amt:833},
-              {day:20, type:'credit', label:'Overtime Pay (5 hrs)', amt:834},
-              {day:25, type:'credit', label:'Performance Bonus', amt:1000},
-            ]
-          },
-          {
-            m:'June 2026', v:'₹17,800', d:'Paid 1 Jul', txn:'TXN-998231405', base:16000,
-            overtime:1800, overtimeHrs:12, bonus:0, bonusReason:'',
-            advance:0, advanceDate:'', tds:0, lateDeduction:0,
-            bank:'HDFC Bank (****4821)',
-            events:[
-              {day:1, type:'credit', label:'Base Salary', amt:16000},
-              {day:8, type:'credit', label:'Overtime Pay (6 hrs)', amt:900},
-              {day:22, type:'credit', label:'Overtime Pay (6 hrs)', amt:900},
-            ]
-          },
-          {
-            m:'May 2026', v:'₹16,500', d:'Paid 1 Jun', txn:'TXN-881290312', base:16000,
-            overtime:1000, overtimeHrs:7, bonus:500, bonusReason:'Best Staff Award - May',
-            advance:-1000, advanceDate:'10 May', tds:0, lateDeduction:0,
-            bank:'HDFC Bank (****4821)',
-            events:[
-              {day:1, type:'credit', label:'Base Salary', amt:16000},
-              {day:10, type:'debit', label:'Salary Advance Deduction', amt:1000},
-              {day:14, type:'credit', label:'Overtime Pay (7 hrs)', amt:1000},
-              {day:28, type:'credit', label:'Performance Bonus', amt:500},
-            ]
-          }
-        ];
-        const cur = salaryMonths[0];
-        const gross = cur.base + cur.overtime + cur.bonus;
-        const deds = (cur.advance < 0 ? cur.advance : 0) + (cur.tds < 0 ? cur.tds : 0) + (cur.lateDeduction < 0 ? cur.lateDeduction : 0);
-        const net = gross + deds;
-
-        return (
+      {view === 'salary' && (
         <div style={{padding:'14px 14px 32px',display:'flex',flexDirection:'column',gap:14}}>
-
-          {/* Hero net card */}
-          <div style={{background:'linear-gradient(135deg,#1a1500,#3d3200)', borderRadius:20, padding:'22px 20px', color:'#fff', position:'relative', overflow:'hidden'}}>
-            <div style={{position:'absolute', top:-20, right:-20, width:100, height:100, borderRadius:50, background:'rgba(253,224,71,0.08)'}}/>
-            <div style={{position:'absolute', bottom:-30, right:10, width:140, height:140, borderRadius:50, background:'rgba(253,224,71,0.05)'}}/>
-            <p style={{margin:0, fontSize:10.5, color:'#fde047', fontWeight:800, textTransform:'uppercase', letterSpacing:1}}>July 2026 · Net Estimated</p>
-            <h2 style={{margin:'8px 0 4px', fontSize:40, fontWeight:900, letterSpacing:-1.5, color:'#fde047'}}>₹{net.toLocaleString()}</h2>
-            <p style={{margin:'4px 0 0', fontSize:12, fontWeight:700, color:'rgba(253,224,71,0.7)'}}>Pay Date: 1 Aug 2026 · On Track ✓</p>
-            <div style={{display:'flex', gap:10, marginTop:16}}>
-              {[
-                {l:'Gross', v:'₹'+gross.toLocaleString(), c:'#4ade80'},
-                {l:'Deductions', v:'₹'+Math.abs(deds).toLocaleString(), c:'#f87171'},
-                {l:'Net', v:'₹'+net.toLocaleString(), c:'#fde047'},
-              ].map(s=>(
-                <div key={s.l} style={{flex:1, background:'rgba(255,255,255,0.07)', borderRadius:12, padding:'10px 12px', textAlign:'center'}}>
-                  <p style={{margin:0, fontSize:10, color:'rgba(255,255,255,0.5)', fontWeight:700, textTransform:'uppercase'}}>{s.l}</p>
-                  <p style={{margin:'4px 0 0', fontSize:14, fontWeight:900, color:s.c}}>{s.v}</p>
-                </div>
-              ))}
-            </div>
+          {/* Main Card */}
+          <div style={{background: C.primary, borderRadius:18, border: '1px solid #e2e8f0', padding:'20px 18px', color:'#000', boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
+            <p style={{margin:0, fontSize:11, color:'#000', fontWeight:800, textTransform:'uppercase', letterSpacing:.5}}>July 2026 ┬╖ Net Estimated</p>
+            <h2 style={{margin:'6px 0 2px', fontSize:36, fontWeight:900, letterSpacing:-1}}>Γé╣18,500</h2>
+            <p style={{margin:'4px 0 0', fontSize:12, fontWeight:700, color:'#000'}}>Γåæ Pay date: 1 Aug 2026 ┬╖ On Track</p>
           </div>
 
-          {/* Earnings section */}
-          <div style={{background:'#fff', borderRadius:18, border:'1.5px solid #f1f5f9', padding:18, boxShadow:'0 4px 16px rgba(0,0,0,0.03)'}}>
-            <div style={{display:'flex', alignItems:'center', gap:8, marginBottom:14}}>
-              <div style={{width:32, height:32, borderRadius:10, background:'#dcfce7', display:'flex', alignItems:'center', justifyContent:'center'}}>
-                <span className="material-symbols-outlined" style={{fontSize:18, color:'#15803d'}}>trending_up</span>
-              </div>
-              <p style={{margin:0, fontSize:14, fontWeight:900, color:'#1a1500'}}>Earnings</p>
-            </div>
-
+          {/* Breakdown Card */}
+          <div style={{background:'#fff', borderRadius:18, border: '1px solid #e2e8f0', padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
+            <p style={{margin:'0 0 12px', fontSize:15, fontWeight:800, color:'#000'}}>≡ƒÆ░ Salary Breakdown</p>
             {[
-              {icon:'home_work', label:'Base Salary', sub:'Fixed monthly pay', val:cur.base, color:'#1a1500', bg:'#f8fafc', isGain:true},
-              {icon:'schedule', label:'Overtime Pay', sub:cur.overtimeHrs+' hrs worked · ₹'+(cur.overtime/cur.overtimeHrs).toFixed(0)+'/hr', val:cur.overtime, color:'#15803d', bg:'#f0fdf4', isGain:true},
-              {icon:'star', label:'Performance Bonus', sub:cur.bonusReason||'Monthly bonus', val:cur.bonus, color:'#0369a1', bg:'#eff6ff', isGain:true},
-            ].filter(r=>r.val>0).map(r=>(
-              <div key={r.label} style={{display:'flex', alignItems:'center', justifyContent:'space-between', padding:'12px 14px', background:r.bg, borderRadius:14, marginBottom:8}}>
-                <div style={{display:'flex', alignItems:'center', gap:10}}>
-                  <span className="material-symbols-outlined" style={{fontSize:18, color:r.color}}>{r.icon}</span>
-                  <div>
-                    <p style={{margin:0, fontSize:13.5, fontWeight:800, color:'#1a1500'}}>{r.label}</p>
-                    <p style={{margin:'1px 0 0', fontSize:11, color:'#64748b', fontWeight:600}}>{r.sub}</p>
-                  </div>
-                </div>
-                <span style={{fontSize:15, fontWeight:900, color:r.color}}>+₹{r.val.toLocaleString()}</span>
+              {l:'Base Monthly', v:'Γé╣16,000', c:'#000'},
+              {l:'Overtime (15 hrs)', v:'+Γé╣2,500', c:'#15803d'},
+              {l:'Performance Bonus', v:'+Γé╣1,000', c:'#15803d'},
+              {l:'Advance Deduction', v:'ΓêÆΓé╣1,000', c:'#b91c1c'}
+            ].map(row=>(
+              <div key={row.l} style={{display:'flex', justifyContent:'space-between', padding:'10px 0', borderBottom: '1px solid #e2e8f0'}}>
+                <span style={{fontSize:13, fontWeight:600, color:'#333'}}>{row.l}</span>
+                <span style={{fontSize:14, fontWeight:900, color:row.c}}>{row.v}</span>
               </div>
             ))}
-
-            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'10px 14px', background:'#f0fdf4', borderRadius:12, border:'1px solid #bbf7d0', marginTop:4}}>
-              <span style={{fontSize:13, fontWeight:800, color:'#15803d'}}>Total Gross</span>
-              <span style={{fontSize:16, fontWeight:900, color:'#15803d'}}>₹{gross.toLocaleString()}</span>
+            <div style={{display:'flex', justifyContent:'space-between', padding:'12px 0 0', alignItems:'center'}}>
+              <span style={{fontSize:16, fontWeight:900, color:'#000'}}>Net Payable</span>
+              <span style={{fontSize:22, fontWeight:900, color:'#78680a', background:'#fefce8', padding:'2px 8px', borderRadius:8, border: '1px solid #e8df9a'}}>Γé╣18,500</span>
             </div>
           </div>
 
-          {/* Deductions section */}
-          {deds < 0 && (
-          <div style={{background:'#fff', borderRadius:18, border:'1.5px solid #f1f5f9', padding:18, boxShadow:'0 4px 16px rgba(0,0,0,0.03)'}}>
-            <div style={{display:'flex', alignItems:'center', gap:8, marginBottom:14}}>
-              <div style={{width:32, height:32, borderRadius:10, background:'#fee2e2', display:'flex', alignItems:'center', justifyContent:'center'}}>
-                <span className="material-symbols-outlined" style={{fontSize:18, color:'#b91c1c'}}>trending_down</span>
-              </div>
-              <p style={{margin:0, fontSize:14, fontWeight:900, color:'#1a1500'}}>Deductions</p>
-            </div>
+          {/* History Card */}
+          <div style={{background:'#fff', borderRadius:18, border: '1px solid #e2e8f0', padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
+            <p style={{margin:'0 0 4px', fontSize:15, fontWeight:800, color:'#000'}}>≡ƒôä Pay Slip History</p>
+            <p style={{margin:'0 0 14px', fontSize:12, fontWeight:600, color:C.muted}}>Click any month to view full details or share</p>
 
-            {cur.advance < 0 && (
-              <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', padding:'12px 14px', background:'#fff5f5', borderRadius:14, marginBottom:8, border:'1px solid #fecaca'}}>
-                <div style={{display:'flex', alignItems:'center', gap:10}}>
-                  <span className="material-symbols-outlined" style={{fontSize:18, color:'#b91c1c'}}>account_balance_wallet</span>
-                  <div>
-                    <p style={{margin:0, fontSize:13.5, fontWeight:800, color:'#1a1500'}}>Advance Deduction</p>
-                    <p style={{margin:'1px 0 0', fontSize:11, color:'#64748b', fontWeight:600}}>Advance taken on {cur.advanceDate}</p>
-                  </div>
-                </div>
-                <span style={{fontSize:15, fontWeight:900, color:'#b91c1c'}}>-₹{Math.abs(cur.advance).toLocaleString()}</span>
-              </div>
-            )}
-            {cur.tds < 0 && (
-              <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', padding:'12px 14px', background:'#fff5f5', borderRadius:14, marginBottom:8, border:'1px solid #fecaca'}}>
-                <div style={{display:'flex', alignItems:'center', gap:10}}>
-                  <span className="material-symbols-outlined" style={{fontSize:18, color:'#b91c1c'}}>receipt_long</span>
-                  <div>
-                    <p style={{margin:0, fontSize:13.5, fontWeight:800, color:'#1a1500'}}>TDS / Tax Deduction</p>
-                  </div>
-                </div>
-                <span style={{fontSize:15, fontWeight:900, color:'#b91c1c'}}>-₹{Math.abs(cur.tds).toLocaleString()}</span>
-              </div>
-            )}
-            {cur.lateDeduction < 0 && (
-              <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', padding:'12px 14px', background:'#fff5f5', borderRadius:14, marginBottom:8, border:'1px solid #fecaca'}}>
-                <div style={{display:'flex', alignItems:'center', gap:10}}>
-                  <span className="material-symbols-outlined" style={{fontSize:18, color:'#b91c1c'}}>timer_off</span>
-                  <div>
-                    <p style={{margin:0, fontSize:13.5, fontWeight:800, color:'#1a1500'}}>Late / Absent Deduction</p>
-                  </div>
-                </div>
-                <span style={{fontSize:15, fontWeight:900, color:'#b91c1c'}}>-₹{Math.abs(cur.lateDeduction).toLocaleString()}</span>
-              </div>
-            )}
-
-            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'10px 14px', background:'#fef2f2', borderRadius:12, border:'1px solid #fecaca', marginTop:4}}>
-              <span style={{fontSize:13, fontWeight:800, color:'#b91c1c'}}>Total Deductions</span>
-              <span style={{fontSize:16, fontWeight:900, color:'#b91c1c'}}>-₹{Math.abs(deds).toLocaleString()}</span>
-            </div>
-          </div>
-          )}
-
-          {/* Net Pay Summary */}
-          <div style={{background:'linear-gradient(to right, #fffef2, #fffadc)', borderRadius:18, border:'1.5px solid #e8df9a', padding:'16px 18px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-            <div>
-              <p style={{margin:0, fontSize:11, fontWeight:800, color:'#ca8a04', textTransform:'uppercase'}}>Net Take-Home</p>
-              <h3 style={{margin:'4px 0 0', fontSize:28, fontWeight:900, color:'#1a1500', letterSpacing:-1}}>₹{net.toLocaleString()}</h3>
-            </div>
-            <div style={{textAlign:'right'}}>
-              <p style={{margin:0, fontSize:11, color:'#ca8a04', fontWeight:700}}>Pay Date</p>
-              <p style={{margin:'2px 0 0', fontSize:14, fontWeight:800, color:'#1a1500'}}>1 Aug 2026</p>
-            </div>
-          </div>
-
-          {/* Calendar payment tracker */}
-          <div style={{background:'#fff', borderRadius:18, border:'1.5px solid #f1f5f9', padding:18, boxShadow:'0 4px 16px rgba(0,0,0,0.03)'}}>
-            <div style={{display:'flex', alignItems:'center', gap:8, marginBottom:4}}>
-              <div style={{width:32, height:32, borderRadius:10, background:'#fefce8', display:'flex', alignItems:'center', justifyContent:'center'}}>
-                <span className="material-symbols-outlined" style={{fontSize:18, color:'#ca8a04'}}>calendar_month</span>
-              </div>
-              <div>
-                <p style={{margin:0, fontSize:14, fontWeight:900, color:'#1a1500'}}>Payment Calendar</p>
-                <p style={{margin:'1px 0 0', fontSize:11, color:'#64748b', fontWeight:600}}>Tap any day to see what you received or lost</p>
-              </div>
-            </div>
-
-            {/* Month selector */}
-            <div style={{display:'flex', gap:6, marginBottom:16, overflowX:'auto', paddingBottom:4, marginTop:12}}>
-              {salaryMonths.map((sm, idx) => (
-                <button key={sm.m} onClick={() => setSelectedPaySlip(sm)}
-                  style={{
-                    padding:'7px 14px', borderRadius:20, border:'none', whiteSpace:'nowrap',
-                    background: selectedPaySlip?.m === sm.m ? '#1a1500' : '#f8fafc',
-                    color: selectedPaySlip?.m === sm.m ? '#fde047' : '#64748b',
-                    fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit'
-                  }}>
-                  {sm.m.split(' ')[0]}
-                </button>
-              ))}
-            </div>
-
-            {/* Calendar grid */}
-            {(() => {
-              const activeMon = selectedPaySlip || salaryMonths[0];
-              const daysInMonth = activeMon.m === 'July 2026' ? 31 : activeMon.m === 'June 2026' ? 30 : 31;
-              const eventDays = {};
-              (activeMon.events || []).forEach(e => { eventDays[e.day] = e; });
-
-              return (
+            {[
+              {m:'June 2026', v:'Γé╣17,800', d:'Paid 1 Jul', txn:'TXN-998231405', base:'Γé╣16,000', overtime:'+Γé╣1,800', bonus:'Γé╣0', ded:'Γé╣0', bank:'HDFC Bank (****4821)'},
+              {m:'May 2026', v:'Γé╣16,500', d:'Paid 1 Jun', txn:'TXN-881290312', base:'Γé╣16,000', overtime:'+Γé╣1,000', bonus:'Γé╣500', ded:'-Γé╣1,000', bank:'HDFC Bank (****4821)'}
+            ].map(s=>(
+              <div 
+                key={s.m} 
+                onClick={()=>{ setSelectedPaySlip(s); setShowPaySlipModal(true); }}
+                style={{background:'#fafafa', border: '1px solid #e2e8f0', borderRadius:12, padding:14, display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10, cursor:'pointer', boxShadow: '0 2px 8px rgba(15,23,42,0.04)', transition:'all 0.15s'}}
+              >
                 <div>
-                  {/* Day headers */}
-                  <div style={{display:'grid', gridTemplateColumns:'repeat(7,1fr)', gap:3, marginBottom:6}}>
-                    {['S','M','T','W','T','F','S'].map((d,i)=>(
-                      <div key={i} style={{textAlign:'center', fontSize:10, fontWeight:800, color:'#94a3b8', padding:'4px 0'}}>{d}</div>
-                    ))}
-                  </div>
-                  {/* Day cells */}
-                  <div style={{display:'grid', gridTemplateColumns:'repeat(7,1fr)', gap:3}}>
-                    {Array.from({length: daysInMonth}, (_, i) => i+1).map(day => {
-                      const ev = eventDays[day];
-                      return (
-                        <div key={day}
-                          onClick={() => ev && alert((ev.type==='credit'?'Received':'Deducted')+': '+ev.label+'\nAmount: '+(ev.type==='credit'?'+':'-')+'₹'+ev.amt.toLocaleString())}
-                          style={{
-                            aspect:'1/1', minHeight:36, borderRadius:8, display:'flex', flexDirection:'column',
-                            alignItems:'center', justifyContent:'center', cursor: ev ? 'pointer' : 'default',
-                            background: ev ? (ev.type==='credit' ? '#dcfce7' : '#fee2e2') : '#f8fafc',
-                            border: ev ? (ev.type==='credit' ? '1.5px solid #86efac' : '1.5px solid #fca5a5') : '1px solid #f1f5f9',
-                            position:'relative', transition:'transform 0.1s',
-                          }}>
-                          <span style={{fontSize:11, fontWeight: ev ? 900 : 600, color: ev ? (ev.type==='credit' ? '#15803d' : '#b91c1c') : '#94a3b8'}}>{day}</span>
-                          {ev && <span style={{fontSize:8, fontWeight:800, color: ev.type==='credit' ? '#15803d' : '#b91c1c', marginTop:1}}>{ev.type==='credit'?'+':'-'}</span>}
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Legend */}
-                  <div style={{display:'flex', gap:14, marginTop:12}}>
-                    <div style={{display:'flex', alignItems:'center', gap:6}}>
-                      <div style={{width:12, height:12, borderRadius:4, background:'#dcfce7', border:'1px solid #86efac'}}/>
-                      <span style={{fontSize:11, color:'#64748b', fontWeight:700}}>Money received</span>
-                    </div>
-                    <div style={{display:'flex', alignItems:'center', gap:6}}>
-                      <div style={{width:12, height:12, borderRadius:4, background:'#fee2e2', border:'1px solid #fca5a5'}}/>
-                      <span style={{fontSize:11, color:'#64748b', fontWeight:700}}>Deducted</span>
-                    </div>
-                  </div>
-
-                  {/* Event list for selected month */}
-                  {(activeMon.events||[]).length > 0 && (
-                    <div style={{marginTop:14, display:'flex', flexDirection:'column', gap:6}}>
-                      <p style={{margin:'0 0 6px', fontSize:11, fontWeight:800, color:'#64748b', textTransform:'uppercase'}}>Transaction Log</p>
-                      {activeMon.events.map((ev, idx) => (
-                        <div key={idx} style={{display:'flex', alignItems:'center', justifyContent:'space-between', padding:'10px 12px', background: ev.type==='credit'?'#f0fdf4':'#fff5f5', borderRadius:12, border: ev.type==='credit'?'1px solid #bbf7d0':'1px solid #fecaca'}}>
-                          <div style={{display:'flex', alignItems:'center', gap:8}}>
-                            <div style={{width:28, height:28, borderRadius:8, background: ev.type==='credit'?'#dcfce7':'#fee2e2', display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:900, color: ev.type==='credit'?'#15803d':'#b91c1c'}}>
-                              {ev.day}
-                            </div>
-                            <div>
-                              <p style={{margin:0, fontSize:12.5, fontWeight:800, color:'#1a1500'}}>{ev.label}</p>
-                              <p style={{margin:0, fontSize:10.5, color:'#64748b', fontWeight:600}}>{activeMon.m.split(' ')[0]} {ev.day}</p>
-                            </div>
-                          </div>
-                          <span style={{fontSize:13, fontWeight:900, color: ev.type==='credit'?'#15803d':'#b91c1c'}}>
-                            {ev.type==='credit'?'+':'-'}₹{ev.amt.toLocaleString()}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  <p style={{margin:0, fontSize:14, fontWeight:800, color:'#000'}}>{s.m}</p>
+                  <p style={{margin:'2px 0 0', fontSize:11, fontWeight:700, color:'#15803d'}}>Γ£ô {s.d}</p>
                 </div>
-              );
-            })()}
-          </div>
-
-          {/* Pay Slip History */}
-          <div style={{background:'#fff', borderRadius:18, border:'1.5px solid #f1f5f9', padding:18, boxShadow:'0 4px 16px rgba(0,0,0,0.03)'}}>
-            <div style={{display:'flex', alignItems:'center', gap:8, marginBottom:14}}>
-              <div style={{width:32, height:32, borderRadius:10, background:'#fefce8', display:'flex', alignItems:'center', justifyContent:'center'}}>
-                <span className="material-symbols-outlined" style={{fontSize:18, color:'#ca8a04'}}>receipt</span>
-              </div>
-              <div>
-                <p style={{margin:0, fontSize:14, fontWeight:900, color:'#1a1500'}}>Pay Slip History</p>
-                <p style={{margin:'1px 0 0', fontSize:11, color:'#64748b', fontWeight:600}}>Tap to view full statement & share</p>
-              </div>
-            </div>
-            {salaryMonths.map(s => {
-              const sNet = s.base + s.overtime + s.bonus + (s.advance < 0 ? s.advance : 0);
-              return (
-                <div key={s.m}
-                  onClick={() => { setSelectedPaySlip(s); setShowPaySlipModal(true); }}
-                  style={{background:'#f8fafc', border:'1px solid #f1f5f9', borderRadius:14, padding:'14px 16px', display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8, cursor:'pointer', boxShadow:'0 2px 8px rgba(0,0,0,0.02)'}}>
-                  <div>
-                    <p style={{margin:0, fontSize:14, fontWeight:800, color:'#1a1500'}}>{s.m}</p>
-                    <p style={{margin:'2px 0 0', fontSize:11, fontWeight:700, color: s.d.startsWith('Paid')?'#15803d':'#ca8a04'}}>{s.d.startsWith('Paid')?'✓':'⏳'} {s.d}</p>
-                  </div>
-                  <div style={{display:'flex', alignItems:'center', gap:10}}>
-                    <div style={{textAlign:'right'}}>
-                      <p style={{margin:0, fontSize:16, fontWeight:900, color:'#1a1500'}}>₹{sNet.toLocaleString()}</p>
-                      <p style={{margin:'1px 0 0', fontSize:10, color:'#64748b', fontWeight:700}}>{s.events.length} transactions</p>
-                    </div>
-                    <span className="material-symbols-outlined" style={{fontSize:18, color:'#ca8a04'}}>chevron_right</span>
-                  </div>
+                <div style={{display:'flex', alignItems:'center', gap:10}}>
+                  <span style={{fontSize:16, fontWeight:900, color:'#000'}}>{s.v}</span>
+                  <button type="button" style={{padding:'6px 10px', background:'#fef08a', border: '1px solid #e2e8f0', borderRadius:8, color:'#000', fontSize:11, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow: '0 2px 6px rgba(120, 104, 10, 0.04)', display:'flex', alignItems:'center', gap:4}}>
+                    View ≡ƒæü∩╕Å
+                  </button>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
-
         </div>
-        );
-      })()}
-
+      )}
       {/* ══════════════════════════════════════════════════════════════════════
           INVENTORY & PETTY CASH FUNDS
          ══════════════════════════════════════════════════════════════════════ */}
@@ -4245,106 +3999,71 @@ export default function StaffApp(){
       </Sheet>
 
       {/* Pay Slip Detailed View & Share Sheet */}
-      <Sheet show={showPaySlipModal} onClose={() => setShowPaySlipModal(false)} title={(selectedPaySlip?.m || '') + ' Pay Slip'} sub="Detailed Salary Statement">
-        {selectedPaySlip && (() => {
-          const sp = selectedPaySlip;
-          const gross = sp.base + sp.overtime + sp.bonus;
-          const dedsTotal = (sp.advance < 0 ? sp.advance : 0) + (sp.tds < 0 ? sp.tds : 0) + (sp.lateDeduction < 0 ? sp.lateDeduction : 0);
-          const netPay = gross + dedsTotal;
-          return (
+      <Sheet show={showPaySlipModal} onClose={() => setShowPaySlipModal(false)} title={`${selectedPaySlip?.m || ''} Pay Slip`} sub="Detailed Salary Statement">
+        {selectedPaySlip && (
           <div style={{display:'flex', flexDirection:'column', gap:14}}>
-            {/* Header */}
-            <div style={{background:'linear-gradient(135deg,#1a1500,#3d3200)', padding:'18px 18px', borderRadius:16, color:'#fff'}}>
-              <p style={{margin:0, fontSize:10, color:'#fde047', fontWeight:800, textTransform:'uppercase', letterSpacing:1}}>NET PAY · {sp.m}</p>
-              <h3 style={{margin:'6px 0 4px', fontSize:32, fontWeight:900, color:'#fde047', letterSpacing:-1}}>₹{netPay.toLocaleString()}</h3>
-              <p style={{margin:'2px 0 0', fontSize:11.5, fontWeight:700, color:'rgba(253,224,71,0.7)'}}>
-                {sp.d.startsWith('Paid') ? '✓ ' : '⏳ '}{sp.d} · {sp.bank}
-              </p>
+            <div style={{background:'#fef08a', padding:'14px 16px', borderRadius:12, border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
+              <p style={{margin:0, fontSize:12, fontWeight:800, color:'#000', textTransform:'uppercase'}}>Net Disbursed Amount</p>
+              <h3 style={{margin:'4px 0 0', fontSize:30, fontWeight:900, color:'#000'}}>{selectedPaySlip.v}</h3>
+              <p style={{margin:'4px 0 0', fontSize:12, fontWeight:700, color:'#15803d'}}>Γ£ô {selectedPaySlip.d} ┬╖ {selectedPaySlip.bank}</p>
             </div>
 
-            {/* Earnings */}
-            <div style={{background:'#fff', border:'1px solid #f1f5f9', borderRadius:14, padding:16}}>
-              <p style={{margin:'0 0 12px', fontSize:12, fontWeight:800, color:'#15803d', textTransform:'uppercase', letterSpacing:.5}}>Earnings</p>
-              {[
-                {label:'Base Salary', sub:'Fixed monthly', val:sp.base, show:true},
-                {label:'Overtime Pay', sub:sp.overtimeHrs+' hrs × ₹'+(sp.overtimeHrs>0?(sp.overtime/sp.overtimeHrs).toFixed(0):0)+'/hr', val:sp.overtime, show:sp.overtime>0},
-                {label:'Performance Bonus', sub:sp.bonusReason||'Monthly bonus', val:sp.bonus, show:sp.bonus>0},
-              ].filter(r=>r.show).map(r=>(
-                <div key={r.label} style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'9px 0', borderBottom:'1px solid #f8fafc'}}>
-                  <div>
-                    <p style={{margin:0, fontSize:13, fontWeight:800, color:'#1a1500'}}>{r.label}</p>
-                    <p style={{margin:0, fontSize:10.5, color:'#94a3b8', fontWeight:600}}>{r.sub}</p>
-                  </div>
-                  <span style={{fontSize:14, fontWeight:900, color:'#15803d'}}>+₹{r.val.toLocaleString()}</span>
-                </div>
-              ))}
-              <div style={{display:'flex', justifyContent:'space-between', padding:'10px 0 0'}}>
-                <span style={{fontSize:13, fontWeight:800, color:'#1a1500'}}>Gross Earnings</span>
-                <span style={{fontSize:15, fontWeight:900, color:'#15803d'}}>₹{gross.toLocaleString()}</span>
+            <div style={{background:'#fff', border: '1px solid #e2e8f0', borderRadius:12, padding:'14px'}}>
+              <p style={{margin:'0 0 10px', fontSize:13, fontWeight:800, color:'#000', textTransform:'uppercase'}}>Earnings & Deductions</p>
+              <div style={{display:'flex', justifyContent:'space-between', padding:'6px 0', borderBottom:'1px solid #eee', fontSize:13}}>
+                <span style={{color:C.muted}}>Base Salary</span>
+                <span style={{fontWeight:800, color:'#000'}}>{selectedPaySlip.base}</span>
+              </div>
+              <div style={{display:'flex', justifyContent:'space-between', padding:'6px 0', borderBottom:'1px solid #eee', fontSize:13}}>
+                <span style={{color:C.muted}}>Overtime</span>
+                <span style={{fontWeight:800, color:'#15803d'}}>{selectedPaySlip.overtime}</span>
+              </div>
+              <div style={{display:'flex', justifyContent:'space-between', padding:'6px 0', borderBottom:'1px solid #eee', fontSize:13}}>
+                <span style={{color:C.muted}}>Bonus</span>
+                <span style={{fontWeight:800, color:'#15803d'}}>{selectedPaySlip.bonus}</span>
+              </div>
+              <div style={{display:'flex', justifyContent:'space-between', padding:'6px 0', borderBottom:'1px solid #eee', fontSize:13}}>
+                <span style={{color:C.muted}}>Deductions</span>
+                <span style={{fontWeight:800, color:'#b91c1c'}}>{selectedPaySlip.ded}</span>
+              </div>
+              <div style={{display:'flex', justifyContent:'space-between', padding:'10px 0 0', fontSize:14, fontWeight:900}}>
+                <span>Total Net Pay</span>
+                <span>{selectedPaySlip.v}</span>
               </div>
             </div>
 
-            {/* Deductions */}
-            {dedsTotal < 0 && (
-            <div style={{background:'#fff', border:'1px solid #f1f5f9', borderRadius:14, padding:16}}>
-              <p style={{margin:'0 0 12px', fontSize:12, fontWeight:800, color:'#b91c1c', textTransform:'uppercase', letterSpacing:.5}}>Deductions</p>
-              {[
-                {label:'Advance Deduction', sub:'Advance taken: '+sp.advanceDate, val:sp.advance, show:sp.advance<0},
-                {label:'TDS / Tax', sub:'Tax deducted at source', val:sp.tds, show:sp.tds<0},
-                {label:'Late / Absent', sub:'Attendance penalty', val:sp.lateDeduction, show:sp.lateDeduction<0},
-              ].filter(r=>r.show).map(r=>(
-                <div key={r.label} style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'9px 0', borderBottom:'1px solid #f8fafc'}}>
-                  <div>
-                    <p style={{margin:0, fontSize:13, fontWeight:800, color:'#1a1500'}}>{r.label}</p>
-                    <p style={{margin:0, fontSize:10.5, color:'#94a3b8', fontWeight:600}}>{r.sub}</p>
-                  </div>
-                  <span style={{fontSize:14, fontWeight:900, color:'#b91c1c'}}>-₹{Math.abs(r.val).toLocaleString()}</span>
-                </div>
-              ))}
-              <div style={{display:'flex', justifyContent:'space-between', padding:'10px 0 0'}}>
-                <span style={{fontSize:13, fontWeight:800, color:'#1a1500'}}>Total Deductions</span>
-                <span style={{fontSize:15, fontWeight:900, color:'#b91c1c'}}>-₹{Math.abs(dedsTotal).toLocaleString()}</span>
-              </div>
-            </div>
-            )}
-
-            {/* Net Summary */}
-            <div style={{background:'#fffef2', border:'1.5px solid #e8df9a', borderRadius:14, padding:'14px 16px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-              <span style={{fontSize:14, fontWeight:900, color:'#1a1500'}}>Net Take-Home Pay</span>
-              <span style={{fontSize:20, fontWeight:900, color:'#78680a'}}>₹{netPay.toLocaleString()}</span>
+            <div style={{background:'#f5f5f5', border: '1px solid #e2e8f0', borderRadius:12, padding:'12px', fontSize:11, fontWeight:700, color:'#333'}}>
+              <p style={{margin:0}}>Reference TXN: {selectedPaySlip.txn}</p>
+              <p style={{margin:'4px 0 0'}}>Employee: {staffName} ({staffRole})</p>
             </div>
 
-            {/* TXN info */}
-            <div style={{background:'#f8fafc', border:'1px solid #f1f5f9', borderRadius:12, padding:'12px 14px', fontSize:11, fontWeight:700, color:'#64748b'}}>
-              <p style={{margin:0}}>TXN Ref: {sp.txn}</p>
-              <p style={{margin:'3px 0 0'}}>Employee: {staffName} · {staffRole}</p>
-            </div>
-
-            {/* Actions */}
-            <div style={{display:'flex', gap:10}}>
-              <button type="button" onClick={() => alert('Downloading PDF for ' + sp.m + '...')}
-                style={{flex:1, padding:13, background:'#f8fafc', color:'#1a1500', border:'1px solid #f1f5f9', borderRadius:12, fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', justifyContent:'center', gap:6}}>
-                <span className="material-symbols-outlined" style={{fontSize:16}}>download</span> PDF
+            {/* Actions: Download & Share */}
+            <div style={{display:'flex', gap:10, marginTop:4}}>
+              <button 
+                type="button" 
+                onClick={() => alert(`Downloading PDF for ${selectedPaySlip.m}...`)} 
+                style={{flex:1, padding:13, background:'#fff', color:'#000', border: '1px solid #e2e8f0', borderRadius:12, fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow: '0 2px 8px rgba(15,23,42,0.04)', display:'flex', alignItems:'center', justifyContent:'center', gap:6}}
+              >
+                <span>≡ƒôÑ</span> PDF
               </button>
-              <button type="button" onClick={() => {
-                  const txt = `Febebo Pay Slip
-Month: ${sp.m}
-Net Pay: ₹${netPay.toLocaleString()}
-Base: ₹${sp.base.toLocaleString()}
-Overtime: +₹${sp.overtime.toLocaleString()}
-Bonus: +₹${sp.bonus.toLocaleString()}${dedsTotal < 0 ? `\nDeductions: -₹${Math.abs(dedsTotal).toLocaleString()}` : ''}
-Status: ${sp.d}
-TXN: ${sp.txn}`;
-                  if (navigator.share) { navigator.share({title: sp.m + ' Pay Slip', text: txt}).catch(()=>{}); }
-                  else { navigator.clipboard.writeText(txt); alert('Pay Slip copied to clipboard!'); }
-                }}
-                style={{flex:2, padding:13, background:'#1a1500', color:'#fde047', border:'none', borderRadius:12, fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', justifyContent:'center', gap:6}}>
-                <span className="material-symbols-outlined" style={{fontSize:16}}>share</span> Share Pay Slip
+              <button 
+                type="button" 
+                onClick={() => {
+                  const shareText = `≡ƒôä Febebo Staff Pay Slip\nMonth: ${selectedPaySlip.m}\nNet Paid: ${selectedPaySlip.v}\nStatus: ${selectedPaySlip.d}\nTxn: ${selectedPaySlip.txn}`;
+                  if (navigator.share) {
+                    navigator.share({ title: `${selectedPaySlip.m} Pay Slip`, text: shareText }).catch(() => {});
+                  } else {
+                    navigator.clipboard.writeText(shareText);
+                    alert('Pay Slip summary copied to clipboard! You can share it to any platform.');
+                  }
+                }} 
+                style={{flex:2, padding:13, background:'#fef08a', color:'#000', border: '1px solid #e2e8f0', borderRadius:12, fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow: '0 2px 8px rgba(15,23,42,0.04)', display:'flex', alignItems:'center', justifyContent:'center', gap:6}}
+              >
+                <span>≡ƒôñ</span> Share Pay Slip
               </button>
             </div>
           </div>
-          );
-        })()}
+        )}
       </Sheet>
 
       {/* Log Expense Modal */}
