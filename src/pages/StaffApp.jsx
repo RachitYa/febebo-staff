@@ -1617,37 +1617,81 @@ export default function StaffApp(){
             </div>
           </>)}
 
-          {/* PLUMBER WORK QUEUE */}
+                    {/* PLUMBER WORK QUEUE */}
           {staffRole === 'Plumber' && (<>
-            <div style={{background:'linear-gradient(135deg,#d97706,#fbbf24)', borderRadius:16, padding:'14px 16px', color:'#fff', boxShadow:'0 8px 20px rgba(217,119,6,0.2)'}}>
-              <p style={{margin:0, fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:0.5, color:'#bfdbfe'}}>🔧 Plumbing & Water Systems</p>
-              <h3 style={{margin:'4px 0 2px', fontSize:20, fontWeight:900}}>Job Work Queue</h3>
-              <p style={{margin:0, fontSize:12, color:'#bfdbfe', fontWeight:700}}>{plumbingJobs.filter(j=>j.status==='Open').length} open · {plumbingJobs.filter(j=>j.status==='In Progress').length} in progress · {plumbingJobs.filter(j=>j.priority==='High').length} urgent</p>
+            <div style={{background: 'linear-gradient(to bottom, #fffef2, #fffdf0)', borderRadius:18, border:'1.5px solid #e8df9a', padding:'20px 18px', color:'#1a1500'}}>
+              <div style={{display:'flex', alignItems:'center', gap:8, marginBottom:4}}>
+                <span className="material-symbols-outlined" style={{fontSize:20, color:'#ca8a04'}}>water_drop</span>
+                <span style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:0.5, color:'#ca8a04'}}>Plumbing & Water Systems</span>
+              </div>
+              <h3 style={{margin:0, fontSize:22, fontWeight:900, color:'#1a1500'}}>Job Work Queue</h3>
+              <p style={{margin:'4px 0 0', fontSize:12.5, color:C.muted, fontWeight:700}}>{plumbingJobs.filter(j=>j.status==='Open').length} open · {plumbingJobs.filter(j=>j.status==='In Progress').length} in progress · {plumbingJobs.filter(j=>j.priority==='High').length} urgent</p>
             </div>
 
-            <div style={{display:'flex', flexDirection:'column', gap:12}}>
+            <div style={{display:'flex', flexDirection:'column', gap:14}}>
               {plumbingJobs.map(j => (
-                <div key={j.id} style={{background:'#fff', border:`1px solid ${j.priority==='High' ? '#fca5a5' : '#e2e8f0'}`, borderRadius:14, padding:16, boxShadow:'0 4px 14px rgba(15,23,42,0.04)'}}>
-                  <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:8}}>
+                <div key={j.id} style={{background:'#fff', border:'1px solid #f6f3df', borderRadius:18, padding:'20px', boxShadow:'0 4px 16px rgba(120, 104, 10, 0.03)'}}>
+                  <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:12}}>
                     <div style={{flex:1}}>
-                      <div style={{display:'flex', alignItems:'center', gap:6, marginBottom:4}}>
-                        <span style={{fontSize:14, fontWeight:900, color:C.primary}}>Room {j.room}</span>
-                        <span style={{fontSize:11, fontWeight:800, padding:'2px 8px', borderRadius:20, background: j.priority==='High'?'#fee2e2':'#f1f5f9', color: j.priority==='High'?'#b91c1c':'#475569'}}>{j.priority}</span>
+                      <div style={{display:'flex', alignItems:'center', gap:8, marginBottom:6}}>
+                        <span style={{fontSize:15, fontWeight:900, color:'#1a1500'}}>Room {j.room}</span>
+                        <span style={{fontSize:10, fontWeight:800, padding:'2px 8px', borderRadius:6, background: j.priority==='High'?'#fef2f2':'#f8fafc', color: j.priority==='High'?'#b91c1c':'#475569'}}>{j.priority}</span>
                       </div>
-                      <p style={{margin:0, fontSize:13, fontWeight:800, color:C.text}}>{j.issue}</p>
-                      <p style={{margin:'3px 0 0', fontSize:11, color:C.muted}}>👤 {j.student} · 🕐 {j.date}</p>
-                      {j.note && <p style={{margin:'4px 0 0', fontSize:11, color:'#7c3aed', fontWeight:700, background:'#f5f3ff', padding:'4px 8px', borderRadius:6}}>📝 {j.note}</p>}
+                      <p style={{margin:0, fontSize:15, fontWeight:800, color:'#1a1500'}}>{j.issue}</p>
+                      <p style={{margin:'6px 0 0', fontSize:11.5, fontWeight:600, color:C.muted}}>by {j.student} · {j.date}</p>
+                      
+                      {j.note && (
+                        <div style={{marginTop:10, borderLeft:'2.5px solid #ca8a04', paddingLeft:10, fontSize:12, fontWeight:700, color:'#ca8a04', fontStyle:'italic'}}>
+                          Note: {j.note}
+                        </div>
+                      )}
                     </div>
-                    <span style={{fontSize:11, fontWeight:800, padding:'4px 10px', borderRadius:20, background: j.status==='Resolved'?'#dcfce7':j.status==='In Progress'?'#fef3c7':'#eff6ff', color: j.status==='Resolved'?'#166534':j.status==='In Progress'?'#92400e':'#1d4ed8'}}>{j.status}</span>
+                    <span style={{fontSize:11, fontWeight:800, padding:'4px 10px', borderRadius:8, background: j.status==='Resolved'?'#dcfce7':j.status==='In Progress'?'#fff7ed':'#eff6ff', color: j.status==='Resolved'?'#15803d':j.status==='In Progress'?'#c2410c':'#1d4ed8'}}>{j.status}</span>
                   </div>
-                  <div style={{display:'flex', gap:8}}>
+
+                  <div style={{display:'flex', justifyContent:'flex-end', gap:8, marginTop:14}}>
                     {j.status !== 'Resolved' && (
-                      <button onClick={()=>setPlumbingJobs(prev=>prev.map(x=>x.id===j.id?{...x,status:x.status==='Open'?'In Progress':'Resolved'}:x))} style={{flex:1, padding:'8px 0', borderRadius:10, border:'none', background: j.status==='Open'?'#eff6ff':'#dcfce7', color: j.status==='Open'?'#1d4ed8':'#166534', fontSize:12, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}>
-                        {j.status==='Open' ? '▶ Start Job' : '✓ Mark Resolved'}
+                      <button 
+                        onClick={()=>setPlumbingJobs(prev=>prev.map(x=>x.id===j.id?{...x,status:x.status==='Open'?'In Progress':'Resolved'}:x))} 
+                        style={{
+                          padding:'8px 16px', 
+                          borderRadius:12, 
+                          border:'none', 
+                          background: j.status==='Open'?'#eff6ff':'#dcfce7', 
+                          color: j.status==='Open'?'#1d4ed8':'#15803d', 
+                          fontSize:12, 
+                          fontWeight:900, 
+                          cursor:'pointer', 
+                          fontFamily:'inherit',
+                          display:'flex',
+                          alignItems:'center',
+                          gap:6
+                        }}
+                      >
+                        <span className="material-symbols-outlined" style={{fontSize:14}}>
+                          {j.status==='Open' ? 'play_arrow' : 'check'}
+                        </span>
+                        {j.status==='Open' ? 'Start Job' : 'Mark Resolved'}
                       </button>
                     )}
-                    <a href={`tel:${INIT_VISITORS[0]?.phone || '+91 9800000000'}`} style={{padding:'8px 14px', borderRadius:10, background:'#f0fdf4', border:'1px solid #86efac', color:'#166534', fontSize:12, fontWeight:800, textDecoration:'none'}}>
-                      📞 Call Student
+                    <a 
+                      href={'tel:' + (INIT_VISITORS[0]?.phone || '+91 9800000000')} 
+                      style={{
+                        padding:'8px 16px', 
+                        borderRadius:12, 
+                        background:'#f0fdf4', 
+                        border:'1px solid #dcfce7', 
+                        color:'#15803d', 
+                        fontSize:12, 
+                        fontWeight:900, 
+                        textDecoration:'none',
+                        display:'flex',
+                        alignItems:'center',
+                        gap:6
+                      }}
+                    >
+                      <span className="material-symbols-outlined" style={{fontSize:14}}>phone</span>
+                      Call Student
                     </a>
                   </div>
                 </div>
@@ -1657,39 +1701,67 @@ export default function StaffApp(){
 
           {/* ELECTRICIAN WORK QUEUE */}
           {staffRole === 'Electrician' && (<>
-            <div style={{background:'linear-gradient(135deg,#ca8a04,#facc15)', borderRadius:16, padding:'14px 16px', color:'#000', boxShadow:'0 8px 20px rgba(202,138,4,0.2)'}}>
-              <p style={{margin:0, fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:0.5, color:'#713f12'}}>⚡ Electrical & Wiring</p>
-              <h3 style={{margin:'4px 0 2px', fontSize:20, fontWeight:900, color:'#000'}}>Job Work Queue</h3>
-              <p style={{margin:0, fontSize:12, color:'#713f12', fontWeight:700}}>{electricalJobs.filter(j=>j.status==='Open').length} open · {electricalJobs.filter(j=>j.priority==='High').length} high voltage danger</p>
+            <div style={{background: 'linear-gradient(to bottom, #fffef2, #fffdf0)', borderRadius:18, border:'1.5px solid #e8df9a', padding:'20px 18px', color:'#1a1500'}}>
+              <div style={{display:'flex', alignItems:'center', gap:8, marginBottom:4}}>
+                <span className="material-symbols-outlined" style={{fontSize:20, color:'#ca8a04'}}>bolt</span>
+                <span style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:0.5, color:'#ca8a04'}}>Electrical & Wiring</span>
+              </div>
+              <h3 style={{margin:0, fontSize:22, fontWeight:900, color:'#1a1500'}}>Job Work Queue</h3>
+              <p style={{margin:'4px 0 0', fontSize:12.5, color:C.muted, fontWeight:700}}>{electricalJobs.filter(j=>j.status==='Open').length} open · {electricalJobs.filter(j=>j.priority==='High').length} high voltage danger</p>
             </div>
 
             {/* Safety Banner for High Priority */}
             {electricalJobs.some(j=>j.priority==='High' && j.status!=='Resolved') && (
-              <div style={{background:'#fff1f2', border:'1px solid #fca5a5', borderRadius:12, padding:'10px 14px', display:'flex', alignItems:'center', gap:10}}>
-                <span className="material-symbols-outlined" style={{fontSize:20, color:'#dc2626'}}>warning</span>
-                <p style={{margin:0, fontSize:12, fontWeight:800, color:'#991b1b'}}>⚠️ High voltage / sparking issue reported — use PPE before starting work!</p>
+              <div style={{background:'#fffbfe', border:'1.5px solid #fde047', borderRadius:18, padding:'12px 16px', display:'flex', alignItems:'center', gap:10, boxShadow:'0 4px 12px rgba(253, 224, 71, 0.05)'}}>
+                <span className="material-symbols-outlined" style={{fontSize:20, color:'#ca8a04'}}>warning</span>
+                <p style={{margin:0, fontSize:12.5, fontWeight:800, color:'#854d0e'}}>High voltage / sparking issue reported — use PPE before starting work!</p>
               </div>
             )}
 
-            <div style={{display:'flex', flexDirection:'column', gap:12}}>
+            <div style={{display:'flex', flexDirection:'column', gap:14}}>
               {electricalJobs.map(j => (
-                <div key={j.id} style={{background:'#fff', border:`1px solid ${j.priority==='High' ? '#fde047' : '#e2e8f0'}`, borderRadius:14, padding:16, boxShadow:'0 4px 14px rgba(15,23,42,0.04)'}}>
-                  <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:8}}>
+                <div key={j.id} style={{background:'#fff', border:'1px solid #f6f3df', borderRadius:18, padding:'20px', boxShadow:'0 4px 16px rgba(120, 104, 10, 0.03)'}}>
+                  <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:12}}>
                     <div style={{flex:1}}>
-                      <div style={{display:'flex', alignItems:'center', gap:6, marginBottom:4}}>
-                        <span style={{fontSize:14, fontWeight:900, color:C.primary}}>Room {j.room}</span>
-                        <span style={{fontSize:11, fontWeight:800, padding:'2px 8px', borderRadius:20, background: j.priority==='High'?'#fef9c3':'#f1f5f9', color: j.priority==='High'?'#713f12':'#475569'}}>{j.priority}</span>
+                      <div style={{display:'flex', alignItems:'center', gap:8, marginBottom:6}}>
+                        <span style={{fontSize:15, fontWeight:900, color:'#1a1500'}}>Room {j.room}</span>
+                        <span style={{fontSize:10, fontWeight:800, padding:'2px 8px', borderRadius:6, background: j.priority==='High'?'#fef2f2':'#f8fafc', color: j.priority==='High'?'#b91c1c':'#475569'}}>{j.priority}</span>
                       </div>
-                      <p style={{margin:0, fontSize:13, fontWeight:800, color:C.text}}>{j.issue}</p>
-                      <p style={{margin:'3px 0 0', fontSize:11, color:C.muted}}>👤 {j.student} · 🕐 {j.date}</p>
-                      {j.note && <p style={{margin:'4px 0 0', fontSize:11, color:'#92400e', fontWeight:700, background:'#fef3c7', padding:'4px 8px', borderRadius:6}}>📝 {j.note}</p>}
+                      <p style={{margin:0, fontSize:15, fontWeight:800, color:'#1a1500'}}>{j.issue}</p>
+                      <p style={{margin:'6px 0 0', fontSize:11.5, fontWeight:600, color:C.muted}}>by {j.student} · {j.date}</p>
+                      
+                      {j.note && (
+                        <div style={{marginTop:10, borderLeft:'2.5px solid #ca8a04', paddingLeft:10, fontSize:12, fontWeight:700, color:'#ca8a04', fontStyle:'italic'}}>
+                          Note: {j.note}
+                        </div>
+                      )}
                     </div>
-                    <span style={{fontSize:11, fontWeight:800, padding:'4px 10px', borderRadius:20, background: j.status==='Resolved'?'#dcfce7':j.status==='In Progress'?'#fef3c7':'#fefce8', color: j.status==='Resolved'?'#166534':j.status==='In Progress'?'#92400e':'#713f12'}}>{j.status}</span>
+                    <span style={{fontSize:11, fontWeight:800, padding:'4px 10px', borderRadius:8, background: j.status==='Resolved'?'#dcfce7':j.status==='In Progress'?'#fff7ed':'#fefce8', color: j.status==='Resolved'?'#15803d':j.status==='In Progress'?'#c2410c':'#ca8a04'}}>{j.status}</span>
                   </div>
+
                   {j.status !== 'Resolved' && (
-                    <div style={{display:'flex', gap:8}}>
-                      <button onClick={()=>setElectricalJobs(prev=>prev.map(x=>x.id===j.id?{...x,status:x.status==='Open'?'In Progress':'Resolved'}:x))} style={{flex:1, padding:'8px 0', borderRadius:10, border:'none', background: j.status==='Open'?'#fefce8':'#dcfce7', color: j.status==='Open'?'#713f12':'#166534', fontSize:12, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}>
-                        {j.status==='Open' ? '▶ Start Job' : '✓ Mark Resolved'}
+                    <div style={{display:'flex', justifyContent:'flex-end', marginTop:14}}>
+                      <button 
+                        onClick={()=>setElectricalJobs(prev=>prev.map(x=>x.id===j.id?{...x,status:x.status==='Open'?'In Progress':'Resolved'}:x))} 
+                        style={{
+                          padding:'8px 16px', 
+                          borderRadius:12, 
+                          border:'none', 
+                          background: j.status==='Open'?'#fefce8':'#dcfce7', 
+                          color: j.status==='Open'?'#ca8a04':'#15803d', 
+                          fontSize:12, 
+                          fontWeight:900, 
+                          cursor:'pointer', 
+                          fontFamily:'inherit',
+                          display:'flex',
+                          alignItems:'center',
+                          gap:6
+                        }}
+                      >
+                        <span className="material-symbols-outlined" style={{fontSize:14}}>
+                          {j.status==='Open' ? 'play_arrow' : 'check'}
+                        </span>
+                        {j.status==='Open' ? 'Start Job' : 'Mark Resolved'}
                       </button>
                     </div>
                   )}
@@ -1700,31 +1772,61 @@ export default function StaffApp(){
 
           {/* CARPENTER WORK QUEUE */}
           {staffRole === 'Carpenter' && (<>
-            <div style={{background:'linear-gradient(135deg,#78350f,#d97706)', borderRadius:16, padding:'14px 16px', color:'#fff', boxShadow:'0 8px 20px rgba(120,53,15,0.2)'}}>
-              <p style={{margin:0, fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:0.5, color:'#fde68a'}}>🪚 Carpentry & Fixtures</p>
-              <h3 style={{margin:'4px 0 2px', fontSize:20, fontWeight:900}}>Job Work Queue</h3>
-              <p style={{margin:0, fontSize:12, color:'#fef3c7', fontWeight:700}}>{carpenterJobs.filter(j=>j.status==='Open').length} open jobs · {carpenterJobs.filter(j=>j.priority==='High').length} urgent</p>
+            <div style={{background: 'linear-gradient(to bottom, #fffef2, #fffdf0)', borderRadius:18, border:'1.5px solid #e8df9a', padding:'20px 18px', color:'#1a1500'}}>
+              <div style={{display:'flex', alignItems:'center', gap:8, marginBottom:4}}>
+                <span className="material-symbols-outlined" style={{fontSize:20, color:'#ca8a04'}}>handyman</span>
+                <span style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:0.5, color:'#ca8a04'}}>Carpentry & Fixtures</span>
+              </div>
+              <h3 style={{margin:0, fontSize:22, fontWeight:900, color:'#1a1500'}}>Job Work Queue</h3>
+              <p style={{margin:'4px 0 0', fontSize:12.5, color:C.muted, fontWeight:700}}>{carpenterJobs.filter(j=>j.status==='Open').length} open jobs · {carpenterJobs.filter(j=>j.priority==='High').length} urgent</p>
             </div>
 
-            <div style={{display:'flex', flexDirection:'column', gap:12}}>
+            <div style={{display:'flex', flexDirection:'column', gap:14}}>
               {carpenterJobs.map(j => (
-                <div key={j.id} style={{background:'#fff', border:`1px solid ${j.priority==='High' ? '#fde68a' : '#e2e8f0'}`, borderRadius:14, padding:16, boxShadow:'0 4px 14px rgba(15,23,42,0.04)'}}>
-                  <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:8}}>
+                <div key={j.id} style={{background:'#fff', border:'1px solid #f6f3df', borderRadius:18, padding:'20px', boxShadow:'0 4px 16px rgba(120, 104, 10, 0.03)'}}>
+                  <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:12}}>
                     <div style={{flex:1}}>
-                      <div style={{display:'flex', alignItems:'center', gap:6, marginBottom:4}}>
-                        <span style={{fontSize:14, fontWeight:900, color:C.primary}}>Room {j.room}</span>
-                        <span style={{fontSize:11, fontWeight:800, padding:'2px 8px', borderRadius:20, background: j.priority==='High'?'#fef3c7':'#f1f5f9', color: j.priority==='High'?'#92400e':'#475569'}}>{j.priority}</span>
+                      <div style={{display:'flex', alignItems:'center', gap:8, marginBottom:6}}>
+                        <span style={{fontSize:15, fontWeight:900, color:'#1a1500'}}>Room {j.room}</span>
+                        <span style={{fontSize:10, fontWeight:800, padding:'2px 8px', borderRadius:6, background: j.priority==='High'?'#fef3c7':'#f8fafc', color: j.priority==='High'?'#92400e':'#475569'}}>{j.priority}</span>
                       </div>
-                      <p style={{margin:0, fontSize:13, fontWeight:800, color:C.text}}>{j.issue}</p>
-                      <p style={{margin:'3px 0 0', fontSize:11, color:C.muted}}>👤 {j.student} · 🕐 {j.date}</p>
-                      {j.note && <p style={{margin:'4px 0 0', fontSize:11, color:'#78350f', fontWeight:700, background:'#fef3c7', padding:'4px 8px', borderRadius:6}}>📝 {j.note}</p>}
+                      <p style={{margin:0, fontSize:15, fontWeight:800, color:'#1a1500'}}>{j.issue}</p>
+                      <p style={{margin:'6px 0 0', fontSize:11.5, fontWeight:600, color:C.muted}}>by {j.student} · {j.date}</p>
+                      
+                      {j.note && (
+                        <div style={{marginTop:10, borderLeft:'2.5px solid #ca8a04', paddingLeft:10, fontSize:12, fontWeight:700, color:'#ca8a04', fontStyle:'italic'}}>
+                          Note: {j.note}
+                        </div>
+                      )}
                     </div>
-                    <span style={{fontSize:11, fontWeight:800, padding:'4px 10px', borderRadius:20, background: j.status==='Resolved'?'#dcfce7':j.status==='In Progress'?'#fef3c7':'#fefce8', color: j.status==='Resolved'?'#166534':j.status==='In Progress'?'#92400e':'#78350f'}}>{j.status}</span>
+                    <span style={{fontSize:11, fontWeight:800, padding:'4px 10px', borderRadius:8, background: j.status==='Resolved'?'#dcfce7':j.status==='In Progress'?'#fff7ed':'#fefce8', color: j.status==='Resolved'?'#15803d':j.status==='In Progress'?'#c2410c':'#78350f'}}>{j.status}</span>
                   </div>
+
                   {j.status !== 'Resolved' && (
-                    <button onClick={()=>setCarpenterJobs(prev=>prev.map(x=>x.id===j.id?{...x,status:x.status==='Open'?'In Progress':'Resolved'}:x))} style={{width:'100%', padding:'9px 0', borderRadius:10, border:'none', background: j.status==='Open'?'#fef3c7':'#dcfce7', color: j.status==='Open'?'#78350f':'#166534', fontSize:12, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}>
-                      {j.status==='Open' ? '▶ Start Job' : '✓ Mark Resolved'}
-                    </button>
+                    <div style={{display:'flex', justifyContent:'flex-end', marginTop:14}}>
+                      <button 
+                        onClick={()=>setCarpenterJobs(prev=>prev.map(x=>x.id===j.id?{...x,status:x.status==='Open'?'In Progress':'Resolved'}:x))} 
+                        style={{
+                          padding:'8px 16px', 
+                          borderRadius:12, 
+                          border:'none', 
+                          background: j.status==='Open'?'#fef3c7':'#dcfce7', 
+                          color: j.status==='Open'?'#78350f':'#15803d', 
+                          fontSize:12, 
+                          fontWeight:900, 
+                          cursor:'pointer', 
+                          fontFamily:'inherit',
+                          display:'flex',
+                          alignItems:'center',
+                          gap:6
+                        }}
+                      >
+                        <span className="material-symbols-outlined" style={{fontSize:14}}>
+                          {j.status==='Open' ? 'play_arrow' : 'check'}
+                        </span>
+                        {j.status==='Open' ? 'Start Job' : 'Mark Resolved'}
+                      </button>
+                    </div>
                   )}
                 </div>
               ))}
@@ -1736,7 +1838,6 @@ export default function StaffApp(){
               Request Materials / Tools
             </button>
           </>)}
-
           {/* SALES MANAGER DASHBOARD */}
           {staffRole === 'Sales Manager' && (<>
             {/* Tab nav */}
