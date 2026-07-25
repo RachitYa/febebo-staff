@@ -658,39 +658,73 @@ export default function StaffApp(){
       {/* ── HEADER (always visible) ──────────────────────────────────────── */}
       {view === 'home' ? (
         // Home Hero Header
-        <div style={{background: '#ffffff', padding:'0 16px 20px', color: '#1a1500', borderBottom: '1px solid #e8df9a'}}>
+        <div style={{background: 'linear-gradient(to bottom, #fffef2, #fffdf0)', padding:'0 16px 20px', color: '#1a1500', borderBottom: '1.5px solid #e8df9a'}}>
           <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', height:60}}>
-            <button onClick={()=>setSidebar(true)} style={{background: 'rgba(255,255,255,0.45)', backdropFilter:'blur(4px)', border: '1px solid rgba(255,255,255,0.5)', borderRadius:10, width:38, height:38, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer'}}>
-              <span className="material-symbols-outlined" style={{fontSize:20, color: '#78350f'}}>menu</span>
+            <button onClick={()=>setSidebar(true)} style={{background: '#fefce8', border: '1.5px solid #e8df9a', borderRadius:12, width:38, height:38, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer'}}>
+              <span className="material-symbols-outlined" style={{fontSize:20, color: '#ca8a04'}}>menu</span>
             </button>
-            <p style={{fontFamily:"'Hanken Grotesk',sans-serif", fontSize:24, fontWeight:900, color: '#1a1200', margin:0, letterSpacing:-.5}}>febebo</p>
-            <button onClick={()=>setShowDemandList(true)} style={{background: '#ffffff', border: 'none', borderRadius:10, padding:'7px 14px', color: '#0f172a', fontSize:12, fontWeight:800, cursor:'pointer', display:'flex', alignItems:'center', gap:6, boxShadow: '0 2px 8px rgba(0,0,0,0.15)'}}>
-              <span className="material-symbols-outlined" style={{fontSize:16, color: '#92400e'}}>post_add</span>
+            <p style={{fontFamily:"'Hanken Grotesk',sans-serif", fontSize:24, fontWeight:900, color: '#1a1500', margin:0, letterSpacing:-.5}}>febebo</p>
+            <button onClick={()=>setShowDemandList(true)} style={{background: '#ca8a04', border: 'none', borderRadius:12, padding:'8px 16px', color: '#ffffff', fontSize:12, fontWeight:800, cursor:'pointer', display:'flex', alignItems:'center', gap:6, boxShadow: '0 4px 12px rgba(202, 138, 4, 0.2)'}}>
+              <span className="material-symbols-outlined" style={{fontSize:16, color: '#ffffff'}}>post_add</span>
               Demand
             </button>
           </div>
 
           {/* Greeting card */}
           <div style={{marginTop:14}}>
-            <p style={{margin:'0 0 4px', fontSize:14, color: '#78350f', fontWeight:800}}>{greet}, {firstName} 👋</p>
-            <div style={{display:'flex', alignItems:'center', gap:8}}>
-              <h2 style={{margin:0, fontSize:24, fontWeight:900, color: '#1a1200', letterSpacing:-.5}}>{meta.dept}</h2>
-              <span style={{fontSize:11, fontWeight:900, background: 'rgba(255,255,255,0.55)', color: '#78350f', padding:'4px 10px', borderRadius:20, border: '1px solid #f472b6', boxShadow:'0 2px 6px rgba(0,0,0,0.15)'}}>{staffRole}</span>
+            <p style={{margin:0, fontSize:13, fontWeight:800, color:'#ca8a04', textTransform:'uppercase', letterSpacing:'0.04em'}}>{greet}, {firstName} 👋</p>
+            <div style={{display:'flex', alignItems:'center', gap:10, marginTop:4}}>
+              <div style={{width:40, height:40, borderRadius:12, background: meta.accentBg, border: '1.5px solid #e8df9a', display:'flex', alignItems:'center', justifyContent:'center', fontSize:20, boxShadow:'0 2px 6px rgba(0,0,0,0.05)'}}>
+                {meta.emoji}
+              </div>
+              <div>
+                <div style={{display:'flex', alignItems:'center', gap:6}}>
+                  <h2 style={{margin:0, fontSize:22, fontWeight:900, color: '#1a1500', letterSpacing:-.5}}>{meta.dept}</h2>
+                  <span style={{fontSize:10, fontWeight:800, background: '#fefce8', color: '#ca8a04', padding:'3px 8px', borderRadius:8, border: '1.5px solid #e8df9a'}}>{staffRole}</span>
+                </div>
+              </div>
             </div>
-            <p style={{margin:'6px 0 0', fontSize:12, color: '#92400e', fontWeight: 800}}>📅 {today} · Febebo PG</p>
           </div>
 
           {/* Punch card */}
-          <div style={{marginTop:18, background: '#ffffff', border: '1px solid #e2e8f0', borderRadius:16, padding:'16px', display:'flex', alignItems:'center', justifyContent:'space-between', boxShadow: '0 10px 25px -5px rgba(15,23,42,0.12)'}}>
-            <div>
-              <div style={{display:'flex', alignItems:'center', gap:8, marginBottom:4}}>
-                <span style={{width:10, height:10, borderRadius:'50%', background: clocked ? '#10b981' : '#ef4444', display:'inline-block'}}/>
-                <span style={{fontSize:14, fontWeight:900, color: '#0f172a'}}>{clocked ? `On Duty · In at ${clockIn}` : 'Off Shift'}</span>
+          <div style={{marginTop:18, background: '#ffffff', border: '1.5px solid #e8df9a', borderRadius:18, padding:'14px 16px', display:'flex', alignItems:'center', justifyContent:'space-between', boxShadow: '0 4px 16px rgba(120, 104, 10, 0.04)'}}>
+            <div style={{display:'flex', flexDirection:'column', gap:2}}>
+              <div style={{display:'flex', alignItems:'center', gap:8}}>
+                <span style={{position:'relative', display:'flex', height:10, width:10}}>
+                  {clocked && (
+                    <span style={{animation:'ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite', position:'absolute', display:'inline-flex', height:'100%', width:'100%', borderRadius:'50%', background:'#10b981', opacity:0.75}}></span>
+                  )}
+                  <span style={{position:'relative', display:'inline-flex', borderRadius:'50%', height:10, width:10, background: clocked ? '#10b981' : '#ef4444'}}></span>
+                </span>
+                <span style={{fontSize:14, fontWeight:800, color: '#1a1500'}}>{clocked ? 'On Duty' : 'Off Shift'}</span>
               </div>
-              
+              {clocked && (
+                <span style={{fontSize:11, fontWeight:700, color: C.muted, marginLeft:18}}>Logged in at {clockIn}</span>
+              )}
             </div>
-            <button onClick={punch} style={{padding:'10px 16px', borderRadius:10, border: 'none', background: clocked ? '#fee2e2' : '#dcfce7', color: clocked ? '#991b1b' : '#166534', fontSize:13, fontWeight:900, cursor:'pointer', fontFamily:'inherit', whiteSpace:'nowrap', boxShadow: '0 2px 6px rgba(0,0,0,0.06)'}}>
-              {clocked ? '⏹ Punch Out' : '▶ Punch In'}
+            
+            <button 
+              onClick={punch} 
+              style={{
+                padding:'8px 16px', 
+                borderRadius:12, 
+                border: 'none', 
+                background: clocked ? '#fee2e2' : '#dcfce7', 
+                color: clocked ? '#991b1b' : '#166534', 
+                fontSize:12, 
+                fontWeight:900, 
+                cursor:'pointer', 
+                fontFamily:'inherit', 
+                display:'flex', 
+                alignItems:'center', 
+                gap:6,
+                boxShadow: '0 2px 6px rgba(0,0,0,0.03)'
+              }}
+            >
+              <span className="material-symbols-outlined" style={{fontSize:16}}>
+                {clocked ? 'logout' : 'login'}
+              </span>
+              {clocked ? 'Punch Out' : 'Punch In'}
             </button>
           </div>
         </div>
