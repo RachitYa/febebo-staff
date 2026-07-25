@@ -8,9 +8,14 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     // Simulate checking local storage for an existing session
-    const storedUser = localStorage.getItem('febebo_user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    try {
+      const storedUser = localStorage.getItem('febebo_user');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+    } catch (e) {
+      console.error('Error parsing stored user:', e);
+      localStorage.removeItem('febebo_user');
     }
     setLoading(false);
   }, []);
