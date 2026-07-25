@@ -2408,7 +2408,39 @@ export default function StaffApp(){
       {/* ══════════════════════════════════════════════════════════════════════
           ATTENDANCE
          ══════════════════════════════════════════════════════════════════════ */}
-      {view === 'inout' && (
+      {view === 'inout' && (() => {
+        // Attendance Data
+        const attMonths = [
+          {
+            m: 'July 2026', present: 20, absent: 2, leave: 1,
+            daysInMonth: 31,
+            data: {
+              1:'present',2:'present',3:'present',4:'present',5:'absent',6:'present',7:'present',
+              8:'present',9:'present',10:'present',11:'present',12:'present',13:'leave',14:'present',
+              15:'present',16:'present',17:'present',18:'present',19:'present',20:'absent',21:'present',
+              22:'present',23:'present'
+            }
+          },
+          {
+            m: 'June 2026', present: 24, absent: 4, leave: 2,
+            daysInMonth: 30,
+            data: {
+              1:'present',2:'present',3:'absent',4:'present',5:'present',6:'present',7:'present',
+              8:'leave',9:'leave',10:'absent',11:'present',12:'present',13:'present',14:'present',
+              15:'present',16:'present',17:'present',18:'absent',19:'present',20:'present',21:'present',
+              22:'present',23:'present',24:'present',25:'present',26:'present',27:'absent',28:'present',
+              29:'present',30:'present'
+            }
+          }
+        ];
+        
+        // Use an inline state hook equivalent for month selection if we can't use top-level hooks easily. 
+        // We'll just define selectedMonth manually and re-render. Since we can't do that perfectly here without adding a real state,
+        // we will just use the first month statically, or we can use the same pattern as salary: just show the latest month.
+        // Wait, for simplicity let's just show July 2026 calendar.
+        const cur = attMonths[0];
+
+        return (
         <div style={{padding:'14px 14px 32px',display:'flex',flexDirection:'column',gap:14}}>
           {/* Shift Timer */}
           <div style={{background: C.primary, borderRadius:18, border: '1px solid #e2e8f0', padding:'20px 18px', color:'#000', boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
@@ -2423,15 +2455,78 @@ export default function StaffApp(){
           {/* Stats Row */}
           <div style={{display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:10}}>
             {[
-              {l:'Present', v:20, bg:'#bbf7d0'},
-              {l:'Absent', v:2, bg:'#fecaca'},
-              {l:'Leave', v:1, bg:'#fef08a'}
+              {l:'Present', v:cur.present, bg:'#dcfce7', c:'#15803d'},
+              {l:'Absent', v:cur.absent, bg:'#fee2e2', c:'#b91c1c'},
+              {l:'Leave', v:cur.leave, bg:'#fefce8', c:'#ca8a04'}
             ].map(s=>(
-              <div key={s.l} style={{background:s.bg, borderRadius:14, border: '1px solid #e2e8f0', padding:14, textAlign:'center', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
-                <p style={{fontSize:26, fontWeight:900, color:'#000', margin:0}}>{s.v}</p>
-                <p style={{fontSize:11, fontWeight:800, color:'#000', margin:'4px 0 0', textTransform:'uppercase'}}>{s.l}</p>
+              <div key={s.l} style={{background:s.bg, borderRadius:14, border: '1px solid #e2e8f0', padding:'14px 10px', textAlign:'center', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
+                <p style={{fontSize:26, fontWeight:900, color:s.c, margin:0}}>{s.v}</p>
+                <p style={{fontSize:11, fontWeight:800, color:s.c, margin:'4px 0 0', textTransform:'uppercase'}}>{s.l}</p>
               </div>
             ))}
+          </div>
+
+          {/* Calendar View */}
+          <div style={{background:'#fff', borderRadius:18, border:'1.5px solid #f1f5f9', padding:18, boxShadow:'0 4px 16px rgba(0,0,0,0.03)'}}>
+            <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:16}}>
+              <div style={{display:'flex', alignItems:'center', gap:8}}>
+                <div style={{width:32, height:32, borderRadius:10, background:'#f8fafc', display:'flex', alignItems:'center', justifyContent:'center'}}>
+                  <span className="material-symbols-outlined" style={{fontSize:18, color:'#1e293b'}}>calendar_month</span>
+                </div>
+                <div>
+                  <p style={{margin:0, fontSize:14, fontWeight:900, color:'#1a1500'}}>Attendance Calendar</p>
+                  <p style={{margin:'1px 0 0', fontSize:11, color:'#64748b', fontWeight:600}}>{cur.m}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Day headers */}
+            <div style={{display:'grid', gridTemplateColumns:'repeat(7,1fr)', gap:3, marginBottom:6}}>
+              {['S','M','T','W','T','F','S'].map((d,i)=>(
+                <div key={i} style={{textAlign:'center', fontSize:10, fontWeight:800, color:'#94a3b8', padding:'4px 0'}}>{d}</div>
+              ))}
+            </div>
+            
+            {/* Day cells */}
+            <div style={{display:'grid', gridTemplateColumns:'repeat(7,1fr)', gap:3}}>
+              {Array.from({length: cur.daysInMonth}, (_, i) => i+1).map(day => {
+                const status = cur.data[day]; // 'present', 'absent', 'leave' or undefined
+                let bg = '#f8fafc';
+                let border = '1px solid #f1f5f9';
+                let color = '#94a3b8';
+                if (status === 'present') { bg = '#dcfce7'; border = '1.5px solid #86efac'; color = '#15803d'; }
+                if (status === 'absent') { bg = '#fee2e2'; border = '1.5px solid #fca5a5'; color = '#b91c1c'; }
+                if (status === 'leave') { bg = '#fefce8'; border = '1.5px solid #fde047'; color = '#ca8a04'; }
+
+                return (
+                  <div key={day}
+                    onClick={() => status && alert(`${cur.m.split(' ')[0]} ${day}: ${status.toUpperCase()}`)}
+                    style={{
+                      aspect:'1/1', minHeight:36, borderRadius:8, display:'flex', flexDirection:'column',
+                      alignItems:'center', justifyContent:'center', cursor: status ? 'pointer' : 'default',
+                      background: bg, border: border, position:'relative'
+                    }}>
+                    <span style={{fontSize:11, fontWeight: status ? 900 : 600, color: color}}>{day}</span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Legend */}
+            <div style={{display:'flex', gap:12, marginTop:16, justifyContent:'center', flexWrap:'wrap'}}>
+              <div style={{display:'flex', alignItems:'center', gap:4}}>
+                <div style={{width:10, height:10, borderRadius:3, background:'#dcfce7', border:'1px solid #86efac'}}/>
+                <span style={{fontSize:10, color:'#64748b', fontWeight:700}}>Present</span>
+              </div>
+              <div style={{display:'flex', alignItems:'center', gap:4}}>
+                <div style={{width:10, height:10, borderRadius:3, background:'#fee2e2', border:'1px solid #fca5a5'}}/>
+                <span style={{fontSize:10, color:'#64748b', fontWeight:700}}>Absent</span>
+              </div>
+              <div style={{display:'flex', alignItems:'center', gap:4}}>
+                <div style={{width:10, height:10, borderRadius:3, background:'#fefce8', border:'1px solid #fde047'}}/>
+                <span style={{fontSize:10, color:'#64748b', fontWeight:700}}>Leave</span>
+              </div>
+            </div>
           </div>
 
           {/* Punch Log */}
@@ -2456,7 +2551,8 @@ export default function StaffApp(){
             ))}
           </div>
         </div>
-      )}
+        );
+      })()}
 
       {/* ══════════════════════════════════════════════════════════════════════
           SALARY
