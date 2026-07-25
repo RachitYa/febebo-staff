@@ -451,6 +451,7 @@ export default function StaffApp(){
   const [hrTab, setHrTab]           = useState('hiring'); // hiring | enquiries
 
   // Helper / Plumber / Electrician / Carpenter / Sales / Manager state
+  const [selectedAttMonth, setSelectedAttMonth] = useState(null);
   const [tasks, setTasks]               = useState(INIT_TASKS);
   const [isAvailable, setIsAvailable]   = useState(true);
   const [plumbingJobs, setPlumbingJobs] = useState(INIT_PLUMBING);
@@ -2438,7 +2439,7 @@ export default function StaffApp(){
         // We'll just define selectedMonth manually and re-render. Since we can't do that perfectly here without adding a real state,
         // we will just use the first month statically, or we can use the same pattern as salary: just show the latest month.
         // Wait, for simplicity let's just show July 2026 calendar.
-        const cur = attMonths[0];
+        const cur = selectedAttMonth || attMonths[0];
 
         return (
         <div style={{padding:'14px 14px 32px',display:'flex',flexDirection:'column',gap:14}}>
@@ -2468,7 +2469,7 @@ export default function StaffApp(){
 
           {/* Calendar View */}
           <div style={{background:'#fff', borderRadius:18, border:'1.5px solid #f1f5f9', padding:18, boxShadow:'0 4px 16px rgba(0,0,0,0.03)'}}>
-            <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:16}}>
+            <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8}}>
               <div style={{display:'flex', alignItems:'center', gap:8}}>
                 <div style={{width:32, height:32, borderRadius:10, background:'#f8fafc', display:'flex', alignItems:'center', justifyContent:'center'}}>
                   <span className="material-symbols-outlined" style={{fontSize:18, color:'#1e293b'}}>calendar_month</span>
@@ -2478,6 +2479,21 @@ export default function StaffApp(){
                   <p style={{margin:'1px 0 0', fontSize:11, color:'#64748b', fontWeight:600}}>{cur.m}</p>
                 </div>
               </div>
+            </div>
+
+            {/* Month selector */}
+            <div style={{display:'flex', gap:6, marginBottom:16, overflowX:'auto', paddingBottom:4, marginTop:12}}>
+              {attMonths.map((sm, idx) => (
+                <button key={sm.m} onClick={() => setSelectedAttMonth(sm)}
+                  style={{
+                    padding:'7px 14px', borderRadius:20, border:'none', whiteSpace:'nowrap',
+                    background: cur.m === sm.m ? '#1a1500' : '#f8fafc',
+                    color: cur.m === sm.m ? '#fde047' : '#64748b',
+                    fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit'
+                  }}>
+                  {sm.m.split(' ')[0]}
+                </button>
+              ))}
             </div>
 
             {/* Day headers */}
