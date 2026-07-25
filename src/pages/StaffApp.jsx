@@ -198,6 +198,145 @@ const INIT_ITEMS_BY_CATEGORY = {
   ]
 };
 
+// ─── Role-Based Personalized Item Lists ─────────────────────────────────────
+const ROLE_ITEM_LISTS = {
+  'Cook': [
+    { name: 'Rice (Regular)', unit: 'kg', cat: 'Groceries' },
+    { name: 'Basmati Rice', unit: 'kg', cat: 'Groceries' },
+    { name: 'Dal (Chana)', unit: 'kg', cat: 'Groceries' },
+    { name: 'Dal (Moong)', unit: 'kg', cat: 'Groceries' },
+    { name: 'Dal (Masoor)', unit: 'kg', cat: 'Groceries' },
+    { name: 'Besan', unit: 'kg', cat: 'Groceries' },
+    { name: 'Wheat Flour (Aata)', unit: 'kg', cat: 'Groceries' },
+    { name: 'Sooji', unit: 'kg', cat: 'Groceries' },
+    { name: 'Sugar', unit: 'kg', cat: 'Groceries' },
+    { name: 'Salt', unit: 'kg', cat: 'Groceries' },
+    { name: 'Cooking Oil (Sunflower)', unit: 'L', cat: 'Groceries' },
+    { name: 'Cooking Oil (Mustard)', unit: 'L', cat: 'Groceries' },
+    { name: 'Tea Leaves', unit: 'gm', cat: 'Groceries' },
+    { name: 'Coffee Powder', unit: 'gm', cat: 'Groceries' },
+    { name: 'Turmeric Powder', unit: 'gm', cat: 'Groceries' },
+    { name: 'Coriander Powder', unit: 'gm', cat: 'Groceries' },
+    { name: 'Red Chilli Powder', unit: 'gm', cat: 'Groceries' },
+    { name: 'Cumin Seeds', unit: 'gm', cat: 'Groceries' },
+    { name: 'Garam Masala', unit: 'gm', cat: 'Groceries' },
+    { name: 'Vermicelli', unit: 'packet', cat: 'Groceries' },
+    { name: 'Biscuits', unit: 'packet', cat: 'Groceries' },
+    { name: 'Potatoes', unit: 'kg', cat: 'Vegetables' },
+    { name: 'Onions', unit: 'kg', cat: 'Vegetables' },
+    { name: 'Tomatoes', unit: 'kg', cat: 'Vegetables' },
+    { name: 'Green Chillies', unit: 'kg', cat: 'Vegetables' },
+    { name: 'Ginger', unit: 'gm', cat: 'Vegetables' },
+    { name: 'Garlic', unit: 'gm', cat: 'Vegetables' },
+    { name: 'Toned Milk', unit: 'L', cat: 'Dairy' },
+    { name: 'Full Cream Milk', unit: 'L', cat: 'Dairy' },
+    { name: 'Paneer', unit: 'kg', cat: 'Dairy' },
+    { name: 'Curd', unit: 'kg', cat: 'Dairy' },
+    { name: 'LPG Gas Cylinder', unit: 'cylinder', cat: 'Utilities' },
+  ],
+  'Plumber': [
+    { name: 'CPVC Pipe (1/2 inch)', unit: 'm', cat: 'Plumbing' },
+    { name: 'CPVC Pipe (3/4 inch)', unit: 'm', cat: 'Plumbing' },
+    { name: 'PVC Pipe (4 inch)', unit: 'm', cat: 'Plumbing' },
+    { name: 'Ball Valve (1/2 inch)', unit: 'pc', cat: 'Plumbing' },
+    { name: 'Stop Cock', unit: 'pc', cat: 'Plumbing' },
+    { name: 'Angle Valve', unit: 'pc', cat: 'Plumbing' },
+    { name: 'Pipe Elbow (1/2 inch)', unit: 'pc', cat: 'Plumbing' },
+    { name: 'Pipe Tee (1/2 inch)', unit: 'pc', cat: 'Plumbing' },
+    { name: 'Teflon Tape', unit: 'roll', cat: 'Plumbing' },
+    { name: 'PVC Solvent Cement', unit: 'tin', cat: 'Plumbing' },
+    { name: 'Geyser Element', unit: 'pc', cat: 'Fittings' },
+    { name: 'Float Valve', unit: 'pc', cat: 'Fittings' },
+    { name: 'Tap Washer Set', unit: 'set', cat: 'Fittings' },
+    { name: 'Drain Cleaner Chemical', unit: 'bottle', cat: 'Cleaning' },
+    { name: 'Flexible Hose Pipe', unit: 'm', cat: 'Plumbing' },
+    { name: 'Plumber Putty', unit: 'tin', cat: 'Plumbing' },
+  ],
+  'Electrician': [
+    { name: 'MCB (Single Pole 6A)', unit: 'pc', cat: 'Electrical' },
+    { name: 'MCB (Double Pole 32A)', unit: 'pc', cat: 'Electrical' },
+    { name: 'Wire (1.5 sq mm)', unit: 'm', cat: 'Electrical' },
+    { name: 'Wire (2.5 sq mm)', unit: 'm', cat: 'Electrical' },
+    { name: 'Modular Switch (10A)', unit: 'pc', cat: 'Electrical' },
+    { name: 'Modular Socket (16A)', unit: 'pc', cat: 'Electrical' },
+    { name: 'AC Socket (5 pin)', unit: 'pc', cat: 'Electrical' },
+    { name: 'LED Bulb (9W)', unit: 'pc', cat: 'Electrical' },
+    { name: 'LED Bulb (12W)', unit: 'pc', cat: 'Electrical' },
+    { name: 'Tube Light (18W)', unit: 'pc', cat: 'Electrical' },
+    { name: 'Fan Capacitor', unit: 'pc', cat: 'Electrical' },
+    { name: 'Geyser Switch (25A)', unit: 'pc', cat: 'Electrical' },
+    { name: 'Extension Board (4 socket)', unit: 'pc', cat: 'Electrical' },
+    { name: 'PVC Conduit Pipe', unit: 'm', cat: 'Electrical' },
+    { name: 'Electrical Tape', unit: 'roll', cat: 'Supplies' },
+  ],
+  'Carpenter': [
+    { name: 'Plywood (18mm)', unit: 'sheet', cat: 'Wood' },
+    { name: 'MDF Board (12mm)', unit: 'sheet', cat: 'Wood' },
+    { name: 'Nail Set (Mixed)', unit: 'box', cat: 'Hardware' },
+    { name: 'Wood Screw Set', unit: 'box', cat: 'Hardware' },
+    { name: 'Hinge (3 inch)', unit: 'pair', cat: 'Hardware' },
+    { name: 'Door Handle', unit: 'pc', cat: 'Hardware' },
+    { name: 'Door Latch (5 inch)', unit: 'pc', cat: 'Hardware' },
+    { name: 'Door Lock Set', unit: 'set', cat: 'Hardware' },
+    { name: 'Wood Polish', unit: 'L', cat: 'Finishing' },
+    { name: 'Wood Filler Putty', unit: 'tin', cat: 'Finishing' },
+    { name: 'Sandpaper (80 grit)', unit: 'sheet', cat: 'Finishing' },
+    { name: 'Wood Glue', unit: 'bottle', cat: 'Finishing' },
+    { name: 'Drawer Slider Set', unit: 'pair', cat: 'Hardware' },
+  ],
+  'Housekeeper': [
+    { name: 'Floor Cleaning Liquid', unit: 'L', cat: 'Cleaning' },
+    { name: 'Toilet Cleaning Liquid', unit: 'bottle', cat: 'Cleaning' },
+    { name: 'Glass Cleaner', unit: 'bottle', cat: 'Cleaning' },
+    { name: 'Disinfectant Spray', unit: 'bottle', cat: 'Cleaning' },
+    { name: 'Scrub Pad (Pack of 6)', unit: 'pack', cat: 'Cleaning' },
+    { name: 'Broom (Floor)', unit: 'pc', cat: 'Supplies' },
+    { name: 'Mop Set', unit: 'set', cat: 'Supplies' },
+    { name: 'Garbage Bags (Pack of 30)', unit: 'pack', cat: 'Supplies' },
+    { name: 'Toilet Paper (12 Roll Pack)', unit: 'pack', cat: 'Consumables' },
+    { name: 'Hand Wash Liquid', unit: 'bottle', cat: 'Consumables' },
+    { name: 'Room Freshener Spray', unit: 'bottle', cat: 'Consumables' },
+    { name: 'Laundry Detergent Powder', unit: 'kg', cat: 'Cleaning' },
+    { name: 'Cloth Wiper / Duster', unit: 'pc', cat: 'Supplies' },
+  ],
+  'Security': [
+    { name: 'Log Book (A4)', unit: 'pc', cat: 'Stationery' },
+    { name: 'Pen (Blue, Pack of 10)', unit: 'pack', cat: 'Stationery' },
+    { name: 'Torch / Flashlight', unit: 'pc', cat: 'Equipment' },
+    { name: 'Batteries (AA)', unit: 'pack', cat: 'Equipment' },
+    { name: 'Visitor Badge (Pack of 50)', unit: 'pack', cat: 'Stationery' },
+    { name: 'Rubber Stamp Ink', unit: 'bottle', cat: 'Stationery' },
+    { name: 'Umbrella', unit: 'pc', cat: 'Supplies' },
+    { name: 'Safety Whistle', unit: 'pc', cat: 'Equipment' },
+  ],
+  'Sales Manager': [
+    { name: 'Brochure Paper (A4 Glossy)', unit: 'ream', cat: 'Stationery' },
+    { name: 'Visiting Cards (Pack of 100)', unit: 'pack', cat: 'Stationery' },
+    { name: 'Pen (Blue, Pack of 10)', unit: 'pack', cat: 'Stationery' },
+    { name: 'File Folder A4', unit: 'pc', cat: 'Stationery' },
+    { name: 'Notepad A4', unit: 'pc', cat: 'Stationery' },
+    { name: 'Marker Pen (Pack of 5)', unit: 'pack', cat: 'Stationery' },
+    { name: 'Printer Ink Cartridge', unit: 'pc', cat: 'Equipment' },
+    { name: 'A4 Printing Paper (500 sheet)', unit: 'ream', cat: 'Stationery' },
+  ],
+  'Purchase Manager': [
+    { name: 'Invoice File Folder', unit: 'pc', cat: 'Stationery' },
+    { name: 'Payment Receipt Book', unit: 'pc', cat: 'Stationery' },
+    { name: 'Pen (Blue, Pack of 10)', unit: 'pack', cat: 'Stationery' },
+    { name: 'Calculator', unit: 'pc', cat: 'Equipment' },
+    { name: 'Printer Ink Cartridge', unit: 'pc', cat: 'Equipment' },
+    { name: 'A4 Printing Paper (500 sheet)', unit: 'ream', cat: 'Stationery' },
+    { name: 'Stapler + Refill', unit: 'set', cat: 'Stationery' },
+  ],
+};
+
+const DEFAULT_ITEMS = [
+  { name: 'Pen (Blue)', unit: 'pc', cat: 'Stationery' },
+  { name: 'Notepad', unit: 'pc', cat: 'Stationery' },
+  { name: 'Torch', unit: 'pc', cat: 'Equipment' },
+  { name: 'Umbrella', unit: 'pc', cat: 'Supplies' },
+];
+
 const INIT_VENDOR_LEDGER = [
   { id: 1, vendorId: 1, date: '24 July 2026', type: 'Purchase', amount: 100, desc: 'Purchase: Besan (10 kg)', status: 'Pending', pm: 'UPI -> sunilkumar@upi' }
 ];
@@ -410,7 +549,73 @@ export default function StaffApp(){
   const [dItem,setDItem]=useState(''); const [dQty,setDQty]=useState(''); const [dNote,setDNote]=useState('');
   const [myDemands,setMyDemands]=useState([{id:1,item:'Basmati Rice 25kg',qty:'2 Bags',date:'22 Jul',status:'Approved'}]);
 
+  // Send Item Request system
+  const todayStr = new Date().toISOString().split('T')[0];
+  const [showItemRequestModal, setShowItemRequestModal] = useState(false);
+  const [itemReqSentList, setItemReqSentList] = useState([
+    { id: 1, items: ['Rice (Regular) \u2014 5 kg', 'Dal (Chana) \u2014 2 kg', 'Turmeric Powder'], sendTo: 'Purchase Manager', date: '23 Jul 2026', status: 'Received', note: 'Monthly kitchen restock' },
+    { id: 2, items: ['Cooking Oil (Sunflower) \u2014 3 L', 'Onions \u2014 4 kg', 'Tomatoes \u2014 2 kg'], sendTo: 'Admin', date: '21 Jul 2026', status: 'Pending', note: '' },
+  ]);
+  const [itemReqDate, setItemReqDate] = useState(new Date().toISOString().split('T')[0]);
+  const [itemReqSendTo, setItemReqSendTo] = useState('Purchase Manager');
+  const [itemReqNote, setItemReqNote] = useState('');
+  const [itemReqItems, setItemReqItems] = useState([]);
+  const [itemReqCustomInput, setItemReqCustomInput] = useState('');
+  const [itemReqCustomUnit, setItemReqCustomUnit] = useState('');
+  const [itemReqAddingCustom, setItemReqAddingCustom] = useState(false);
+  const [itemReqSearchQ, setItemReqSearchQ] = useState('');
+  const [itemReqSentTab, setItemReqSentTab] = useState('new');
+
+  const RECIPIENTS = ['Purchase Manager', 'Admin', 'Manager', 'Store Incharge', 'Supervisor'];
+
+  const openItemRequest = () => {
+    const baseItems = ROLE_ITEM_LISTS[staffRole] || DEFAULT_ITEMS;
+    setItemReqItems(baseItems.map(i => ({ ...i, checked: false, qty: '' })));
+    setItemReqDate(new Date().toISOString().split('T')[0]);
+    setItemReqSendTo('Purchase Manager');
+    setItemReqNote('');
+    setItemReqSearchQ('');
+    setItemReqAddingCustom(false);
+    setItemReqCustomInput('');
+    setItemReqCustomUnit('');
+    setShowItemRequestModal(true);
+  };
+
+  const addCustomItemToReq = () => {
+    if (!itemReqCustomInput.trim()) return;
+    const newCustom = {
+      name: itemReqCustomInput.trim(),
+      unit: itemReqCustomUnit.trim() || 'unit',
+      cat: 'Custom',
+      checked: true,
+      qty: '',
+      custom: true
+    };
+    setItemReqItems(prev => [...prev, newCustom]);
+    setItemReqCustomInput('');
+    setItemReqCustomUnit('');
+    setItemReqAddingCustom(false);
+  };
+
+  const sendItemRequest = () => {
+    const selected = itemReqItems.filter(i => i.checked);
+    if (selected.length === 0) { alert('Please select at least one item.'); return; }
+    const itemStrings = selected.map(i => i.qty ? (i.name + ' \u2014 ' + i.qty + ' ' + i.unit) : i.name);
+    const req = {
+      id: Date.now(),
+      items: itemStrings,
+      sendTo: itemReqSendTo,
+      date: new Date(itemReqDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
+      status: 'Pending',
+      note: itemReqNote.trim()
+    };
+    setItemReqSentList(prev => [req, ...prev]);
+    setShowItemRequestModal(false);
+    alert('Item request sent to ' + itemReqSendTo + '!');
+  };
+
   // Salary Pay Slip Details
+
   const [selectedPaySlip, setSelectedPaySlip] = useState(null);
   const [showPaySlipModal, setShowPaySlipModal] = useState(false);
 
@@ -651,6 +856,7 @@ export default function StaffApp(){
             {id:'home',      icon:'home',                   label:'Home Dashboard'},
             {id:'work',      icon:'home_work',              label:'My Work'},
             {id:'history',   icon:'history',                label:'Work History'},
+            {id:'itemreq',   icon:'inventory',              label:'Request Items'},
             {id:'inventory', icon:'account_balance_wallet', label:'Inventory & Petty Cash'},
             {id:'inout',     icon:'schedule',               label:'Attendance'},
             {id:'salary',    icon:'payments',               label:'Salary & Pay'},
@@ -787,7 +993,7 @@ export default function StaffApp(){
             <span className="material-symbols-outlined" style={{fontSize:20,color:'#000'}}>arrow_back_ios_new</span>
           </button>
           <p style={{flex:1,margin:0,fontSize:18,fontWeight:900,color:'#000'}}>
-            {view==='work'?'My Work':view==='history'?'Work History':view==='inventory'?'Inventory & Petty Cash':view==='inout'?'Attendance':view==='salary'?'Salary & Pay':view==='items'?'Item List':view==='chat'?'Chat':view==='reports'?'Work Reports':view==='requests'?'Requests':'My Profile'}
+            {view==='work'?'My Work':view==='history'?'Work History':view==='itemreq'?'Request Items':view==='inventory'?'Inventory & Petty Cash':view==='inout'?'Attendance':view==='salary'?'Salary & Pay':view==='items'?'Item List':view==='chat'?'Chat':view==='reports'?'Work Reports':view==='requests'?'Requests':'My Profile'}
           </p>
           {view==='items' && (
             <button onClick={()=>setShowDemandForm(true)} style={{background:C.primary,border: `1.5px solid ${C.border}`,borderRadius:10,padding:'6px 10px',color:'#000',fontSize:11,fontWeight:800,cursor:'pointer',display:'flex',alignItems:'center',gap:4,boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
@@ -2553,6 +2759,136 @@ export default function StaffApp(){
       {/* ══════════════════════════════════════════════════════════════════════
           MY PROFILE VIEW
          ══════════════════════════════════════════════════════════════════════ */}
+      {view === 'itemreq' && (
+        <div style={{padding:'14px 14px 32px', display:'flex', flexDirection:'column', gap:14}}>
+
+          {/* Tab switcher */}
+          <div style={{display:'flex', background:'#fff', borderRadius:12, padding:4, border:'1px solid #e8df9a', gap:4}}>
+            {[['new','add_shopping_cart','New Request'],['sent','history','Sent']].map(([tab, icon, label]) => (
+              <button key={tab} onClick={() => setItemReqSentTab(tab)} style={{
+                flex:1, padding:'9px 0', borderRadius:10, border:'none',
+                background: itemReqSentTab === tab ? C.primary : 'transparent',
+                color: itemReqSentTab === tab ? '#1a1500' : C.muted,
+                fontSize:12, fontWeight:900, cursor:'pointer', fontFamily:'inherit',
+                display:'flex', alignItems:'center', justifyContent:'center', gap:6
+              }}>
+                <span className="material-symbols-outlined" style={{fontSize:15}}>{icon}</span>
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {itemReqSentTab === 'new' ? (
+            <>
+              {/* CTA Hero */}
+              <div style={{background:'linear-gradient(to bottom, #fffef2, #fffadc)', border:'1.5px solid #e8df9a', borderRadius:18, padding:'20px 18px'}}>
+                <div style={{display:'flex', alignItems:'center', gap:8, marginBottom:6}}>
+                  <span className="material-symbols-outlined" style={{fontSize:22, color:'#ca8a04'}}>inventory</span>
+                  <span style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:0.5, color:'#ca8a04'}}>Item Request</span>
+                </div>
+                <h3 style={{margin:'0 0 4px', fontSize:20, fontWeight:900, color:'#1a1500'}}>Need Supplies?</h3>
+                <p style={{margin:'0 0 14px', fontSize:12.5, color:C.muted, fontWeight:600, lineHeight:1.6}}>
+                  Select from your personalised list, add quantity (optional), and send to manager or purchase team.
+                </p>
+                <button
+                  onClick={openItemRequest}
+                  style={{
+                    width:'100%', padding:'13px 0', borderRadius:14, border:'none',
+                    background:'#1a1500', color:'#fde047', fontSize:14, fontWeight:900,
+                    cursor:'pointer', fontFamily:'inherit',
+                    display:'flex', alignItems:'center', justifyContent:'center', gap:8
+                  }}
+                >
+                  <span className="material-symbols-outlined" style={{fontSize:18}}>add_shopping_cart</span>
+                  Create New Item Request
+                </button>
+              </div>
+
+              {/* Quick stats */}
+              <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
+                {[
+                  { label:'Total Sent', val: itemReqSentList.length, icon:'send', bg:'#eff6ff', color:'#1d4ed8' },
+                  { label:'Pending', val: itemReqSentList.filter(r=>r.status==='Pending').length, icon:'schedule', bg:'#fef3c7', color:'#b45309' }
+                ].map(s => (
+                  <div key={s.label} style={{background:'#fff', border:'1px solid #e8df9a', borderRadius:14, padding:'14px 16px', display:'flex', alignItems:'center', gap:12, boxShadow:'0 2px 8px rgba(120,104,10,0.03)'}}>
+                    <div style={{width:36, height:36, borderRadius:10, background:s.bg, display:'flex', alignItems:'center', justifyContent:'center'}}>
+                      <span className="material-symbols-outlined" style={{fontSize:20, color:s.color}}>{s.icon}</span>
+                    </div>
+                    <div>
+                      <p style={{margin:0, fontSize:22, fontWeight:900, color:'#1a1500'}}>{s.val}</p>
+                      <p style={{margin:0, fontSize:11, fontWeight:700, color:C.muted}}>{s.label}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Recent sent list */}
+              {itemReqSentList.length > 0 && (
+                <div style={{display:'flex', flexDirection:'column', gap:10}}>
+                  <p style={{margin:0, fontSize:11, fontWeight:800, color:C.muted, textTransform:'uppercase'}}>Recent Requests</p>
+                  {itemReqSentList.slice(0, 3).map(r => (
+                    <div key={r.id} style={{background:'#fff', border:'1px solid #f1f5f9', borderRadius:14, padding:'14px 16px', boxShadow:'0 2px 8px rgba(0,0,0,0.02)'}}>
+                      <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:8}}>
+                        <div>
+                          <p style={{margin:0, fontSize:13, fontWeight:900, color:'#1a1500'}}>To: {r.sendTo}</p>
+                          <p style={{margin:'2px 0 0', fontSize:11, fontWeight:600, color:C.muted}}>{r.date} · {r.items.length} items</p>
+                        </div>
+                        <span style={{
+                          fontSize:10, fontWeight:800, padding:'3px 8px', borderRadius:6,
+                          background: r.status === 'Received' ? '#dcfce7' : '#fef3c7',
+                          color: r.status === 'Received' ? '#15803d' : '#b45309'
+                        }}>{r.status}</span>
+                      </div>
+                      <p style={{margin:0, fontSize:12, color:C.muted, lineHeight:1.5}}>
+                        {r.items.slice(0,2).join(', ')}{r.items.length > 2 ? ' +' + (r.items.length - 2) + ' more' : ''}
+                      </p>
+                    </div>
+                  ))}
+                  <button onClick={() => setItemReqSentTab('sent')} style={{background:'none', border:'none', fontSize:12, fontWeight:800, color:'#ca8a04', cursor:'pointer', fontFamily:'inherit', padding:0, textAlign:'left'}}>
+                    View all sent requests
+                  </button>
+                </div>
+              )}
+            </>
+          ) : (
+            <div style={{display:'flex', flexDirection:'column', gap:12}}>
+              {itemReqSentList.length === 0 ? (
+                <p style={{textAlign:'center', padding:'30px 0', fontSize:13.5, color:C.muted, fontStyle:'italic'}}>No requests sent yet.</p>
+              ) : (
+                itemReqSentList.map(r => (
+                  <div key={r.id} style={{background:'#fff', border:'1px solid #f1f5f9', borderRadius:18, padding:'18px 16px', boxShadow:'0 4px 12px rgba(0,0,0,0.02)'}}>
+                    <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:10}}>
+                      <div>
+                        <p style={{margin:0, fontSize:14, fontWeight:900, color:'#1a1500'}}>To: {r.sendTo}</p>
+                        <p style={{margin:'2px 0 0', fontSize:11.5, color:C.muted}}>{r.date} · {r.items.length} items</p>
+                      </div>
+                      <span style={{
+                        fontSize:10.5, fontWeight:800, padding:'4px 10px', borderRadius:8,
+                        background: r.status === 'Received' ? '#dcfce7' : '#fef3c7',
+                        color: r.status === 'Received' ? '#15803d' : '#b45309'
+                      }}>{r.status}</span>
+                    </div>
+                    <div style={{display:'flex', flexDirection:'column', gap:5}}>
+                      {r.items.map((itm, idx) => (
+                        <div key={idx} style={{display:'flex', alignItems:'center', gap:8, background:'#f8fafc', padding:'7px 10px', borderRadius:8}}>
+                          <span className="material-symbols-outlined" style={{fontSize:14, color:'#ca8a04'}}>check_box</span>
+                          <span style={{fontSize:12.5, fontWeight:700, color:'#1a1500'}}>{itm}</span>
+                        </div>
+                      ))}
+                      {r.note && (
+                        <div style={{marginTop:6, fontSize:11.5, color:'#78350f', fontStyle:'italic', borderLeft:'2px solid #ca8a04', paddingLeft:8}}>
+                          Note: {r.note}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
       {view === 'history' && (
         <div style={{padding:'14px 14px 32px', display:'flex', flexDirection:'column', gap:14}}>
           {/* Calendar Header with Navigation */}
@@ -3010,6 +3346,200 @@ export default function StaffApp(){
       </Sheet>
 
       {/* Sheet 2: Demand Creation Form */}
+      {/* Item Request Full Modal */}
+      {showItemRequestModal && (
+        <div style={{
+          position:'fixed', inset:0, background:'rgba(0,0,0,0.5)', zIndex:500,
+          display:'flex', flexDirection:'column', alignItems:'flex-end'
+        }} onClick={e => { if (e.target === e.currentTarget) setShowItemRequestModal(false); }}>
+          <div style={{
+            width:'100%', maxWidth:480, height:'95vh', marginTop:'5vh',
+            background:'#f8f9fa', borderRadius:'24px 24px 0 0',
+            display:'flex', flexDirection:'column', overflowY:'auto'
+          }}>
+            {/* Header */}
+            <div style={{
+              background:'#fff', padding:'16px 18px',
+              borderBottom:'1px solid #f1f5f9', display:'flex',
+              alignItems:'center', justifyContent:'space-between',
+              position:'sticky', top:0, zIndex:10, borderRadius:'24px 24px 0 0'
+            }}>
+              <div>
+                <p style={{margin:0, fontSize:16, fontWeight:900, color:'#1a1500'}}>Request Items</p>
+                <p style={{margin:'2px 0 0', fontSize:11, color:C.muted, fontWeight:700}}>{staffRole} list · {staffName}</p>
+              </div>
+              <button onClick={() => setShowItemRequestModal(false)} style={{background:'#f8f9fa', border:'none', borderRadius:10, width:34, height:34, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', fontSize:18, color:'#666'}}>
+                <span className="material-symbols-outlined" style={{fontSize:20}}>close</span>
+              </button>
+            </div>
+
+            {/* Body */}
+            <div style={{padding:'16px', display:'flex', flexDirection:'column', gap:14, flex:1}}>
+
+              {/* Date & Send To */}
+              <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:10}}>
+                <div>
+                  <p style={{margin:'0 0 5px', fontSize:10.5, fontWeight:800, color:C.muted, textTransform:'uppercase'}}>Date</p>
+                  <input type="date" value={itemReqDate} onChange={e => setItemReqDate(e.target.value)}
+                    style={{width:'100%', padding:'9px 12px', border:'1.5px solid #e8df9a', borderRadius:10, fontSize:13, fontFamily:'inherit', boxSizing:'border-box'}} />
+                </div>
+                <div>
+                  <p style={{margin:'0 0 5px', fontSize:10.5, fontWeight:800, color:C.muted, textTransform:'uppercase'}}>Send To</p>
+                  <select value={itemReqSendTo} onChange={e => setItemReqSendTo(e.target.value)}
+                    style={{width:'100%', padding:'9px 12px', border:'1.5px solid #e8df9a', borderRadius:10, fontSize:13, fontFamily:'inherit', background:'#fff', boxSizing:'border-box'}}>
+                    {RECIPIENTS.map(r => <option key={r} value={r}>{r}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              {/* Search */}
+              <div style={{position:'relative'}}>
+                <span className="material-symbols-outlined" style={{position:'absolute', left:12, top:'50%', transform:'translateY(-50%)', fontSize:17, color:C.muted}}>search</span>
+                <input type="text" placeholder="Search items..." value={itemReqSearchQ} onChange={e => setItemReqSearchQ(e.target.value)}
+                  style={{width:'100%', padding:'10px 12px 10px 38px', border:'1.5px solid #e8df9a', borderRadius:12, fontSize:13, fontFamily:'inherit', boxSizing:'border-box'}} />
+              </div>
+
+              {/* Summary row */}
+              <div style={{display:'flex', alignItems:'center', justifyContent:'space-between'}}>
+                <p style={{margin:0, fontSize:11, fontWeight:700, color:C.muted}}>
+                  {itemReqItems.filter(i => i.checked).length} items selected
+                </p>
+                <button onClick={() => setItemReqItems(prev => prev.map(i => ({ ...i, checked: false })))}
+                  style={{background:'none', border:'none', fontSize:11, fontWeight:800, color:'#b91c1c', cursor:'pointer', fontFamily:'inherit', padding:0}}>
+                  Clear All
+                </button>
+              </div>
+
+              {/* Grouped item list */}
+              {(() => {
+                const filtered = itemReqItems.filter(i =>
+                  i.name.toLowerCase().includes(itemReqSearchQ.toLowerCase()) ||
+                  (i.cat || '').toLowerCase().includes(itemReqSearchQ.toLowerCase())
+                );
+                const categories = [...new Set(filtered.map(i => i.cat || 'General'))];
+                return (
+                  <div style={{display:'flex', flexDirection:'column', gap:12}}>
+                    {categories.map(cat => {
+                      const catItems = filtered.filter(i => (i.cat || 'General') === cat);
+                      return (
+                        <div key={cat}>
+                          <p style={{margin:'0 0 8px', fontSize:10.5, fontWeight:800, color:C.muted, textTransform:'uppercase', letterSpacing:0.4}}>{cat}</p>
+                          <div style={{display:'flex', flexDirection:'column', gap:6}}>
+                            {catItems.map((item) => {
+                              const globalIdx = itemReqItems.findIndex(i => i.name === item.name && i.cat === item.cat);
+                              return (
+                                <div key={item.name + item.cat} style={{
+                                  background:'#fff',
+                                  border: item.checked ? '1.5px solid #ca8a04' : '1px solid #f1f5f9',
+                                  borderRadius:14, padding:'12px 14px',
+                                  display:'flex', alignItems:'center', justifyContent:'space-between',
+                                  boxShadow: item.checked ? '0 2px 8px rgba(202,138,4,0.08)' : 'none'
+                                }}>
+                                  <div style={{display:'flex', alignItems:'center', gap:10, flex:1}}>
+                                    <div
+                                      onClick={() => setItemReqItems(prev => prev.map((x, i) => i === globalIdx ? {...x, checked: !x.checked} : x))}
+                                      style={{
+                                        width:20, height:20, borderRadius:6,
+                                        border: item.checked ? '2px solid #ca8a04' : '2px solid #d1d5db',
+                                        background: item.checked ? '#ca8a04' : '#fff',
+                                        cursor:'pointer', flexShrink:0,
+                                        display:'flex', alignItems:'center', justifyContent:'center'
+                                      }}
+                                    >
+                                      {item.checked && <span className="material-symbols-outlined" style={{fontSize:13, color:'#fff'}}>check</span>}
+                                    </div>
+                                    <div style={{flex:1}}>
+                                      <p style={{margin:0, fontSize:13.5, fontWeight: item.checked ? 800 : 700, color: item.checked ? '#1a1500' : '#374151'}}>{item.name}</p>
+                                      <p style={{margin:0, fontSize:10.5, color:C.muted}}>per {item.unit}{item.custom ? ' · Custom' : ''}</p>
+                                    </div>
+                                  </div>
+                                  {item.checked && (
+                                    <div style={{display:'flex', alignItems:'center', gap:6}}>
+                                      <input
+                                        type="number"
+                                        placeholder="Qty"
+                                        value={item.qty}
+                                        onChange={e => setItemReqItems(prev => prev.map((x, i) => i === globalIdx ? {...x, qty: e.target.value} : x))}
+                                        style={{width:54, padding:'6px 8px', border:'1.5px solid #e8df9a', borderRadius:8, fontSize:12.5, textAlign:'center', fontFamily:'inherit'}}
+                                      />
+                                      <span style={{fontSize:11, color:C.muted, whiteSpace:'nowrap'}}>{item.unit}</span>
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
+
+              {/* Add Custom Item */}
+              {!itemReqAddingCustom ? (
+                <button onClick={() => setItemReqAddingCustom(true)} style={{
+                  display:'flex', alignItems:'center', gap:8, background:'none',
+                  border:'1.5px dashed #ca8a04', borderRadius:12, padding:'11px 14px',
+                  fontSize:13, fontWeight:800, color:'#ca8a04', cursor:'pointer', fontFamily:'inherit', width:'100%'
+                }}>
+                  <span className="material-symbols-outlined" style={{fontSize:18}}>add</span>
+                  Add Item Not In List
+                </button>
+              ) : (
+                <div style={{background:'#fffef2', border:'1.5px solid #e8df9a', borderRadius:14, padding:'14px'}}>
+                  <p style={{margin:'0 0 10px', fontSize:11.5, fontWeight:800, color:'#ca8a04'}}>ADD CUSTOM ITEM</p>
+                  <div style={{display:'flex', gap:8, marginBottom:10}}>
+                    <input type="text" placeholder="Item name..." value={itemReqCustomInput} onChange={e => setItemReqCustomInput(e.target.value)}
+                      style={{flex:2, padding:'9px 12px', border:'1.5px solid #e8df9a', borderRadius:10, fontSize:13, fontFamily:'inherit'}} />
+                    <input type="text" placeholder="Unit (kg/pc)" value={itemReqCustomUnit} onChange={e => setItemReqCustomUnit(e.target.value)}
+                      style={{flex:1, padding:'9px 10px', border:'1.5px solid #e8df9a', borderRadius:10, fontSize:12, fontFamily:'inherit'}} />
+                  </div>
+                  <div style={{display:'flex', gap:8}}>
+                    <button onClick={addCustomItemToReq} style={{flex:1, padding:'9px 0', borderRadius:10, border:'none', background:'#ca8a04', color:'#fff', fontSize:12, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}>
+                      Add to List
+                    </button>
+                    <button onClick={() => { setItemReqAddingCustom(false); setItemReqCustomInput(''); setItemReqCustomUnit(''); }}
+                      style={{flex:1, padding:'9px 0', borderRadius:10, border:'1px solid #e8df9a', background:'#fff', color:C.muted, fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit'}}>
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Note */}
+              <div>
+                <p style={{margin:'0 0 5px', fontSize:10.5, fontWeight:800, color:C.muted, textTransform:'uppercase'}}>Note (Optional)</p>
+                <textarea
+                  value={itemReqNote}
+                  onChange={e => setItemReqNote(e.target.value)}
+                  placeholder="Any special instructions or remarks..."
+                  rows={2}
+                  style={{width:'100%', padding:'10px 12px', border:'1.5px solid #e8df9a', borderRadius:12, fontSize:13, fontFamily:'inherit', resize:'none', boxSizing:'border-box'}}
+                />
+              </div>
+            </div>
+
+            {/* Sticky Send button */}
+            <div style={{padding:'14px 16px', background:'#fff', borderTop:'1px solid #f1f5f9', position:'sticky', bottom:0}}>
+              <button onClick={sendItemRequest} style={{
+                width:'100%', padding:15, borderRadius:14, border:'none',
+                background: itemReqItems.filter(i => i.checked).length === 0 ? '#e5e7eb' : '#1a1500',
+                color: itemReqItems.filter(i => i.checked).length === 0 ? '#9ca3af' : '#fde047',
+                fontSize:14, fontWeight:900,
+                cursor: itemReqItems.filter(i => i.checked).length === 0 ? 'not-allowed' : 'pointer',
+                fontFamily:'inherit', display:'flex', alignItems:'center', justifyContent:'center', gap:8
+              }}>
+                <span className="material-symbols-outlined" style={{fontSize:18}}>send</span>
+                {itemReqItems.filter(i => i.checked).length === 0
+                  ? 'Select items to send'
+                  : ('Send to ' + itemReqSendTo + ' (' + itemReqItems.filter(i => i.checked).length + ' items)')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Sheet 3: Add Items Modal (Screenshot 3) */}
       <Sheet show={showAddPurchaseModal} onClose={()=>setShowAddPurchaseModal(false)} title="Add Items" sub={selectedVendor ? `${selectedVendor.category} · ${selectedVendor.shop}` : ''}>
         <div style={{display:'flex', flexDirection:'column', gap:12}}>
