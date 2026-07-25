@@ -323,6 +323,31 @@ export default function StaffApp(){
   // Purchase
   const [demands,setDemands]    = useState(INIT_DEMANDS);
 
+  // My Profile page states
+  const [profilePic, setProfilePic] = useState(localStorage.getItem('febebo_profile_pic') || null);
+  const [editPersonal, setEditPersonal] = useState(false);
+  const [phoneInput, setPhoneInput] = useState(user?.mobile || '+91 98000 12345');
+  const [emailInput, setEmailInput] = useState(user?.name ? `${user.name.split(' ')[0].toLowerCase()}@febebo.com` : 'staff@febebo.com');
+  const [addressInput, setAddressInput] = useState('H-42, Block C, Sector 62, Noida, UP - 201301');
+  const [emergencyInput, setEmergencyInput] = useState('Pooja Devi (Wife) · +91 98111 22233');
+
+  const [editProfessional, setEditProfessional] = useState(false);
+  const [salaryInput, setSalaryInput] = useState('₹18,500');
+  const [dojInput, setDojInput] = useState('15th Jan 2025');
+  const [shiftInput, setShiftInput] = useState('09:00 AM - 06:00 PM');
+  const [statusInput, setStatusInput] = useState('On Duty ✅');
+
+  const [documentsList, setDocumentsList] = useState(() => {
+    const saved = localStorage.getItem('febebo_docs');
+    return saved ? JSON.parse(saved) : [
+      { name: 'Aadhar Card', desc: 'Verification Complete', icon: 'badge', no: 'XXXX XXXX 8892', status: 'Verified', fileUrl: 'Aadhar_Card_Verified.pdf' },
+      { name: 'PAN Card', desc: 'Verification Complete', icon: 'credit_card', no: 'ABCDE1234F', status: 'Verified', fileUrl: 'PAN_Card_Verified.pdf' },
+      { name: 'Employment Agreement', desc: 'Agreement document unsigned', icon: 'description', no: 'Signed PDF', status: 'Unverified', fileUrl: '' }
+    ];
+  });
+
+  const [previewDoc, setPreviewDoc] = useState(null); // { name, fileUrl, status }
+
   // Vendor system states for Purchase Manager
   const [vendors, setVendors] = useState(INIT_VENDORS);
   const [activeVendorCategory, setActiveVendorCategory] = useState('Groceries');
@@ -2362,11 +2387,42 @@ export default function StaffApp(){
       {view === 'profile_view' && (
         <div style={{padding:'14px 14px 32px', display:'flex', flexDirection:'column', gap:14}}>
           {/* Main Card: Avatar & Status */}
-          <div style={{background:'#fff', borderRadius:18, border:'1px solid #e8df9a', padding:'20px 16px', display:'flex', flexDirection:'column', alignItems:'center', textAlign:'center', boxShadow:'0 4px 16px rgba(120, 104, 10, 0.05)'}}>
-            <div style={{width:80, height:80, borderRadius:50, background:meta.accentBg, border:'2px solid #e8df9a', display:'flex', alignItems:'center', justifyContent:'center', fontSize:36, marginBottom:12, boxShadow:'0 4px 12px rgba(0,0,0,0.06)'}}>
-              {meta.emoji}
+          <div style={{background:'#fff', borderRadius:18, border:'1px solid #e8df9a', padding:'24px 16px', display:'flex', flexDirection:'column', alignItems:'center', textAlign:'center', boxShadow:'0 4px 16px rgba(120, 104, 10, 0.05)', position:'relative'}}>
+            
+            {/* Clickable Profile Avatar with Hidden File Input */}
+            <div style={{position:'relative', cursor:'pointer'}} onClick={() => document.getElementById('avatar-input').click()}>
+              {profilePic ? (
+                <img src={profilePic} alt="Profile" style={{width:84, height:84, borderRadius:50, objectFit:'cover', border:'2.5px solid #ca8a04', boxShadow:'0 4px 12px rgba(0,0,0,0.08)'}} />
+              ) : (
+                <div style={{width:84, height:84, borderRadius:50, background:meta.accentBg, border:'2.5px solid #e8df9a', display:'flex', alignItems:'center', justifyContent:'center', fontSize:38, boxShadow:'0 4px 12px rgba(0,0,0,0.06)'}}>
+                  {meta.emoji}
+                </div>
+              )}
+              {/* Photo edit badge overlay */}
+              <div style={{position:'absolute', bottom:-4, right:-4, background:'#ca8a04', borderRadius:'50%', width:26, height:26, display:'flex', alignItems:'center', justifyContent:'center', border:'2px solid #fff', boxShadow:'0 2px 6px rgba(0,0,0,0.2)'}}>
+                <span className="material-symbols-outlined" style={{fontSize:14, color:'#fff'}}>photo_camera</span>
+              </div>
             </div>
-            <h3 style={{margin:'0 0 4px', fontSize:22, fontWeight:900, color:'#000'}}>{staffName}</h3>
+
+            <input 
+              id="avatar-input" 
+              type="file" 
+              accept="image/*" 
+              style={{display:'none'}} 
+              onChange={e => {
+                const file = e.target.files[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onload = () => {
+                    setProfilePic(reader.result);
+                    localStorage.setItem('febebo_profile_pic', reader.result);
+                  };
+                  reader.readAsDataURL(file);
+                }
+              }}
+            />
+
+            <h3 style={{margin:'10px 0 4px', fontSize:22, fontWeight:900, color:'#000'}}>{staffName}</h3>
             <div style={{display:'flex', alignItems:'center', gap:6, marginBottom:12}}>
               <span style={{fontSize:11, fontWeight:800, background:meta.accent, color:'#000', padding:'2px 8px', borderRadius:8, border:'1.5px solid #e8df9a'}}>{staffRole}</span>
               <span style={{fontSize:12, fontWeight:700, color:C.muted}}>· {meta.dept}</span>
@@ -2379,72 +2435,207 @@ export default function StaffApp(){
 
           {/* Section: Personal Detailing */}
           <div style={{background:'#fff', borderRadius:18, border:'1px solid #e8df9a', padding:16, display:'flex', flexDirection:'column', gap:12, boxShadow:'0 4px 16px rgba(120, 104, 10, 0.05)'}}>
-            <p style={{margin:0, fontSize:14, fontWeight:900, color:'#000', borderBottom:'1px solid #f1f5f9', paddingBottom:8, display:'flex', alignItems:'center', gap:6}}>
-              <span className="material-symbols-outlined" style={{fontSize:18, color:'#78680a'}}>person</span>
-              Personal Details
-            </p>
-            <div style={{display:'grid', gridTemplateColumns:'1fr', gap:10}}>
-              {[
-                {label:'Phone Number', val: user?.mobile || '+91 98000 12345'},
-                {label:'Email Address', val: `${staffName.toLowerCase().replace(/\s+/g, '.')}@febebo.com`},
-                {label:'Permanent Address', val: 'H-42, Block C, Sector 62, Noida, UP - 201301'},
-                {label:'Emergency Contact', val: 'Pooja Devi (Wife) · +91 98111 22233'},
-              ].map(item => (
-                <div key={item.label} style={{display:'flex', flexDirection:'column', gap:2}}>
-                  <span style={{fontSize:10, fontWeight:800, color:C.muted, textTransform:'uppercase'}}>{item.label}</span>
-                  <span style={{fontSize:13, fontWeight:700, color:'#000'}}>{item.val}</span>
-                </div>
-              ))}
+            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', borderBottom:'1px solid #f1f5f9', paddingBottom:8}}>
+              <p style={{margin:0, fontSize:14, fontWeight:900, color:'#000', display:'flex', alignItems:'center', gap:6}}>
+                <span className="material-symbols-outlined" style={{fontSize:18, color:'#ca8a04'}}>person</span>
+                Personal Details
+              </p>
+              <button 
+                onClick={() => setEditPersonal(!editPersonal)} 
+                style={{background:'none', border:'none', color:'#ca8a04', fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', gap:4}}
+              >
+                <span className="material-symbols-outlined" style={{fontSize:14}}>{editPersonal ? 'save' : 'edit'}</span>
+                {editPersonal ? 'Done' : 'Edit'}
+              </button>
+            </div>
+
+            <div style={{display:'flex', flexDirection:'column', gap:12}}>
+              {/* Phone */}
+              <div style={{display:'flex', flexDirection:'column', gap:3}}>
+                <span style={{fontSize:10, fontWeight:800, color:C.muted, textTransform:'uppercase'}}>Phone Number</span>
+                {editPersonal ? (
+                  <input type="text" value={phoneInput} onChange={e=>setPhoneInput(e.target.value)} style={{padding:'8px 10px', border:`1px solid ${C.border}`, borderRadius:8, fontSize:13, outline:'none'}} />
+                ) : (
+                  <span style={{fontSize:13, fontWeight:700, color:'#000'}}>{phoneInput}</span>
+                )}
+              </div>
+
+              {/* Email */}
+              <div style={{display:'flex', flexDirection:'column', gap:3}}>
+                <span style={{fontSize:10, fontWeight:800, color:C.muted, textTransform:'uppercase'}}>Email Address</span>
+                {editPersonal ? (
+                  <input type="email" value={emailInput} onChange={e=>setEmailInput(e.target.value)} style={{padding:'8px 10px', border:`1px solid ${C.border}`, borderRadius:8, fontSize:13, outline:'none'}} />
+                ) : (
+                  <span style={{fontSize:13, fontWeight:700, color:'#000'}}>{emailInput}</span>
+                )}
+              </div>
+
+              {/* Permanent Address */}
+              <div style={{display:'flex', flexDirection:'column', gap:3}}>
+                <span style={{fontSize:10, fontWeight:800, color:C.muted, textTransform:'uppercase'}}>Permanent Address</span>
+                {editPersonal ? (
+                  <textarea value={addressInput} rows={2} onChange={e=>setAddressInput(e.target.value)} style={{padding:'8px 10px', border:`1px solid ${C.border}`, borderRadius:8, fontSize:13, outline:'none', resize:'none', fontFamily:'inherit'}} />
+                ) : (
+                  <span style={{fontSize:13, fontWeight:700, color:'#000'}}>{addressInput}</span>
+                )}
+              </div>
+
+              {/* Emergency Contact */}
+              <div style={{display:'flex', flexDirection:'column', gap:3}}>
+                <span style={{fontSize:10, fontWeight:800, color:C.muted, textTransform:'uppercase'}}>Emergency Contact</span>
+                {editPersonal ? (
+                  <input type="text" value={emergencyInput} onChange={e=>setEmergencyInput(e.target.value)} style={{padding:'8px 10px', border:`1px solid ${C.border}`, borderRadius:8, fontSize:13, outline:'none'}} />
+                ) : (
+                  <span style={{fontSize:13, fontWeight:700, color:'#000'}}>{emergencyInput}</span>
+                )}
+              </div>
             </div>
           </div>
 
           {/* Section: Professional Detailing */}
           <div style={{background:'#fff', borderRadius:18, border:'1px solid #e8df9a', padding:16, display:'flex', flexDirection:'column', gap:12, boxShadow:'0 4px 16px rgba(120, 104, 10, 0.05)'}}>
-            <p style={{margin:0, fontSize:14, fontWeight:900, color:'#000', borderBottom:'1px solid #f1f5f9', paddingBottom:8, display:'flex', alignItems:'center', gap:6}}>
-              <span className="material-symbols-outlined" style={{fontSize:18, color:'#78680a'}}>badge</span>
-              Professional Details
-            </p>
+            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', borderBottom:'1px solid #f1f5f9', paddingBottom:8}}>
+              <p style={{margin:0, fontSize:14, fontWeight:900, color:'#000', display:'flex', alignItems:'center', gap:6}}>
+                <span className="material-symbols-outlined" style={{fontSize:18, color:'#ca8a04'}}>badge</span>
+                Professional Details
+              </p>
+              <button 
+                onClick={() => setEditProfessional(!editProfessional)} 
+                style={{background:'none', border:'none', color:'#ca8a04', fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', gap:4}}
+              >
+                <span className="material-symbols-outlined" style={{fontSize:14}}>{editProfessional ? 'save' : 'edit'}</span>
+                {editProfessional ? 'Done' : 'Edit'}
+              </button>
+            </div>
+
             <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
-              {[
-                {label:'Staff ID', val:`FEB-2026-ST0${(user?.id || 1042) % 1000}`},
-                {label:'Designated Role', val:staffRole},
-                {label:'Monthly Salary', val:'₹18,500'},
-                {label:'Date of Joining', val:'15th Jan 2025'},
-                {label:'Shift Timing', val:'09:00 AM - 06:00 PM'},
-                {label:'Duty Status', val:'On Duty ✅'},
-              ].map(item => (
-                <div key={item.label} style={{display:'flex', flexDirection:'column', gap:2}}>
-                  <span style={{fontSize:10, fontWeight:800, color:C.muted, textTransform:'uppercase'}}>{item.label}</span>
-                  <span style={{fontSize:13, fontWeight:700, color:'#000'}}>{item.val}</span>
-                </div>
-              ))}
+              <div style={{display:'flex', flexDirection:'column', gap:2}}>
+                <span style={{fontSize:10, fontWeight:800, color:C.muted, textTransform:'uppercase'}}>Staff ID</span>
+                <span style={{fontSize:13, fontWeight:700, color:'#000'}}>{'FEB-2026-ST0' + ((user?.id || 1042) % 1000)}</span>
+              </div>
+
+              <div style={{display:'flex', flexDirection:'column', gap:2}}>
+                <span style={{fontSize:10, fontWeight:800, color:C.muted, textTransform:'uppercase'}}>Designated Role</span>
+                <span style={{fontSize:13, fontWeight:700, color:'#000'}}>{staffRole}</span>
+              </div>
+
+              <div style={{display:'flex', flexDirection:'column', gap:2}}>
+                <span style={{fontSize:10, fontWeight:800, color:C.muted, textTransform:'uppercase'}}>Monthly Salary</span>
+                {editProfessional ? (
+                  <input type="text" value={salaryInput} onChange={e=>setSalaryInput(e.target.value)} style={{padding:'6px 8px', border:`1px solid ${C.border}`, borderRadius:8, fontSize:13, outline:'none'}} />
+                ) : (
+                  <span style={{fontSize:13, fontWeight:700, color:'#000'}}>{salaryInput}</span>
+                )}
+              </div>
+
+              <div style={{display:'flex', flexDirection:'column', gap:2}}>
+                <span style={{fontSize:10, fontWeight:800, color:C.muted, textTransform:'uppercase'}}>Date of Joining</span>
+                {editProfessional ? (
+                  <input type="text" value={dojInput} onChange={e=>setDojInput(e.target.value)} style={{padding:'6px 8px', border:`1px solid ${C.border}`, borderRadius:8, fontSize:13, outline:'none'}} />
+                ) : (
+                  <span style={{fontSize:13, fontWeight:700, color:'#000'}}>{dojInput}</span>
+                )}
+              </div>
+
+              <div style={{display:'flex', flexDirection:'column', gap:2}}>
+                <span style={{fontSize:10, fontWeight:800, color:C.muted, textTransform:'uppercase'}}>Shift Timing</span>
+                {editProfessional ? (
+                  <input type="text" value={shiftInput} onChange={e=>setShiftInput(e.target.value)} style={{padding:'6px 8px', border:`1px solid ${C.border}`, borderRadius:8, fontSize:13, outline:'none'}} />
+                ) : (
+                  <span style={{fontSize:13, fontWeight:700, color:'#000'}}>{shiftInput}</span>
+                )}
+              </div>
+
+              <div style={{display:'flex', flexDirection:'column', gap:2}}>
+                <span style={{fontSize:10, fontWeight:800, color:C.muted, textTransform:'uppercase'}}>Duty Status</span>
+                {editProfessional ? (
+                  <input type="text" value={statusInput} onChange={e=>setStatusInput(e.target.value)} style={{padding:'6px 8px', border:`1px solid ${C.border}`, borderRadius:8, fontSize:13, outline:'none'}} />
+                ) : (
+                  <span style={{fontSize:13, fontWeight:700, color:'#000'}}>{statusInput}</span>
+                )}
+              </div>
             </div>
           </div>
 
           {/* Section: Documents */}
           <div style={{background:'#fff', borderRadius:18, border:'1px solid #e8df9a', padding:16, display:'flex', flexDirection:'column', gap:12, boxShadow:'0 4px 16px rgba(120, 104, 10, 0.05)'}}>
             <p style={{margin:0, fontSize:14, fontWeight:900, color:'#000', borderBottom:'1px solid #f1f5f9', paddingBottom:8, display:'flex', alignItems:'center', gap:6}}>
-              <span className="material-symbols-outlined" style={{fontSize:18, color:'#78680a'}}>folder_shared</span>
+              <span className="material-symbols-outlined" style={{fontSize:18, color:'#ca8a04'}}>folder_shared</span>
               Documents & Verification
             </p>
-            <div style={{display:'flex', flexDirection:'column', gap:8}}>
-              {[
-                {name:'Aadhar Card', desc:'Verification Complete', icon:'badge', no:'XXXX XXXX 8892'},
-                {name:'PAN Card', desc:'Verification Complete', icon:'credit_card', no:'ABCDE1234F'},
-                {name:'Employment Agreement', desc:'Signed on 15 Jan 2025', icon:'description', no:'Signed PDF'},
-              ].map(doc => (
-                <div key={doc.name} style={{background:C.bg, borderRadius:12, padding:'10px 12px', border:'1px solid #e8df9a', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-                  <div style={{display:'flex', alignItems:'center', gap:10}}>
-                    <span className="material-symbols-outlined" style={{fontSize:22, color:'#78680a'}}>{doc.icon}</span>
-                    <div>
+            <div style={{display:'flex', flexDirection:'column', gap:10}}>
+              {documentsList.map((doc, idx) => (
+                <div key={doc.name} style={{background:C.bg, borderRadius:12, padding:'12px', border:'1px solid #e8df9a', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                  <div style={{display:'flex', alignItems:'center', gap:10, flex:1}}>
+                    <span className="material-symbols-outlined" style={{fontSize:22, color:'#ca8a04'}}>{doc.icon}</span>
+                    <div style={{flex:1}}>
                       <p style={{margin:0, fontSize:12, fontWeight:800, color:'#000'}}>{doc.name}</p>
-                      <p style={{margin:0, fontSize:10, color:C.muted}}>{doc.no} · {doc.desc}</p>
+                      <p style={{margin:0, fontSize:10, color:C.muted}}>{doc.no} · {doc.status === 'Verified' ? 'Verified' : doc.status}</p>
                     </div>
                   </div>
-                  <div style={{display:'flex', alignItems:'center', gap:4, background:'#dcfce7', padding:'4px 8px', borderRadius:8}}>
-                    <span className="material-symbols-outlined" style={{fontSize:12, color:'#166534'}}>check_circle</span>
-                    <span style={{fontSize:9, fontWeight:800, color:'#166534'}}>Verified</span>
+                  
+                  {/* File interaction depending on Verification status */}
+                  <div style={{display:'flex', alignItems:'center', gap:6}}>
+                    {doc.status === 'Verified' ? (
+                      <>
+                        <button 
+                          onClick={() => setPreviewDoc(doc)}
+                          style={{background:'#fefce8', border:'1px solid #e8df9a', borderRadius:6, padding:'4px 8px', fontSize:10, fontWeight:800, color:'#ca8a04', cursor:'pointer', fontFamily:'inherit'}}
+                        >
+                          👁️ View
+                        </button>
+                        <div style={{display:'flex', alignItems:'center', gap:2, background:'#dcfce7', padding:'4px 8px', borderRadius:8}}>
+                          <span className="material-symbols-outlined" style={{fontSize:10, color:'#166534'}}>check_circle</span>
+                          <span style={{fontSize:9, fontWeight:800, color:'#166534'}}>Verified</span>
+                        </div>
+                      </>
+                    ) : doc.status === 'Under Verification' || doc.status === 'Uploaded' ? (
+                      <>
+                        <button 
+                          onClick={() => setPreviewDoc(doc)}
+                          style={{background:'#fefce8', border:'1px solid #e8df9a', borderRadius:6, padding:'4px 8px', fontSize:10, fontWeight:800, color:'#ca8a04', cursor:'pointer', fontFamily:'inherit'}}
+                        >
+                          👁️ Preview
+                        </button>
+                        <div style={{display:'flex', alignItems:'center', gap:2, background:'#fef3c7', padding:'4px 8px', borderRadius:8}}>
+                          <span className="material-symbols-outlined" style={{fontSize:10, color:'#b45309'}}>schedule</span>
+                          <span style={{fontSize:9, fontWeight:800, color:'#b45309'}}>Pending Verify</span>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <button 
+                          onClick={() => document.getElementById(`doc-upload-${idx}`).click()}
+                          style={{background:'#ca8a04', border:'none', borderRadius:8, padding:'6px 12px', fontSize:10, fontWeight:800, color:'#fff', cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', gap:4}}
+                        >
+                          <span className="material-symbols-outlined" style={{fontSize:12}}>upload</span>
+                          Upload
+                        </button>
+                        <input 
+                          id={`doc-upload-${idx}`}
+                          type="file"
+                          accept=".pdf,image/*"
+                          style={{display:'none'}}
+                          onChange={e => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              const updatedDocs = documentsList.map((d, i) => i === idx ? {
+                                ...d,
+                                status: 'Under Verification',
+                                desc: 'Verification Pending',
+                                fileUrl: file.name,
+                                no: file.name.substring(0, 15) + '...'
+                              } : d);
+                              setDocumentsList(updatedDocs);
+                              localStorage.setItem('febebo_docs', JSON.stringify(updatedDocs));
+                              alert(`${file.name} uploaded successfully! Subject to admin verification.`);
+                            }
+                          }}
+                        />
+                      </>
+                    )}
                   </div>
+
                 </div>
               ))}
             </div>
@@ -2601,6 +2792,48 @@ export default function StaffApp(){
       </Sheet>
 
       {/* Sheet 4: Purchase Payment Modal (Screenshot 4) */}
+      {/* Sheet 5: Document Preview Modal */}
+      <Sheet show={!!previewDoc} onClose={() => setPreviewDoc(null)} title={previewDoc?.name || 'Document View'} sub="Uploaded Document Details">
+        <div style={{display:'flex', flexDirection:'column', gap:14, alignItems:'center', textAlign:'center'}}>
+          <div style={{width:68, height:68, borderRadius:50, background: '#fefce8', border: '1px solid #e8df9a', display:'flex', alignItems:'center', justifyContent:'center', margin:'10px 0'}}>
+            <span className="material-symbols-outlined" style={{fontSize:32, color:'#ca8a04'}}>
+              {previewDoc?.icon === 'badge' ? 'badge' : previewDoc?.icon === 'credit_card' ? 'credit_card' : 'description'}
+            </span>
+          </div>
+          
+          <div>
+            <h4 style={{margin:0, fontSize:16, fontWeight:800, color:C.text}}>{previewDoc?.name}</h4>
+            <p style={{margin:'4px 0 0', fontSize:12, color:C.muted}}>Reference/No: {previewDoc?.no}</p>
+          </div>
+
+          {/* Document Preview Box (Simulating a modern PDF/Image review card) */}
+          <div style={{width:'100%', padding:'30px 10px', background:'#fafafa', border:`1.5px dashed ${C.border}`, borderRadius:14, display:'flex', flexDirection:'column', alignItems:'center', gap:8}}>
+            <span className="material-symbols-outlined" style={{fontSize:40, color: previewDoc?.status === 'Verified' ? '#166534' : '#b45309'}}>
+              {previewDoc?.status === 'Verified' ? 'task_alt' : 'quick_reference_all'}
+            </span>
+            <div>
+              <p style={{margin:0, fontSize:13, fontWeight:800, color:C.text}}>{previewDoc?.fileUrl}</p>
+              <p style={{margin:'2px 0 0', fontSize:10.5, color:C.muted}}>File Size: ~245 KB · PDF Format</p>
+            </div>
+            
+            <div style={{marginTop:10, display:'inline-flex', alignItems:'center', gap:6, background: previewDoc?.status === 'Verified' ? '#dcfce7' : '#fef3c7', padding:'4px 12px', borderRadius:8}}>
+              <span className="material-symbols-outlined" style={{fontSize:12, color: previewDoc?.status === 'Verified' ? '#166534' : '#b45309'}}>
+                {previewDoc?.status === 'Verified' ? 'verified' : 'pending'}
+              </span>
+              <span style={{fontSize:10.5, fontWeight:800, color: previewDoc?.status === 'Verified' ? '#166534' : '#b45309'}}>
+                {previewDoc?.status === 'Verified' ? 'VERIFIED DOCUMENT' : 'PENDING APPROVAL'}
+              </span>
+            </div>
+          </div>
+
+          <button 
+            onClick={() => setPreviewDoc(null)} 
+            style={{width:'100%', padding:12, background:'#ca8a04', border:'none', borderRadius:10, color:'#fff', fontSize:13, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}
+          >
+            Close View
+          </button>
+        </div>
+      </Sheet>
       <Sheet show={showPayVendorModal} onClose={()=>setShowPayVendorModal(false)} title="Purchase Payment">
         <div style={{display:'flex', flexDirection:'column', gap:12}}>
           {/* Summary values card */}
