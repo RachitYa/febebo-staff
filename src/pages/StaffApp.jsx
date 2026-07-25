@@ -323,6 +323,39 @@ export default function StaffApp(){
   // Purchase
   const [demands,setDemands]    = useState(INIT_DEMANDS);
 
+  // Work History states
+  const [historyYear, setHistoryYear] = useState(2026);
+  const [historyMonth, setHistoryMonth] = useState(6); // July (0-indexed)
+  const [selectedHistoryDate, setSelectedHistoryDate] = useState('2026-07-25');
+
+  const HISTORY_DAYS = {
+    '2026-07-01': { status: 'work', tasks: ['Cleaned Room 102 bathroom', 'Fixed water pressure in Room 103'] },
+    '2026-07-02': { status: 'work', tasks: ['Kitchen cleanup', 'Repaired table lock in Room 204'] },
+    '2026-07-03': { status: 'present', tasks: [] },
+    '2026-07-04': { status: 'absent', tasks: [] },
+    '2026-07-05': { status: 'work', tasks: ['Repaired door hinges in Room 301', 'Changed light bulb in corridor'] },
+    '2026-07-06': { status: 'work', tasks: ['Kitchen assistant shift', 'Disposed waste bins'] },
+    '2026-07-07': { status: 'work', tasks: ['Unclogged kitchen sink drain', 'Washed main entry staircase'] },
+    '2026-07-08': { status: 'work', tasks: ['Replaced AC remote battery in Room 207'] },
+    '2026-07-09': { status: 'work', tasks: ['Mopped lobby', 'Polished dining tables'] },
+    '2026-07-10': { status: 'present', tasks: [] },
+    '2026-07-11': { status: 'absent', tasks: [] },
+    '2026-07-12': { status: 'work', tasks: ['Repaired ceiling fan switch in Room 105'] },
+    '2026-07-13': { status: 'work', tasks: ['Washed terrace floor', 'Refilled water tank filters'] },
+    '2026-07-14': { status: 'work', tasks: ['Fixed sparking socket in Room 302', 'Checked geyser heating'] },
+    '2026-07-15': { status: 'work', tasks: ['Assisted vendor delivery', 'Restocked cleaning chemicals'] },
+    '2026-07-16': { status: 'work', tasks: ['Mopped floor in Room 206', 'Polished door knobs'] },
+    '2026-07-17': { status: 'present', tasks: [] },
+    '2026-07-18': { status: 'absent', tasks: [] },
+    '2026-07-19': { status: 'work', tasks: ['Unclogged bathroom pipe in Room 101'] },
+    '2026-07-20': { status: 'work', tasks: ['Washed dining hall', 'Sorted garbage bags'] },
+    '2026-07-21': { status: 'work', tasks: ['Fixed loose wiring in corridor', 'Fitted wall hooks in Room 304'] },
+    '2026-07-22': { status: 'absent', tasks: [] },
+    '2026-07-23': { status: 'work', tasks: ['Assisted in LPG cylinder placement', 'Washed courtyard'] },
+    '2026-07-24': { status: 'present', tasks: [] },
+    '2026-07-25': { status: 'work', tasks: ['Room 305: Geyser switch sparking / MCB tripping', 'Room 103: AC remote not pairing'] },
+  };
+
   // My Profile page states
   const [profilePic, setProfilePic] = useState(localStorage.getItem('febebo_profile_pic') || null);
   const [editPersonal, setEditPersonal] = useState(false);
@@ -617,6 +650,7 @@ export default function StaffApp(){
           {[
             {id:'home',      icon:'home',                   label:'Home Dashboard'},
             {id:'work',      icon:'home_work',              label:'My Work'},
+            {id:'history',   icon:'history',                label:'Work History'},
             {id:'inventory', icon:'account_balance_wallet', label:'Inventory & Petty Cash'},
             {id:'inout',     icon:'schedule',               label:'Attendance'},
             {id:'salary',    icon:'payments',               label:'Salary & Pay'},
@@ -753,7 +787,7 @@ export default function StaffApp(){
             <span className="material-symbols-outlined" style={{fontSize:20,color:'#000'}}>arrow_back_ios_new</span>
           </button>
           <p style={{flex:1,margin:0,fontSize:18,fontWeight:900,color:'#000'}}>
-            {view==='work'?'My Work':view==='inventory'?'Inventory & Petty Cash':view==='inout'?'Attendance':view==='salary'?'Salary & Pay':view==='items'?'Item List':view==='chat'?'Chat':view==='reports'?'Work Reports':view==='requests'?'Requests':'My Profile'}
+            {view==='work'?'My Work':view==='history'?'Work History':view==='inventory'?'Inventory & Petty Cash':view==='inout'?'Attendance':view==='salary'?'Salary & Pay':view==='items'?'Item List':view==='chat'?'Chat':view==='reports'?'Work Reports':view==='requests'?'Requests':'My Profile'}
           </p>
           {view==='items' && (
             <button onClick={()=>setShowDemandForm(true)} style={{background:C.primary,border: `1.5px solid ${C.border}`,borderRadius:10,padding:'6px 10px',color:'#000',fontSize:11,fontWeight:800,cursor:'pointer',display:'flex',alignItems:'center',gap:4,boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
@@ -2519,6 +2553,162 @@ export default function StaffApp(){
       {/* ══════════════════════════════════════════════════════════════════════
           MY PROFILE VIEW
          ══════════════════════════════════════════════════════════════════════ */}
+      {view === 'history' && (
+        <div style={{padding:'14px 14px 32px', display:'flex', flexDirection:'column', gap:14}}>
+          {/* Calendar Header with Navigation */}
+          <div style={{background:'#fff', borderRadius:18, border:'1px solid #e8df9a', padding:'16px', display:'flex', flexDirection:'column', gap:12, boxShadow:'0 4px 16px rgba(120, 104, 10, 0.04)'}}>
+            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+              <button 
+                onClick={() => {
+                  if (historyMonth === 0) {
+                    setHistoryMonth(11);
+                    setHistoryYear(historyYear - 1);
+                  } else {
+                    setHistoryMonth(historyMonth - 1);
+                  }
+                }}
+                style={{background:'none', border:'none', color:'#ca8a04', cursor:'pointer', display:'flex', alignItems:'center'}}
+              >
+                <span className="material-symbols-outlined">chevron_left</span>
+              </button>
+              <span style={{fontSize:16, fontWeight:900, color:'#1a1500'}}>
+                {new Date(historyYear, historyMonth).toLocaleString('default', { month: 'long', year: 'numeric' })}
+              </span>
+              <button 
+                onClick={() => {
+                  if (historyMonth === 11) {
+                    setHistoryMonth(0);
+                    setHistoryYear(historyYear + 1);
+                  } else {
+                    setHistoryMonth(historyMonth + 1);
+                  }
+                }}
+                style={{background:'none', border:'none', color:'#ca8a04', cursor:'pointer', display:'flex', alignItems:'center'}}
+              >
+                <span className="material-symbols-outlined">chevron_right</span>
+              </button>
+            </div>
+
+            {/* Week Days Headers */}
+            <div style={{display:'grid', gridTemplateColumns:'repeat(7, 1fr)', textAlign:'center', gap:6}}>
+              {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => (
+                <span key={d} style={{fontSize:11, fontWeight:800, color:C.muted}}>{d}</span>
+              ))}
+            </div>
+
+            {/* Month Days Grid */}
+            <div style={{display:'grid', gridTemplateColumns:'repeat(7, 1fr)', gap:6}}>
+              {(() => {
+                const daysInMonth = new Date(historyYear, historyMonth + 1, 0).getDate();
+                const firstDayIndex = new Date(historyYear, historyMonth, 1).getDay();
+                const cells = [];
+
+                // Empty leading cells
+                for (let i = 0; i < firstDayIndex; i++) {
+                  cells.push(<div key={`empty-${i}`} />);
+                }
+
+                // Calendar day cells
+                for (let day = 1; day <= daysInMonth; day++) {
+                  const dateString = `${historyYear}-${String(historyMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                  const dayData = HISTORY_DAYS[dateString] || { status: 'present', tasks: [] };
+                  const isSelected = selectedHistoryDate === dateString;
+
+                  let bg = '#f8fafc';
+                  let color = '#64748b';
+                  let border = '1px solid #e2e8f0';
+
+                  if (dayData.status === 'work') {
+                    bg = '#dcfce7';
+                    color = '#15803d';
+                    border = '1px solid #bbf7d0';
+                  } else if (dayData.status === 'absent') {
+                    bg = '#fee2e2';
+                    color = '#b91c1c';
+                    border = '1px solid #fca5a5';
+                  }
+
+                  cells.push(
+                    <button
+                      key={`day-${day}`}
+                      onClick={() => setSelectedHistoryDate(dateString)}
+                      style={{
+                        height:36,
+                        borderRadius:10,
+                        border: isSelected ? '2px solid #ca8a04' : border,
+                        background: bg,
+                        color: color,
+                        fontSize:12,
+                        fontWeight:800,
+                        cursor:'pointer',
+                        fontFamily:'inherit',
+                        display:'flex',
+                        alignItems:'center',
+                        justifyContent:'center',
+                        boxShadow: isSelected ? '0 0 6px rgba(202,138,4,0.3)' : 'none'
+                      }}
+                    >
+                      {day}
+                    </button>
+                  );
+                }
+
+                return cells;
+              })()}
+            </div>
+          </div>
+
+          {/* Selected Date Details Card */}
+          {(() => {
+            const dayData = HISTORY_DAYS[selectedHistoryDate] || { status: 'present', tasks: [] };
+            const formattedDate = new Date(selectedHistoryDate).toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+            return (
+              <div style={{background:'#fff', borderRadius:18, border:'1px solid #e8df9a', padding:'18px 16px', display:'flex', flexDirection:'column', gap:12, boxShadow:'0 4px 16px rgba(120, 104, 10, 0.04)'}}>
+                <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', borderBottom:'1px solid #f1f5f9', paddingBottom:10}}>
+                  <div>
+                    <h4 style={{margin:0, fontSize:15, fontWeight:900, color:'#1a1500'}}>{formattedDate}</h4>
+                    <p style={{margin:'2px 0 0', fontSize:11.5, color:C.muted}}>Work history details</p>
+                  </div>
+                  <span style={{
+                    fontSize:10.5, 
+                    fontWeight:800, 
+                    padding:'4px 8px', 
+                    borderRadius:8, 
+                    background: dayData.status === 'work' ? '#dcfce7' : dayData.status === 'absent' ? '#fee2e2' : '#f8fafc',
+                    color: dayData.status === 'work' ? '#15803d' : dayData.status === 'absent' ? '#b91c1c' : '#64748b',
+                    border: dayData.status === 'work' ? '1px solid #bbf7d0' : dayData.status === 'absent' ? '1px solid #fca5a5' : '1px solid #e2e8f0'
+                  }}>
+                    {dayData.status === 'work' ? 'Present (Jobs Done)' : dayData.status === 'absent' ? 'Absent (Off Duty)' : 'Present (No Jobs)'}
+                  </span>
+                </div>
+
+                <div>
+                  <p style={{margin:'0 0 8px', fontSize:11, fontWeight:800, color:C.muted, textTransform:'uppercase'}}>Tasks Performed</p>
+                  {dayData.status === 'absent' ? (
+                    <div style={{display:'flex', alignItems:'center', gap:8, color:'#b91c1c', background:'#fee2e2', padding:'10px 12px', borderRadius:10, fontSize:12.5, fontWeight:700}}>
+                      <span className="material-symbols-outlined" style={{fontSize:18}}>cancel</span>
+                      Staff member was marked absent on this date.
+                    </div>
+                  ) : dayData.tasks.length === 0 ? (
+                    <p style={{margin:0, fontSize:13, fontWeight:700, color:C.muted, fontStyle:'italic'}}>No work or jobs completed on this date.</p>
+                  ) : (
+                    <div style={{display:'flex', flexDirection:'column', gap:8}}>
+                      {dayData.tasks.map((t, idx) => (
+                        <div key={idx} style={{display:'flex', alignItems:'center', gap:10, background:'#f8fafc', padding:'10px 12px', borderRadius:10, border:'1px solid #e2e8f0'}}>
+                          <span className="material-symbols-outlined" style={{fontSize:18, color:'#15803d'}}>check_circle</span>
+                          <span style={{fontSize:13, fontWeight:700, color:'#1a1500'}}>{t}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+      )}
+
       {view === 'profile_view' && (
         <div style={{padding:'14px 14px 32px', display:'flex', flexDirection:'column', gap:14}}>
           {/* Main Card: Avatar & Status */}
