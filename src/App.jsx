@@ -15,8 +15,12 @@ import StaffApp from './pages/StaffApp';
 
 // Redirect helper
 const RootRedirect = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
+  if (user.role !== 'staff' && user.role !== 'customer') {
+    logout();
+    return <Navigate to="/login" replace />;
+  }
   return <Navigate to="/staff-app" replace />;
 };
 
