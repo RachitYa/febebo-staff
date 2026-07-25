@@ -2496,8 +2496,43 @@ export default function StaffApp(){
             <p style={{margin:'0 0 14px', fontSize:12, fontWeight:600, color:C.muted}}>Click any month to view full details or share</p>
 
             {[
-              {m:'June 2026', v:'₹17,800', d:'Paid 1 Jul', txn:'TXN-998231405', base:'₹16,000', overtime:'+₹1,800', bonus:'₹0', ded:'₹0', bank:'HDFC Bank (****4821)'},
-              {m:'May 2026', v:'₹16,500', d:'Paid 1 Jun', txn:'TXN-881290312', base:'₹16,000', overtime:'+₹1,000', bonus:'₹500', ded:'-₹1,000', bank:'HDFC Bank (****4821)'}
+              {
+                m:'July 2026', v:'₹18,500', d:'Due 1 Aug', txn:'TXN-PENDING', base:16000,
+                overtime:2500, overtimeHrs:15, bonus:1000, bonusReason:'July Performance Target Met',
+                advance:-1000, advanceDate:'15 Jul', tds:0, lateDeduction:0,
+                bank:'HDFC Bank (****4821)',
+                events:[
+                  {day:1, type:'credit', label:'Base Salary Advance', amt:5000},
+                  {day:5, type:'debit', label:'Advance Deduction', amt:1000},
+                  {day:10, type:'credit', label:'Overtime Pay (5 hrs)', amt:833},
+                  {day:15, type:'credit', label:'Overtime Pay (5 hrs)', amt:833},
+                  {day:20, type:'credit', label:'Overtime Pay (5 hrs)', amt:834},
+                  {day:25, type:'credit', label:'Performance Bonus', amt:1000},
+                ]
+              },
+              {
+                m:'June 2026', v:'₹17,800', d:'Paid 1 Jul', txn:'TXN-998231405', base:16000,
+                overtime:1800, overtimeHrs:12, bonus:0, bonusReason:'',
+                advance:0, advanceDate:'', tds:0, lateDeduction:0,
+                bank:'HDFC Bank (****4821)',
+                events:[
+                  {day:1, type:'credit', label:'Base Salary', amt:16000},
+                  {day:8, type:'credit', label:'Overtime Pay (6 hrs)', amt:900},
+                  {day:22, type:'credit', label:'Overtime Pay (6 hrs)', amt:900},
+                ]
+              },
+              {
+                m:'May 2026', v:'₹16,500', d:'Paid 1 Jun', txn:'TXN-881290312', base:16000,
+                overtime:1000, overtimeHrs:7, bonus:500, bonusReason:'Best Staff Award - May',
+                advance:-1000, advanceDate:'10 May', tds:0, lateDeduction:0,
+                bank:'HDFC Bank (****4821)',
+                events:[
+                  {day:1, type:'credit', label:'Base Salary', amt:16000},
+                  {day:10, type:'debit', label:'Salary Advance Deduction', amt:1000},
+                  {day:14, type:'credit', label:'Overtime Pay (7 hrs)', amt:1000},
+                  {day:28, type:'credit', label:'Performance Bonus', amt:500},
+                ]
+              }
             ].map(s=>(
               <div 
                 key={s.m} 
@@ -3888,71 +3923,106 @@ export default function StaffApp(){
       </Sheet>
 
       {/* Pay Slip Detailed View & Share Sheet */}
-      <Sheet show={showPaySlipModal} onClose={() => setShowPaySlipModal(false)} title={`${selectedPaySlip?.m || ''} Pay Slip`} sub="Detailed Salary Statement">
-        {selectedPaySlip && (
+      <Sheet show={showPaySlipModal} onClose={() => setShowPaySlipModal(false)} title={(selectedPaySlip?.m || '') + ' Pay Slip'} sub="Detailed Salary Statement">
+        {selectedPaySlip && (() => {
+          const sp = selectedPaySlip;
+          const gross = sp.base + sp.overtime + sp.bonus;
+          const dedsTotal = (sp.advance < 0 ? sp.advance : 0) + (sp.tds < 0 ? sp.tds : 0) + (sp.lateDeduction < 0 ? sp.lateDeduction : 0);
+          const netPay = gross + dedsTotal;
+          return (
           <div style={{display:'flex', flexDirection:'column', gap:14}}>
-            <div style={{background:'#fef08a', padding:'14px 16px', borderRadius:12, border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
-              <p style={{margin:0, fontSize:12, fontWeight:800, color:'#000', textTransform:'uppercase'}}>Net Disbursed Amount</p>
-              <h3 style={{margin:'4px 0 0', fontSize:30, fontWeight:900, color:'#000'}}>{selectedPaySlip.v}</h3>
-              <p style={{margin:'4px 0 0', fontSize:12, fontWeight:700, color:'#15803d'}}>✓ {selectedPaySlip.d} · {selectedPaySlip.bank}</p>
+            {/* Header */}
+            <div style={{background:'linear-gradient(135deg,#1a1500,#3d3200)', padding:'18px 18px', borderRadius:16, color:'#fff'}}>
+              <p style={{margin:0, fontSize:10, color:'#fde047', fontWeight:800, textTransform:'uppercase', letterSpacing:1}}>NET PAY · {sp.m}</p>
+              <h3 style={{margin:'6px 0 4px', fontSize:32, fontWeight:900, color:'#fde047', letterSpacing:-1}}>₹{netPay.toLocaleString()}</h3>
+              <p style={{margin:'2px 0 0', fontSize:11.5, fontWeight:700, color:'rgba(253,224,71,0.7)'}}>
+                {sp.d.startsWith('Paid') ? '✓ ' : '⏳ '}{sp.d} · {sp.bank}
+              </p>
             </div>
 
-            <div style={{background:'#fff', border: '1px solid #e2e8f0', borderRadius:12, padding:'14px'}}>
-              <p style={{margin:'0 0 10px', fontSize:13, fontWeight:800, color:'#000', textTransform:'uppercase'}}>Earnings & Deductions</p>
-              <div style={{display:'flex', justifyContent:'space-between', padding:'6px 0', borderBottom:'1px solid #eee', fontSize:13}}>
-                <span style={{color:C.muted}}>Base Salary</span>
-                <span style={{fontWeight:800, color:'#000'}}>{selectedPaySlip.base}</span>
-              </div>
-              <div style={{display:'flex', justifyContent:'space-between', padding:'6px 0', borderBottom:'1px solid #eee', fontSize:13}}>
-                <span style={{color:C.muted}}>Overtime</span>
-                <span style={{fontWeight:800, color:'#15803d'}}>{selectedPaySlip.overtime}</span>
-              </div>
-              <div style={{display:'flex', justifyContent:'space-between', padding:'6px 0', borderBottom:'1px solid #eee', fontSize:13}}>
-                <span style={{color:C.muted}}>Bonus</span>
-                <span style={{fontWeight:800, color:'#15803d'}}>{selectedPaySlip.bonus}</span>
-              </div>
-              <div style={{display:'flex', justifyContent:'space-between', padding:'6px 0', borderBottom:'1px solid #eee', fontSize:13}}>
-                <span style={{color:C.muted}}>Deductions</span>
-                <span style={{fontWeight:800, color:'#b91c1c'}}>{selectedPaySlip.ded}</span>
-              </div>
-              <div style={{display:'flex', justifyContent:'space-between', padding:'10px 0 0', fontSize:14, fontWeight:900}}>
-                <span>Total Net Pay</span>
-                <span>{selectedPaySlip.v}</span>
+            {/* Earnings */}
+            <div style={{background:'#fff', border:'1px solid #f1f5f9', borderRadius:14, padding:16}}>
+              <p style={{margin:'0 0 12px', fontSize:12, fontWeight:800, color:'#15803d', textTransform:'uppercase', letterSpacing:.5}}>Earnings</p>
+              {[
+                {label:'Base Salary', sub:'Fixed monthly', val:sp.base, show:true},
+                {label:'Overtime Pay', sub:sp.overtimeHrs+' hrs × ₹'+(sp.overtimeHrs>0?(sp.overtime/sp.overtimeHrs).toFixed(0):0)+'/hr', val:sp.overtime, show:sp.overtime>0},
+                {label:'Performance Bonus', sub:sp.bonusReason||'Monthly bonus', val:sp.bonus, show:sp.bonus>0},
+              ].filter(r=>r.show).map(r=>(
+                <div key={r.label} style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'9px 0', borderBottom:'1px solid #f8fafc'}}>
+                  <div>
+                    <p style={{margin:0, fontSize:13, fontWeight:800, color:'#1a1500'}}>{r.label}</p>
+                    <p style={{margin:0, fontSize:10.5, color:'#94a3b8', fontWeight:600}}>{r.sub}</p>
+                  </div>
+                  <span style={{fontSize:14, fontWeight:900, color:'#15803d'}}>+₹{r.val.toLocaleString()}</span>
+                </div>
+              ))}
+              <div style={{display:'flex', justifyContent:'space-between', padding:'10px 0 0'}}>
+                <span style={{fontSize:13, fontWeight:800, color:'#1a1500'}}>Gross Earnings</span>
+                <span style={{fontSize:15, fontWeight:900, color:'#15803d'}}>₹{gross.toLocaleString()}</span>
               </div>
             </div>
 
-            <div style={{background:'#f5f5f5', border: '1px solid #e2e8f0', borderRadius:12, padding:'12px', fontSize:11, fontWeight:700, color:'#333'}}>
-              <p style={{margin:0}}>Reference TXN: {selectedPaySlip.txn}</p>
-              <p style={{margin:'4px 0 0'}}>Employee: {staffName} ({staffRole})</p>
+            {/* Deductions */}
+            {dedsTotal < 0 && (
+            <div style={{background:'#fff', border:'1px solid #f1f5f9', borderRadius:14, padding:16}}>
+              <p style={{margin:'0 0 12px', fontSize:12, fontWeight:800, color:'#b91c1c', textTransform:'uppercase', letterSpacing:.5}}>Deductions</p>
+              {[
+                {label:'Advance Deduction', sub:'Advance taken: '+sp.advanceDate, val:sp.advance, show:sp.advance<0},
+                {label:'TDS / Tax', sub:'Tax deducted at source', val:sp.tds, show:sp.tds<0},
+                {label:'Late / Absent', sub:'Attendance penalty', val:sp.lateDeduction, show:sp.lateDeduction<0},
+              ].filter(r=>r.show).map(r=>(
+                <div key={r.label} style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'9px 0', borderBottom:'1px solid #f8fafc'}}>
+                  <div>
+                    <p style={{margin:0, fontSize:13, fontWeight:800, color:'#1a1500'}}>{r.label}</p>
+                    <p style={{margin:0, fontSize:10.5, color:'#94a3b8', fontWeight:600}}>{r.sub}</p>
+                  </div>
+                  <span style={{fontSize:14, fontWeight:900, color:'#b91c1c'}}>-₹{Math.abs(r.val).toLocaleString()}</span>
+                </div>
+              ))}
+              <div style={{display:'flex', justifyContent:'space-between', padding:'10px 0 0'}}>
+                <span style={{fontSize:13, fontWeight:800, color:'#1a1500'}}>Total Deductions</span>
+                <span style={{fontSize:15, fontWeight:900, color:'#b91c1c'}}>-₹{Math.abs(dedsTotal).toLocaleString()}</span>
+              </div>
+            </div>
+            )}
+
+            {/* Net Summary */}
+            <div style={{background:'#fffef2', border:'1.5px solid #e8df9a', borderRadius:14, padding:'14px 16px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+              <span style={{fontSize:14, fontWeight:900, color:'#1a1500'}}>Net Take-Home Pay</span>
+              <span style={{fontSize:20, fontWeight:900, color:'#78680a'}}>₹{netPay.toLocaleString()}</span>
             </div>
 
-            {/* Actions: Download & Share */}
-            <div style={{display:'flex', gap:10, marginTop:4}}>
-              <button 
-                type="button" 
-                onClick={() => alert(`Downloading PDF for ${selectedPaySlip.m}...`)} 
-                style={{flex:1, padding:13, background:'#fff', color:'#000', border: '1px solid #e2e8f0', borderRadius:12, fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow: '0 2px 8px rgba(15,23,42,0.04)', display:'flex', alignItems:'center', justifyContent:'center', gap:6}}
-              >
-                <span>📥</span> PDF
+            {/* TXN info */}
+            <div style={{background:'#f8fafc', border:'1px solid #f1f5f9', borderRadius:12, padding:'12px 14px', fontSize:11, fontWeight:700, color:'#64748b'}}>
+              <p style={{margin:0}}>TXN Ref: {sp.txn}</p>
+              <p style={{margin:'3px 0 0'}}>Employee: {staffName} · {staffRole}</p>
+            </div>
+
+            {/* Actions */}
+            <div style={{display:'flex', gap:10}}>
+              <button type="button" onClick={() => alert('Downloading PDF for ' + sp.m + '...')}
+                style={{flex:1, padding:13, background:'#f8fafc', color:'#1a1500', border:'1px solid #f1f5f9', borderRadius:12, fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', justifyContent:'center', gap:6}}>
+                <span className="material-symbols-outlined" style={{fontSize:16}}>download</span> PDF
               </button>
-              <button 
-                type="button" 
-                onClick={() => {
-                  const shareText = `📄 Febebo Staff Pay Slip\nMonth: ${selectedPaySlip.m}\nNet Paid: ${selectedPaySlip.v}\nStatus: ${selectedPaySlip.d}\nTxn: ${selectedPaySlip.txn}`;
-                  if (navigator.share) {
-                    navigator.share({ title: `${selectedPaySlip.m} Pay Slip`, text: shareText }).catch(() => {});
-                  } else {
-                    navigator.clipboard.writeText(shareText);
-                    alert('Pay Slip summary copied to clipboard! You can share it to any platform.');
-                  }
-                }} 
-                style={{flex:2, padding:13, background:'#fef08a', color:'#000', border: '1px solid #e2e8f0', borderRadius:12, fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow: '0 2px 8px rgba(15,23,42,0.04)', display:'flex', alignItems:'center', justifyContent:'center', gap:6}}
-              >
-                <span>📤</span> Share Pay Slip
+              <button type="button" onClick={() => {
+                  const txt = `Febebo Pay Slip
+Month: ${sp.m}
+Net Pay: ₹${netPay.toLocaleString()}
+Base: ₹${sp.base.toLocaleString()}
+Overtime: +₹${sp.overtime.toLocaleString()}
+Bonus: +₹${sp.bonus.toLocaleString()}${dedsTotal < 0 ? `\nDeductions: -₹${Math.abs(dedsTotal).toLocaleString()}` : ''}
+Status: ${sp.d}
+TXN: ${sp.txn}`;
+                  if (navigator.share) { navigator.share({title: sp.m + ' Pay Slip', text: txt}).catch(()=>{}); }
+                  else { navigator.clipboard.writeText(txt); alert('Pay Slip copied to clipboard!'); }
+                }}
+                style={{flex:2, padding:13, background:'#1a1500', color:'#fde047', border:'none', borderRadius:12, fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', justifyContent:'center', gap:6}}>
+                <span className="material-symbols-outlined" style={{fontSize:16}}>share</span> Share Pay Slip
               </button>
             </div>
           </div>
-        )}
+          );
+        })()}
       </Sheet>
 
       {/* Log Expense Modal */}
