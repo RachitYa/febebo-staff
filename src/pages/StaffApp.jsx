@@ -904,10 +904,6 @@ export default function StaffApp(){
               <span className="material-symbols-outlined" style={{fontSize:20, color: '#ca8a04'}}>menu</span>
             </button>
             <p style={{fontFamily:"'Hanken Grotesk',sans-serif", fontSize:24, fontWeight:900, color: '#1a1500', margin:0, letterSpacing:-.5}}>febebo</p>
-            <button onClick={()=>setShowDemandList(true)} style={{background: '#ca8a04', border: 'none', borderRadius:12, padding:'8px 16px', color: '#ffffff', fontSize:12, fontWeight:800, cursor:'pointer', display:'flex', alignItems:'center', gap:6, boxShadow: '0 4px 12px rgba(202, 138, 4, 0.2)'}}>
-              <span className="material-symbols-outlined" style={{fontSize:16, color: '#ffffff'}}>post_add</span>
-              Demand
-            </button>
           </div>
 
           {/* Greeting card */}
@@ -1038,7 +1034,7 @@ export default function StaffApp(){
           </div>
 
           {/* Need Supplies Card */}
-          <div onClick={() => setShowDemandForm(true)} style={{
+          <div onClick={openItemRequest} style={{
             background: '#ffffff',
             border: `1px solid ${C.border}`,
             borderRadius: 18,
