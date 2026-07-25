@@ -2577,19 +2577,19 @@ export default function StaffApp(){
         <div style={{padding:'14px 14px 32px',display:'flex',flexDirection:'column',gap:14}}>
           {/* Main Card */}
           <div style={{background: C.primary, borderRadius:18, border: '1px solid #e2e8f0', padding:'20px 18px', color:'#000', boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
-            <p style={{margin:0, fontSize:11, color:'#000', fontWeight:800, textTransform:'uppercase', letterSpacing:.5}}>July 2026 ┬╖ Net Estimated</p>
-            <h2 style={{margin:'6px 0 2px', fontSize:36, fontWeight:900, letterSpacing:-1}}>Γé╣18,500</h2>
-            <p style={{margin:'4px 0 0', fontSize:12, fontWeight:700, color:'#000'}}>Γåæ Pay date: 1 Aug 2026 ┬╖ On Track</p>
+            <p style={{margin:0, fontSize:11, color:'#000', fontWeight:800, textTransform:'uppercase', letterSpacing:.5}}>July 2026 · Net Estimated</p>
+            <h2 style={{margin:'6px 0 2px', fontSize:36, fontWeight:900, letterSpacing:-1}}>₹18,500</h2>
+            <p style={{margin:'4px 0 0', fontSize:12, fontWeight:700, color:'#000'}}>↑ Pay date: 1 Aug 2026 · On Track</p>
           </div>
 
           {/* Breakdown Card */}
           <div style={{background:'#fff', borderRadius:18, border: '1px solid #e2e8f0', padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
-            <p style={{margin:'0 0 12px', fontSize:15, fontWeight:800, color:'#000'}}>≡ƒÆ░ Salary Breakdown</p>
+            <p style={{margin:'0 0 12px', fontSize:15, fontWeight:800, color:'#000'}}>💰 Salary Breakdown</p>
             {[
-              {l:'Base Monthly', v:'Γé╣16,000', c:'#000'},
-              {l:'Overtime (15 hrs)', v:'+Γé╣2,500', c:'#15803d'},
-              {l:'Performance Bonus', v:'+Γé╣1,000', c:'#15803d'},
-              {l:'Advance Deduction', v:'ΓêÆΓé╣1,000', c:'#b91c1c'}
+              {l:'Base Monthly', v:'₹16,000', c:'#000'},
+              {l:'Overtime (15 hrs)', v:'+₹2,500', c:'#15803d'},
+              {l:'Performance Bonus', v:'+₹1,000', c:'#15803d'},
+              {l:'Advance Deduction', v:'−₹1,000', c:'#b91c1c'}
             ].map(row=>(
               <div key={row.l} style={{display:'flex', justifyContent:'space-between', padding:'10px 0', borderBottom: '1px solid #e2e8f0'}}>
                 <span style={{fontSize:13, fontWeight:600, color:'#333'}}>{row.l}</span>
@@ -2598,18 +2598,18 @@ export default function StaffApp(){
             ))}
             <div style={{display:'flex', justifyContent:'space-between', padding:'12px 0 0', alignItems:'center'}}>
               <span style={{fontSize:16, fontWeight:900, color:'#000'}}>Net Payable</span>
-              <span style={{fontSize:22, fontWeight:900, color:'#78680a', background:'#fefce8', padding:'2px 8px', borderRadius:8, border: '1px solid #e8df9a'}}>Γé╣18,500</span>
+              <span style={{fontSize:22, fontWeight:900, color:'#78680a', background:'#fefce8', padding:'2px 8px', borderRadius:8, border: '1px solid #e8df9a'}}>₹18,500</span>
             </div>
           </div>
 
           {/* History Card */}
           <div style={{background:'#fff', borderRadius:18, border: '1px solid #e2e8f0', padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
-            <p style={{margin:'0 0 4px', fontSize:15, fontWeight:800, color:'#000'}}>≡ƒôä Pay Slip History</p>
+            <p style={{margin:'0 0 4px', fontSize:15, fontWeight:800, color:'#000'}}>📄 Pay Slip History</p>
             <p style={{margin:'0 0 14px', fontSize:12, fontWeight:600, color:C.muted}}>Click any month to view full details or share</p>
 
             {[
-              {m:'June 2026', v:'Γé╣17,800', d:'Paid 1 Jul', txn:'TXN-998231405', base:'Γé╣16,000', overtime:'+Γé╣1,800', bonus:'Γé╣0', ded:'Γé╣0', bank:'HDFC Bank (****4821)'},
-              {m:'May 2026', v:'Γé╣16,500', d:'Paid 1 Jun', txn:'TXN-881290312', base:'Γé╣16,000', overtime:'+Γé╣1,000', bonus:'Γé╣500', ded:'-Γé╣1,000', bank:'HDFC Bank (****4821)'}
+              {m:'June 2026', v:'₹17,800', d:'Paid 1 Jul', txn:'TXN-998231405', base:'₹16,000', overtime:'+₹1,800', bonus:'₹0', ded:'₹0', bank:'HDFC Bank (****4821)'},
+              {m:'May 2026', v:'₹16,500', d:'Paid 1 Jun', txn:'TXN-881290312', base:'₹16,000', overtime:'+₹1,000', bonus:'₹500', ded:'-₹1,000', bank:'HDFC Bank (****4821)'}
             ].map(s=>(
               <div 
                 key={s.m} 
@@ -2618,12 +2618,12 @@ export default function StaffApp(){
               >
                 <div>
                   <p style={{margin:0, fontSize:14, fontWeight:800, color:'#000'}}>{s.m}</p>
-                  <p style={{margin:'2px 0 0', fontSize:11, fontWeight:700, color:'#15803d'}}>Γ£ô {s.d}</p>
+                  <p style={{margin:'2px 0 0', fontSize:11, fontWeight:700, color:'#15803d'}}>✓ {s.d}</p>
                 </div>
                 <div style={{display:'flex', alignItems:'center', gap:10}}>
                   <span style={{fontSize:16, fontWeight:900, color:'#000'}}>{s.v}</span>
                   <button type="button" style={{padding:'6px 10px', background:'#fef08a', border: '1px solid #e2e8f0', borderRadius:8, color:'#000', fontSize:11, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow: '0 2px 6px rgba(120, 104, 10, 0.04)', display:'flex', alignItems:'center', gap:4}}>
-                    View ≡ƒæü∩╕Å
+                    View 👁️
                   </button>
                 </div>
               </div>
@@ -4005,7 +4005,7 @@ export default function StaffApp(){
             <div style={{background:'#fef08a', padding:'14px 16px', borderRadius:12, border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
               <p style={{margin:0, fontSize:12, fontWeight:800, color:'#000', textTransform:'uppercase'}}>Net Disbursed Amount</p>
               <h3 style={{margin:'4px 0 0', fontSize:30, fontWeight:900, color:'#000'}}>{selectedPaySlip.v}</h3>
-              <p style={{margin:'4px 0 0', fontSize:12, fontWeight:700, color:'#15803d'}}>Γ£ô {selectedPaySlip.d} ┬╖ {selectedPaySlip.bank}</p>
+              <p style={{margin:'4px 0 0', fontSize:12, fontWeight:700, color:'#15803d'}}>✓ {selectedPaySlip.d} · {selectedPaySlip.bank}</p>
             </div>
 
             <div style={{background:'#fff', border: '1px solid #e2e8f0', borderRadius:12, padding:'14px'}}>
@@ -4044,12 +4044,12 @@ export default function StaffApp(){
                 onClick={() => alert(`Downloading PDF for ${selectedPaySlip.m}...`)} 
                 style={{flex:1, padding:13, background:'#fff', color:'#000', border: '1px solid #e2e8f0', borderRadius:12, fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow: '0 2px 8px rgba(15,23,42,0.04)', display:'flex', alignItems:'center', justifyContent:'center', gap:6}}
               >
-                <span>≡ƒôÑ</span> PDF
+                <span>📥</span> PDF
               </button>
               <button 
                 type="button" 
                 onClick={() => {
-                  const shareText = `≡ƒôä Febebo Staff Pay Slip\nMonth: ${selectedPaySlip.m}\nNet Paid: ${selectedPaySlip.v}\nStatus: ${selectedPaySlip.d}\nTxn: ${selectedPaySlip.txn}`;
+                  const shareText = `📄 Febebo Staff Pay Slip\nMonth: ${selectedPaySlip.m}\nNet Paid: ${selectedPaySlip.v}\nStatus: ${selectedPaySlip.d}\nTxn: ${selectedPaySlip.txn}`;
                   if (navigator.share) {
                     navigator.share({ title: `${selectedPaySlip.m} Pay Slip`, text: shareText }).catch(() => {});
                   } else {
@@ -4059,7 +4059,7 @@ export default function StaffApp(){
                 }} 
                 style={{flex:2, padding:13, background:'#fef08a', color:'#000', border: '1px solid #e2e8f0', borderRadius:12, fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow: '0 2px 8px rgba(15,23,42,0.04)', display:'flex', alignItems:'center', justifyContent:'center', gap:6}}
               >
-                <span>≡ƒôñ</span> Share Pay Slip
+                <span>📤</span> Share Pay Slip
               </button>
             </div>
           </div>
