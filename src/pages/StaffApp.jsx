@@ -448,6 +448,7 @@ export default function StaffApp(){
   const [editWeeklyMenuDay, setEditWeeklyMenuDay] = useState('');
   const [editWeeklyMenuMeal, setEditWeeklyMenuMeal] = useState('');
   const [editWeeklyMenuVal, setEditWeeklyMenuVal] = useState('');
+  const [selectedFoodMenuDate, setSelectedFoodMenuDate] = useState(new Date().toISOString().split('T')[0]);
   
   const [showBcast,setShowBcast]= useState(false);
   const [bTarget, setBTarget]   = useState('All');
@@ -1262,31 +1263,54 @@ export default function StaffApp(){
       {/* ══════════════════════════════════════════════════════════════════════
           WEEKLY FOOD MENU
          ══════════════════════════════════════════════════════════════════════ */}
-      {view === 'foodMenu' && (
-        <div style={{padding:'0 0 32px', display:'flex', flexDirection:'column', height:'100%'}}>
-          <div style={{background:C.primary, padding:'20px 14px 14px', position:'sticky', top:0, zIndex:10, display:'flex', alignItems:'center', gap:10}}>
-            <button onClick={() => setView('home')} style={{background:'transparent', border:'none', padding:0, margin:0, cursor:'pointer', display:'flex', alignItems:'center'}}>
-              <span className="material-symbols-outlined" style={{fontSize:24, color:'#000'}}>arrow_back</span>
-            </button>
-            <h2 style={{margin:0, fontSize:18, fontWeight:900, color:'#000'}}>Standard Food Menu</h2>
-          </div>
-          
-          <div style={{padding:'14px', display:'flex', flexDirection:'column', gap:16}}>
-            {Object.entries(weeklyFoodMenu).map(([day, meals]) => (
-              <div key={day} style={{background:'#fff', borderRadius:16, border: '1px solid #e2e8f0', padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
-                <h3 style={{margin:'0 0 12px', fontSize:16, fontWeight:900, color:'#000', borderBottom:'1px solid #f1f5f9', paddingBottom:8}}>{day}</h3>
+            {view === 'foodMenu' && (() => {
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const selectedDateObj = new Date(selectedFoodMenuDate);
+        const dayOfWeek = days[selectedDateObj.getDay()];
+        const mealsForDay = weeklyFoodMenu[dayOfWeek];
+
+        return (
+          <div style={{padding:'0 0 32px', display:'flex', flexDirection:'column', height:'100%'}}>
+            <div style={{background:C.primary, padding:'20px 14px 14px', position:'sticky', top:0, zIndex:10, display:'flex', alignItems:'center', gap:10}}>
+              <button onClick={() => setView('home')} style={{background:'transparent', border:'none', padding:0, margin:0, cursor:'pointer', display:'flex', alignItems:'center'}}>
+                <span className="material-symbols-outlined" style={{fontSize:24, color:'#000'}}>arrow_back</span>
+              </button>
+              <h2 style={{margin:0, fontSize:18, fontWeight:900, color:'#000'}}>Food Menu Timetable</h2>
+            </div>
+            
+            <div style={{padding:'14px', display:'flex', flexDirection:'column', gap:16}}>
+              
+              {/* Date Picker */}
+              <div style={{background:'#fff', borderRadius:16, border: '1px solid #e2e8f0', padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)', display:'flex', alignItems:'center', gap:10}}>
+                <div style={{width:44, height:44, borderRadius:22, background:'#fefce8', display:'flex', alignItems:'center', justifyContent:'center'}}>
+                  <span className="material-symbols-outlined" style={{fontSize:24, color:'#a16207'}}>calendar_month</span>
+                </div>
+                <div style={{flex:1}}>
+                  <p style={{margin:0, fontSize:13, fontWeight:800, color:C.muted, textTransform:'uppercase'}}>Select Date</p>
+                  <input 
+                    type="date" 
+                    value={selectedFoodMenuDate} 
+                    onChange={e => setSelectedFoodMenuDate(e.target.value)} 
+                    style={{border:'none', background:'transparent', fontSize:16, fontWeight:900, color:'#1e293b', outline:'none', width:'100%', fontFamily:'inherit', cursor:'pointer', marginTop:2}} 
+                  />
+                </div>
+              </div>
+
+              {/* Day's Menu */}
+              <div style={{background:'#fff', borderRadius:16, border: '1px solid #e2e8f0', padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
+                <h3 style={{margin:'0 0 12px', fontSize:16, fontWeight:900, color:'#000', borderBottom:'1px solid #f1f5f9', paddingBottom:8}}>{dayOfWeek}'s Menu</h3>
                 
                 {['Breakfast', 'Lunch', 'Snacks', 'Dinner'].map(meal => (
                   <div key={meal} style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'8px 0'}}>
                     <div style={{flex:1}}>
                       <span style={{fontSize:11, fontWeight:800, color:C.muted, textTransform:'uppercase'}}>{meal}</span>
-                      <p style={{margin:'2px 0 0', fontSize:14, fontWeight:700, color:'#1e293b'}}>{meals[meal]}</p>
+                      <p style={{margin:'2px 0 0', fontSize:14, fontWeight:700, color:'#1e293b'}}>{mealsForDay[meal]}</p>
                     </div>
                     <button 
                       onClick={() => {
-                        setEditWeeklyMenuDay(day);
+                        setEditWeeklyMenuDay(dayOfWeek);
                         setEditWeeklyMenuMeal(meal);
-                        setEditWeeklyMenuVal(meals[meal]);
+                        setEditWeeklyMenuVal(mealsForDay[meal]);
                         setShowWeeklyMenuEdit(true);
                       }}
                       style={{background:C.bg, border: '1px solid #e2e8f0', borderRadius:10, padding:'6px 12px', fontSize:12, fontWeight:800, color:C.sub, cursor:'pointer', display:'flex', alignItems:'center', gap:4}}>
@@ -1295,42 +1319,43 @@ export default function StaffApp(){
                   </div>
                 ))}
               </div>
-            ))}
-          </div>
-
-          {showWeeklyMenuEdit && (
-            <div style={{position:'fixed', top:0, left:0, right:0, bottom:0, background:'rgba(0,0,0,0.5)', zIndex:999, display:'flex', flexDirection:'column', justifyContent:'flex-end'}}>
-              <div style={{background:'#fff', borderRadius:'24px 24px 0 0', padding:24, animation:'slideUp 0.3s ease'}}>
-                <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16}}>
-                  <h3 style={{margin:0, fontSize:18, fontWeight:900, color:'#000'}}>Edit {editWeeklyMenuDay} {editWeeklyMenuMeal}</h3>
-                  <span className="material-symbols-outlined" onClick={() => setShowWeeklyMenuEdit(false)} style={{cursor:'pointer', color:'#64748b'}}>close</span>
-                </div>
-                <input 
-                  autoFocus 
-                  type="text" 
-                  value={editWeeklyMenuVal} 
-                  onChange={e => setEditWeeklyMenuVal(e.target.value)} 
-                  style={{width:'100%', padding:14, borderRadius:12, border:'2px solid #e2e8f0', fontSize:15, fontWeight:700, outline:'none', fontFamily:'inherit', marginBottom:16}} 
-                />
-                <button 
-                  onClick={() => {
-                     setWeeklyFoodMenu(prev => ({
-                        ...prev,
-                        [editWeeklyMenuDay]: {
-                           ...prev[editWeeklyMenuDay],
-                           [editWeeklyMenuMeal]: editWeeklyMenuVal
-                        }
-                     }));
-                     setShowWeeklyMenuEdit(false);
-                  }}
-                  style={{width:'100%', padding:16, borderRadius:14, background:'#000', color:C.primary, fontSize:15, fontWeight:800, border:'none', cursor:'pointer', fontFamily:'inherit'}}>
-                  Save Changes
-                </button>
-              </div>
             </div>
-          )}
-        </div>
-      )}
+
+            {/* Edit Modal */}
+            {showWeeklyMenuEdit && (
+              <div style={{position:'fixed', top:0, left:0, right:0, bottom:0, background:'rgba(0,0,0,0.5)', zIndex:999, display:'flex', flexDirection:'column', justifyContent:'flex-end'}}>
+                <div style={{background:'#fff', borderRadius:'24px 24px 0 0', padding:24, animation:'slideUp 0.3s ease'}}>
+                  <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16}}>
+                    <h3 style={{margin:0, fontSize:18, fontWeight:900, color:'#000'}}>Edit {editWeeklyMenuDay} {editWeeklyMenuMeal}</h3>
+                    <span className="material-symbols-outlined" onClick={() => setShowWeeklyMenuEdit(false)} style={{cursor:'pointer', color:'#64748b'}}>close</span>
+                  </div>
+                  <input 
+                    autoFocus 
+                    type="text" 
+                    value={editWeeklyMenuVal} 
+                    onChange={e => setEditWeeklyMenuVal(e.target.value)} 
+                    style={{width:'100%', padding:14, borderRadius:12, border:'2px solid #e2e8f0', fontSize:15, fontWeight:700, outline:'none', fontFamily:'inherit', marginBottom:16}} 
+                  />
+                  <button 
+                    onClick={() => {
+                       setWeeklyFoodMenu(prev => ({
+                          ...prev,
+                          [editWeeklyMenuDay]: {
+                             ...prev[editWeeklyMenuDay],
+                             [editWeeklyMenuMeal]: editWeeklyMenuVal
+                          }
+                       }));
+                       setShowWeeklyMenuEdit(false);
+                    }}
+                    style={{width:'100%', padding:16, borderRadius:14, background:'#000', color:C.primary, fontSize:15, fontWeight:800, border:'none', cursor:'pointer', fontFamily:'inherit'}}>
+                    Save Changes
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {view === 'work' && (
         <div style={{padding:'14px 14px 32px',display:'flex',flexDirection:'column',gap:14}}>
