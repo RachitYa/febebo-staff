@@ -429,6 +429,26 @@ export default function StaffApp(){
   const [packPriceVal, setPackPriceVal] = useState('');
   const [workDate, setWorkDate] = useState(new Date().toISOString().split('T')[0]);
   
+  // Cook History Filters
+  const [cookHistStatus, setCookHistStatus] = useState('All');
+  const [cookHistMeal, setCookHistMeal] = useState('All Meals');
+  const [cookHistFood, setCookHistFood] = useState('All Food Items');
+  
+  // Weekly Food Menu
+  const [weeklyFoodMenu, setWeeklyFoodMenu] = useState({
+    Monday: { Breakfast: 'Poha, Jalebi, Tea', Lunch: 'Rajma Chawal, Roti, Salad', Snacks: 'Samosa, Coffee', Dinner: 'Paneer Butter Masala, Roti, Dal' },
+    Tuesday: { Breakfast: 'Aloo Paratha, Curd', Lunch: 'Kadi Pakoda, Rice', Snacks: 'Puff, Tea', Dinner: 'Mix Veg, Dal, Roti' },
+    Wednesday: { Breakfast: 'Idli, Sambhar', Lunch: 'Chole Bhature, Lassi', Snacks: 'Namkeen, Coffee', Dinner: 'Dal Makhani, Roti, Rice' },
+    Thursday: { Breakfast: 'Bread Omelette, Tea', Lunch: 'Dal Fry, Rice, Papad', Snacks: 'Biscuits, Tea', Dinner: 'Egg Curry, Roti, Rice' },
+    Friday: { Breakfast: 'Upma, Tea', Lunch: 'Veg Biryani, Raita', Snacks: 'Bhel Puri', Dinner: 'Matar Paneer, Roti' },
+    Saturday: { Breakfast: 'Puri Sabji, Jalebi', Lunch: 'Dal Tadka, Rice', Snacks: 'Pakoda, Tea', Dinner: 'Aloo Gobi, Roti' },
+    Sunday: { Breakfast: 'Masala Dosa, Chutney', Lunch: 'Special Thali', Snacks: 'Cake, Coffee', Dinner: 'Chicken Curry/Paneer, Roti' }
+  });
+  const [showWeeklyMenuEdit, setShowWeeklyMenuEdit] = useState(false);
+  const [editWeeklyMenuDay, setEditWeeklyMenuDay] = useState('');
+  const [editWeeklyMenuMeal, setEditWeeklyMenuMeal] = useState('');
+  const [editWeeklyMenuVal, setEditWeeklyMenuVal] = useState('');
+  
   const [showBcast,setShowBcast]= useState(false);
   const [bTarget, setBTarget]   = useState('All');
   const [bStudentId, setBStudentId] = useState('');
@@ -1038,6 +1058,7 @@ export default function StaffApp(){
               {id:'chat',      label:'Chat',           icon:'forum',                  bg:'#f0f9ff', c:'#0ea5e9'},
               {id:'reports',   label:'Reports',        icon:'assessment',             bg:'#fff1f2', c:'#f43f5e'},
               {id:'requests',  label:'Requests',       icon:'approval',               bg:'#f5f3ff', c:'#8b5cf6'},
+              ...(staffRole === 'Cook' ? [{id:'foodMenu', label:'Food Menu', icon:'restaurant_menu', bg:'#ede9fe', c:'#a78bfa'}] : []),
             ].map(m => (
               <button key={m.id} onClick={() => setView(m.id)}
                 style={{display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:6, background:'#fff', border:`1px solid ${C.border}`, borderRadius:20, padding:'12px 4px 10px', cursor:'pointer', boxShadow:'0 4px 12px rgba(120, 104, 10, 0.04)', minHeight:88, outline:'none', transition:'all 0.15s'}}>
@@ -1127,6 +1148,176 @@ export default function StaffApp(){
       {/* ══════════════════════════════════════════════════════════════════════
           MY WORK (Role-Specific)
          ══════════════════════════════════════════════════════════════════════ */}
+      
+      {/* ══════════════════════════════════════════════════════════════════════
+          COOK HISTORY VIEW (GPAY STYLE)
+         ══════════════════════════════════════════════════════════════════════ */}
+      {view === 'cookHistory' && (() => {
+        // Generate robust mock history
+        const mockCookHistory = [];
+        const mealsList = ['Breakfast', 'Lunch', 'Snacks', 'Dinner'];
+        const statList = ['Requested', 'To Pack', 'Extra Plate', 'Eaten', 'Not Eaten'];
+        let _id = 1;
+        // Seed some predictable data
+        mockCookHistory.push({ id: _id++, student: 'Rahul Sharma', meal: 'Breakfast', food: 'Poha', status: 'Eaten', date: '26 Jul', amount: 1 });
+        mockCookHistory.push({ id: _id++, student: 'Amit Singh', meal: 'Breakfast', food: 'Jalebi', status: 'Extra Plate', date: '26 Jul', amount: 1 });
+        mockCookHistory.push({ id: _id++, student: 'Sneha Gupta', meal: 'Lunch', food: 'Rajma Chawal', status: 'To Pack', date: '25 Jul', amount: 1 });
+        mockCookHistory.push({ id: _id++, student: 'Vikram', meal: 'Snacks', food: 'Samosa', status: 'Requested', date: '25 Jul', amount: 1 });
+        mockCookHistory.push({ id: _id++, student: 'Priya', meal: 'Dinner', food: 'Paneer Butter Masala', status: 'Not Eaten', date: '24 Jul', amount: 1 });
+        mockCookHistory.push({ id: _id++, student: 'Rahul Sharma', meal: 'Lunch', food: 'Roti, Salad', status: 'Eaten', date: '24 Jul', amount: 1 });
+        
+        // Extract all unique foods for filter
+        const uniqueFoods = ['All Food Items', 'Poha', 'Jalebi', 'Tea', 'Rajma Chawal', 'Roti, Salad', 'Samosa', 'Paneer Butter Masala'];
+        
+        const filteredHist = mockCookHistory.filter(item => {
+           if(cookHistStatus !== 'All' && item.status !== cookHistStatus) return false;
+           if(cookHistMeal !== 'All Meals' && item.meal !== cookHistMeal) return false;
+           if(cookHistFood !== 'All Food Items' && item.food !== cookHistFood) return false;
+           return true;
+        });
+
+        return (
+          <div style={{padding:'0 0 32px', display:'flex', flexDirection:'column', height:'100%'}}>
+            {/* Header */}
+            <div style={{background:C.primary, padding:'20px 14px 14px', position:'sticky', top:0, zIndex:10, display:'flex', alignItems:'center', gap:10}}>
+              <button onClick={() => setView('work')} style={{background:'transparent', border:'none', padding:0, margin:0, cursor:'pointer', display:'flex', alignItems:'center'}}>
+                <span className="material-symbols-outlined" style={{fontSize:24, color:'#000'}}>arrow_back</span>
+              </button>
+              <h2 style={{margin:0, fontSize:18, fontWeight:900, color:'#000'}}>Food Transaction History</h2>
+            </div>
+            
+            {/* Filters */}
+            <div style={{padding:'14px', display:'flex', gap:8, overflowX:'auto', borderBottom:'1px solid #f1f5f9', background:'#fff', whiteSpace:'nowrap'}}>
+              {['All', 'Requested', 'To Pack', 'Extra Plate', 'Eaten', 'Not Eaten'].map(f => (
+                <button key={f} onClick={() => setCookHistStatus(f)} style={{padding:'6px 14px', borderRadius:20, border:'1px solid #e2e8f0', background: cookHistStatus===f?'#1a1500':'#fff', color:cookHistStatus===f?'#fde047':'#1e293b', fontSize:12, fontWeight:700, cursor:'pointer', fontFamily:'inherit'}}>
+                  {f}
+                </button>
+              ))}
+              <div style={{width:1, background:'#e2e8f0', margin:'0 4px'}} />
+              <select value={cookHistMeal} onChange={e => setCookHistMeal(e.target.value)} style={{padding:'6px 12px', borderRadius:20, border:'1px solid #e2e8f0', background:'#fff', color:'#1e293b', fontSize:12, fontWeight:700, outline:'none', cursor:'pointer', fontFamily:'inherit'}}>
+                <option>All Meals</option>
+                <option>Breakfast</option>
+                <option>Lunch</option>
+                <option>Snacks</option>
+                <option>Dinner</option>
+              </select>
+              <select value={cookHistFood} onChange={e => setCookHistFood(e.target.value)} style={{padding:'6px 12px', borderRadius:20, border:'1px solid #e2e8f0', background:'#fff', color:'#1e293b', fontSize:12, fontWeight:700, outline:'none', cursor:'pointer', fontFamily:'inherit'}}>
+                {uniqueFoods.map(food => <option key={food}>{food}</option>)}
+              </select>
+            </div>
+
+            {/* List */}
+            <div style={{padding:'14px', display:'flex', flexDirection:'column', gap:12}}>
+              {filteredHist.length === 0 && (
+                <div style={{textAlign:'center', padding:'30px 0'}}>
+                  <p style={{margin:0, fontSize:14, color:'#64748b', fontWeight:700}}>No history found.</p>
+                </div>
+              )}
+              {filteredHist.map(item => {
+                const getColors = (status) => {
+                  switch(status) {
+                    case 'Eaten': return { bg:'#dcfce7', c:'#15803d', icon:'restaurant' };
+                    case 'Not Eaten': return { bg:'#fee2e2', c:'#b91c1c', icon:'no_meals' };
+                    case 'To Pack': return { bg:'#fef08a', c:'#a16207', icon:'takeout_dining' };
+                    case 'Extra Plate': return { bg:'#e0e7ff', c:'#4338ca', icon:'local_dining' };
+                    default: return { bg:'#f1f5f9', c:'#475569', icon:'notifications' };
+                  }
+                };
+                const clr = getColors(item.status);
+                
+                return (
+                  <div key={item.id} style={{display:'flex', alignItems:'center', gap:14, padding:'14px 16px', background:'#fff', borderRadius:16, border:'1px solid #f1f5f9', boxShadow:'0 2px 8px rgba(0,0,0,0.02)'}}>
+                    <div style={{width:42, height:42, borderRadius:21, background: clr.bg, display:'flex', alignItems:'center', justifyContent:'center'}}>
+                      <span className="material-symbols-outlined" style={{fontSize:20, color: clr.c}}>{clr.icon}</span>
+                    </div>
+                    <div style={{flex:1}}>
+                      <p style={{margin:0, fontSize:15, fontWeight:800, color:'#1a1500'}}>{item.food}</p>
+                      <p style={{margin:'2px 0 0', fontSize:12, fontWeight:600, color:'#64748b'}}>{item.date} · {item.student} · {item.meal}</p>
+                    </div>
+                    <div style={{textAlign:'right'}}>
+                      <p style={{margin:0, fontSize:13, fontWeight:800, color: clr.c}}>{item.status}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          WEEKLY FOOD MENU
+         ══════════════════════════════════════════════════════════════════════ */}
+      {view === 'foodMenu' && (
+        <div style={{padding:'0 0 32px', display:'flex', flexDirection:'column', height:'100%'}}>
+          <div style={{background:C.primary, padding:'20px 14px 14px', position:'sticky', top:0, zIndex:10, display:'flex', alignItems:'center', gap:10}}>
+            <button onClick={() => setView('home')} style={{background:'transparent', border:'none', padding:0, margin:0, cursor:'pointer', display:'flex', alignItems:'center'}}>
+              <span className="material-symbols-outlined" style={{fontSize:24, color:'#000'}}>arrow_back</span>
+            </button>
+            <h2 style={{margin:0, fontSize:18, fontWeight:900, color:'#000'}}>Standard Food Menu</h2>
+          </div>
+          
+          <div style={{padding:'14px', display:'flex', flexDirection:'column', gap:16}}>
+            {Object.entries(weeklyFoodMenu).map(([day, meals]) => (
+              <div key={day} style={{background:'#fff', borderRadius:16, border: '1px solid #e2e8f0', padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
+                <h3 style={{margin:'0 0 12px', fontSize:16, fontWeight:900, color:'#000', borderBottom:'1px solid #f1f5f9', paddingBottom:8}}>{day}</h3>
+                
+                {['Breakfast', 'Lunch', 'Snacks', 'Dinner'].map(meal => (
+                  <div key={meal} style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'8px 0'}}>
+                    <div style={{flex:1}}>
+                      <span style={{fontSize:11, fontWeight:800, color:C.muted, textTransform:'uppercase'}}>{meal}</span>
+                      <p style={{margin:'2px 0 0', fontSize:14, fontWeight:700, color:'#1e293b'}}>{meals[meal]}</p>
+                    </div>
+                    <button 
+                      onClick={() => {
+                        setEditWeeklyMenuDay(day);
+                        setEditWeeklyMenuMeal(meal);
+                        setEditWeeklyMenuVal(meals[meal]);
+                        setShowWeeklyMenuEdit(true);
+                      }}
+                      style={{background:C.bg, border: '1px solid #e2e8f0', borderRadius:10, padding:'6px 12px', fontSize:12, fontWeight:800, color:C.sub, cursor:'pointer', display:'flex', alignItems:'center', gap:4}}>
+                      <span className="material-symbols-outlined" style={{fontSize:14}}>edit</span> Edit
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+
+          {showWeeklyMenuEdit && (
+            <div style={{position:'fixed', top:0, left:0, right:0, bottom:0, background:'rgba(0,0,0,0.5)', zIndex:999, display:'flex', flexDirection:'column', justifyContent:'flex-end'}}>
+              <div style={{background:'#fff', borderRadius:'24px 24px 0 0', padding:24, animation:'slideUp 0.3s ease'}}>
+                <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16}}>
+                  <h3 style={{margin:0, fontSize:18, fontWeight:900, color:'#000'}}>Edit {editWeeklyMenuDay} {editWeeklyMenuMeal}</h3>
+                  <span className="material-symbols-outlined" onClick={() => setShowWeeklyMenuEdit(false)} style={{cursor:'pointer', color:'#64748b'}}>close</span>
+                </div>
+                <input 
+                  autoFocus 
+                  type="text" 
+                  value={editWeeklyMenuVal} 
+                  onChange={e => setEditWeeklyMenuVal(e.target.value)} 
+                  style={{width:'100%', padding:14, borderRadius:12, border:'2px solid #e2e8f0', fontSize:15, fontWeight:700, outline:'none', fontFamily:'inherit', marginBottom:16}} 
+                />
+                <button 
+                  onClick={() => {
+                     setWeeklyFoodMenu(prev => ({
+                        ...prev,
+                        [editWeeklyMenuDay]: {
+                           ...prev[editWeeklyMenuDay],
+                           [editWeeklyMenuMeal]: editWeeklyMenuVal
+                        }
+                     }));
+                     setShowWeeklyMenuEdit(false);
+                  }}
+                  style={{width:'100%', padding:16, borderRadius:14, background:'#000', color:C.primary, fontSize:15, fontWeight:800, border:'none', cursor:'pointer', fontFamily:'inherit'}}>
+                  Save Changes
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {view === 'work' && (
         <div style={{padding:'14px 14px 32px',display:'flex',flexDirection:'column',gap:14}}>
 
@@ -1152,7 +1343,7 @@ export default function StaffApp(){
               {/* Time Filter Tabs */}
               <div style={{display:'flex', flex:1, background:'#fff', borderRadius: 10, padding:3, border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
                 {['Daily', 'Weekly', 'Monthly'].map(f => (
-                  <button key={f} onClick={()=>setTimeFilter(f)} style={{flex:1, padding:'6px 0', borderRadius:8, border:timeFilter===f?'2px solid #000':'2px solid transparent', background:timeFilter===f?C.primary:'transparent', color:'#000', fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit'}}>
+                  <button key={f} onClick={()=>{ if(f==='Weekly' || f==='Monthly') { setView('cookHistory'); } else { setTimeFilter(f); } }} style={{flex:1, padding:'6px 0', borderRadius:8, border:timeFilter===f?'2px solid #000':'2px solid transparent', background:timeFilter===f?C.primary:'transparent', color:'#000', fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit'}}>
                     {f}
                   </button>
                 ))}
