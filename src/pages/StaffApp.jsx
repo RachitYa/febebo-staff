@@ -1153,21 +1153,35 @@ export default function StaffApp(){
           COOK HISTORY VIEW (GPAY STYLE)
          ══════════════════════════════════════════════════════════════════════ */}
       {view === 'cookHistory' && (() => {
-        // Generate robust mock history
+        // Generate robust mock history from the 40 students
         const mockCookHistory = [];
         const mealsList = ['Breakfast', 'Lunch', 'Snacks', 'Dinner'];
         const statList = ['Requested', 'To Pack', 'Extra Plate', 'Eaten', 'Not Eaten'];
+        const uniqueFoodsSet = new Set(['Poha', 'Jalebi', 'Tea', 'Rajma Chawal', 'Roti, Salad', 'Samosa', 'Paneer Butter Masala', 'Aloo Paratha', 'Dal Makhani']);
         let _id = 1;
-        // Seed some predictable data
-        mockCookHistory.push({ id: _id++, student: 'Rahul Sharma', meal: 'Breakfast', food: 'Poha', status: 'Eaten', date: '26 Jul', amount: 1 });
-        mockCookHistory.push({ id: _id++, student: 'Amit Singh', meal: 'Breakfast', food: 'Jalebi', status: 'Extra Plate', date: '26 Jul', amount: 1 });
-        mockCookHistory.push({ id: _id++, student: 'Sneha Gupta', meal: 'Lunch', food: 'Rajma Chawal', status: 'To Pack', date: '25 Jul', amount: 1 });
-        mockCookHistory.push({ id: _id++, student: 'Vikram', meal: 'Snacks', food: 'Samosa', status: 'Requested', date: '25 Jul', amount: 1 });
-        mockCookHistory.push({ id: _id++, student: 'Priya', meal: 'Dinner', food: 'Paneer Butter Masala', status: 'Not Eaten', date: '24 Jul', amount: 1 });
-        mockCookHistory.push({ id: _id++, student: 'Rahul Sharma', meal: 'Lunch', food: 'Roti, Salad', status: 'Eaten', date: '24 Jul', amount: 1 });
+        
+        // Generate a random history for all 40 students
+        students.forEach((s, idx) => {
+           // assign a few random meals to each student
+           const mealCount = (idx % 3) + 1; // 1 to 3 meals
+           for(let i=0; i<mealCount; i++) {
+              const meal = mealsList[(idx + i) % mealsList.length];
+              const status = statList[(idx * 2 + i) % statList.length];
+              const food = Array.from(uniqueFoodsSet)[(idx + i) % uniqueFoodsSet.size];
+              mockCookHistory.push({
+                 id: _id++,
+                 student: s.name,
+                 meal: meal,
+                 food: food,
+                 status: status,
+                 date: '26 Jul',
+                 amount: 1
+              });
+           }
+        });
         
         // Extract all unique foods for filter
-        const uniqueFoods = ['All Food Items', 'Poha', 'Jalebi', 'Tea', 'Rajma Chawal', 'Roti, Salad', 'Samosa', 'Paneer Butter Masala'];
+        const uniqueFoods = ['All Food Items', ...Array.from(uniqueFoodsSet)];
         
         const filteredHist = mockCookHistory.filter(item => {
            if(cookHistStatus !== 'All' && item.status !== cookHistStatus) return false;
@@ -1231,8 +1245,8 @@ export default function StaffApp(){
                       <span className="material-symbols-outlined" style={{fontSize:20, color: clr.c}}>{clr.icon}</span>
                     </div>
                     <div style={{flex:1}}>
-                      <p style={{margin:0, fontSize:15, fontWeight:800, color:'#1a1500'}}>{item.food}</p>
-                      <p style={{margin:'2px 0 0', fontSize:12, fontWeight:600, color:'#64748b'}}>{item.date} · {item.student} · {item.meal}</p>
+                      <p style={{margin:0, fontSize:15, fontWeight:800, color:'#1a1500'}}>{item.student}</p>
+                      <p style={{margin:'2px 0 0', fontSize:12, fontWeight:600, color:'#64748b'}}>{item.date} · {item.meal} {cookHistFood !== 'All Food Items' ? '· ' + item.food : ''}</p>
                     </div>
                     <div style={{textAlign:'right'}}>
                       <p style={{margin:0, fontSize:13, fontWeight:800, color: clr.c}}>{item.status}</p>
