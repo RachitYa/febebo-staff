@@ -453,6 +453,12 @@ export default function StaffApp(){
   // Helper / Plumber / Electrician / Carpenter / Sales / Manager state
   const [selectedAttMonth, setSelectedAttMonth] = useState(null);
   const [tasks, setTasks]               = useState(INIT_TASKS);
+  
+  // Transaction History Filters
+  const [txnMonthFilter, setTxnMonthFilter] = useState('All Months');
+  const [txnYearFilter, setTxnYearFilter] = useState('All Years');
+  const [txnTypeFilter, setTxnTypeFilter] = useState('All Types');
+  const [txnFlowFilter, setTxnFlowFilter] = useState('All');
   const [isAvailable, setIsAvailable]   = useState(true);
   const [plumbingJobs, setPlumbingJobs] = useState(INIT_PLUMBING);
   const [electricalJobs, setElectricalJobs] = useState(INIT_ELECTRICAL);
@@ -2573,6 +2579,102 @@ export default function StaffApp(){
       {/* ══════════════════════════════════════════════════════════════════════
           SALARY
          ══════════════════════════════════════════════════════════════════════ */}
+      
+      {/* ══════════════════════════════════════════════════════════════════════
+          SALARY BREAKDOWN HISTORY (GPAY STYLE)
+         ══════════════════════════════════════════════════════════════════════ */}
+      {view === 'salaryBreakdown' && (() => {
+        const salaryTransactions = [
+          { id: 'txn1', date: '2026-07-25', month: 'July', year: '2026', type: 'Bonus', subtype: 'Performance Bonus', amount: 1000, flow: 'paid' },
+          { id: 'txn2', date: '2026-07-20', month: 'July', year: '2026', type: 'Deduction', subtype: 'Advance Deduction', amount: 1000, flow: 'deducted' },
+          { id: 'txn3', date: '2026-07-15', month: 'July', year: '2026', type: 'Overtime', subtype: 'Overtime (15 hrs)', amount: 2500, flow: 'paid' },
+          { id: 'txn4', date: '2026-07-01', month: 'July', year: '2026', type: 'Salary', subtype: 'Base Monthly', amount: 16000, flow: 'paid' },
+          { id: 'txn5', date: '2026-06-25', month: 'June', year: '2026', type: 'Bonus', subtype: 'Festival Bonus', amount: 500, flow: 'paid' },
+          { id: 'txn6', date: '2026-06-15', month: 'June', year: '2026', type: 'Overtime', subtype: 'Overtime (5 hrs)', amount: 500, flow: 'paid' },
+          { id: 'txn7', date: '2026-06-05', month: 'June', year: '2026', type: 'Deduction', subtype: 'Late Arrival Penalty', amount: 200, flow: 'deducted' },
+          { id: 'txn8', date: '2026-06-01', month: 'June', year: '2026', type: 'Salary', subtype: 'Base Monthly', amount: 16000, flow: 'paid' },
+        ];
+
+        const filteredTransactions = salaryTransactions.filter(txn => {
+          if (txnMonthFilter !== 'All Months' && txn.month !== txnMonthFilter) return false;
+          if (txnYearFilter !== 'All Years' && txn.year !== txnYearFilter) return false;
+          if (txnTypeFilter !== 'All Types' && txn.type !== txnTypeFilter) return false;
+          if (txnFlowFilter !== 'All' && txn.flow !== txnFlowFilter.toLowerCase()) return false;
+          return true;
+        });
+
+        return (
+          <div style={{padding:'0 0 32px', display:'flex', flexDirection:'column', height:'100%'}}>
+            {/* Header */}
+            <div style={{background:C.primary, padding:'20px 14px 14px', position:'sticky', top:0, zIndex:10, display:'flex', alignItems:'center', gap:10}}>
+              <button onClick={() => setView('salary')} style={{background:'transparent', border:'none', padding:0, margin:0, cursor:'pointer', display:'flex', alignItems:'center'}}>
+                <span className="material-symbols-outlined" style={{fontSize:24, color:'#000'}}>arrow_back</span>
+              </button>
+              <h2 style={{margin:0, fontSize:18, fontWeight:900, color:'#000'}}>Transaction History</h2>
+            </div>
+            
+            {/* Filters */}
+            <div style={{padding:'14px', display:'flex', gap:8, overflowX:'auto', borderBottom:'1px solid #f1f5f9', background:'#fff', whiteSpace:'nowrap'}}>
+              {['All', 'Paid', 'Deducted'].map(f => (
+                <button key={f} onClick={() => setTxnFlowFilter(f)} style={{padding:'6px 14px', borderRadius:20, border:'1px solid #e2e8f0', background: txnFlowFilter===f?'#1a1500':'#fff', color:txnFlowFilter===f?'#fde047':'#1e293b', fontSize:12, fontWeight:700, cursor:'pointer', fontFamily:'inherit'}}>
+                  {f}
+                </button>
+              ))}
+              <div style={{width:1, background:'#e2e8f0', margin:'0 4px'}} />
+              <select value={txnTypeFilter} onChange={e => setTxnTypeFilter(e.target.value)} style={{padding:'6px 12px', borderRadius:20, border:'1px solid #e2e8f0', background:'#fff', color:'#1e293b', fontSize:12, fontWeight:700, outline:'none', cursor:'pointer', fontFamily:'inherit'}}>
+                <option>All Types</option>
+                <option>Salary</option>
+                <option>Bonus</option>
+                <option>Overtime</option>
+                <option>Deduction</option>
+              </select>
+              <select value={txnMonthFilter} onChange={e => setTxnMonthFilter(e.target.value)} style={{padding:'6px 12px', borderRadius:20, border:'1px solid #e2e8f0', background:'#fff', color:'#1e293b', fontSize:12, fontWeight:700, outline:'none', cursor:'pointer', fontFamily:'inherit'}}>
+                <option>All Months</option>
+                <option>July</option>
+                <option>June</option>
+              </select>
+              <select value={txnYearFilter} onChange={e => setTxnYearFilter(e.target.value)} style={{padding:'6px 12px', borderRadius:20, border:'1px solid #e2e8f0', background:'#fff', color:'#1e293b', fontSize:12, fontWeight:700, outline:'none', cursor:'pointer', fontFamily:'inherit'}}>
+                <option>All Years</option>
+                <option>2026</option>
+                <option>2025</option>
+              </select>
+            </div>
+
+            {/* Transaction List */}
+            <div style={{padding:'14px', display:'flex', flexDirection:'column', gap:12}}>
+              {filteredTransactions.length === 0 && (
+                <div style={{textAlign:'center', padding:'30px 0'}}>
+                  <p style={{margin:0, fontSize:14, color:'#64748b', fontWeight:700}}>No transactions found.</p>
+                </div>
+              )}
+              {filteredTransactions.map(txn => (
+                <div key={txn.id} style={{display:'flex', alignItems:'center', gap:14, padding:'14px 16px', background:'#fff', borderRadius:16, border:'1px solid #f1f5f9', boxShadow:'0 2px 8px rgba(0,0,0,0.02)'}}>
+                  <div style={{width:42, height:42, borderRadius:21, background: txn.flow === 'paid' ? '#dcfce7' : '#fee2e2', display:'flex', alignItems:'center', justifyContent:'center'}}>
+                    <span className="material-symbols-outlined" style={{fontSize:20, color: txn.flow === 'paid' ? '#15803d' : '#b91c1c'}}>
+                      {txn.flow === 'paid' ? 'south_west' : 'north_east'}
+                    </span>
+                  </div>
+                  <div style={{flex:1}}>
+                    <p style={{margin:0, fontSize:15, fontWeight:800, color:'#1a1500'}}>{txn.subtype}</p>
+                    <p style={{margin:'2px 0 0', fontSize:12, fontWeight:600, color:'#64748b'}}>{txn.date} · {txn.type}</p>
+                  </div>
+                  <div style={{textAlign:'right'}}>
+                    <p style={{margin:0, fontSize:16, fontWeight:900, color: txn.flow === 'paid' ? '#15803d' : '#1a1500'}}>
+                      {txn.flow === 'paid' ? '+' : '-'}₹{txn.amount.toLocaleString()}
+                    </p>
+                    <p style={{margin:'2px 0 0', fontSize:11, fontWeight:700, color:'#94a3b8'}}>{txn.flow === 'paid' ? 'Credited' : 'Debited'}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div style={{padding:'20px', textAlign:'center'}}>
+              <p style={{margin:0, fontSize:12, color:'#94a3b8', fontWeight:600}}>End of transactions</p>
+            </div>
+          </div>
+        );
+      })()}
+
       {view === 'salary' && (
         <div style={{padding:'14px 14px 32px',display:'flex',flexDirection:'column',gap:14}}>
           {/* Main Card */}
@@ -2582,9 +2684,12 @@ export default function StaffApp(){
             <p style={{margin:'4px 0 0', fontSize:12, fontWeight:700, color:'#000'}}>↑ Pay date: 1 Aug 2026 · On Track</p>
           </div>
 
-          {/* Breakdown Card */}
-          <div style={{background:'#fff', borderRadius:18, border: '1px solid #e2e8f0', padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
-            <p style={{margin:'0 0 12px', fontSize:15, fontWeight:800, color:'#000'}}>💰 Salary Breakdown</p>
+                    {/* Breakdown Card */}
+          <div onClick={() => setView('salaryBreakdown')} style={{background:'#fff', borderRadius:18, border: '1px solid #e2e8f0', padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)', cursor:'pointer'}}>
+            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12}}>
+              <p style={{margin:0, fontSize:15, fontWeight:800, color:'#000'}}>💰 Salary Breakdown</p>
+              <span style={{fontSize:12, fontWeight:700, color:'#15803d', display:'flex', alignItems:'center'}}>View All <span className="material-symbols-outlined" style={{fontSize:16}}>chevron_right</span></span>
+            </div>
             {[
               {l:'Base Monthly', v:'₹16,000', c:'#000'},
               {l:'Overtime (15 hrs)', v:'+₹2,500', c:'#15803d'},
