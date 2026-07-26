@@ -433,6 +433,7 @@ export default function StaffApp(){
   const [cookHistStatus, setCookHistStatus] = useState('All');
   const [cookHistMeal, setCookHistMeal] = useState('All Meals');
   const [cookHistFood, setCookHistFood] = useState('All Food Items');
+  const [expandedCookHistId, setExpandedCookHistId] = useState(null);
   
   // Weekly Food Menu
   const [weeklyFoodMenu, setWeeklyFoodMenu] = useState({
@@ -1222,39 +1223,75 @@ export default function StaffApp(){
             </div>
 
             {/* List */}
-            <div style={{padding:'14px', display:'flex', flexDirection:'column', gap:12}}>
+            <div style={{padding:'14px', display:'flex', flexDirection:'column', gap:20}}>
               {filteredHist.length === 0 && (
                 <div style={{textAlign:'center', padding:'30px 0'}}>
                   <p style={{margin:0, fontSize:14, color:'#64748b', fontWeight:700}}>No history found.</p>
                 </div>
               )}
-              {filteredHist.map(item => {
-                const getColors = (status) => {
-                  switch(status) {
-                    case 'Eaten': return { bg:'#dcfce7', c:'#15803d', icon:'restaurant' };
-                    case 'Not Eaten': return { bg:'#fee2e2', c:'#b91c1c', icon:'no_meals' };
-                    case 'To Pack': return { bg:'#fef08a', c:'#a16207', icon:'takeout_dining' };
-                    case 'Extra Plate': return { bg:'#e0e7ff', c:'#4338ca', icon:'local_dining' };
-                    default: return { bg:'#f1f5f9', c:'#475569', icon:'notifications' };
-                  }
-                };
-                const clr = getColors(item.status);
-                
-                return (
-                  <div key={item.id} style={{display:'flex', alignItems:'center', gap:14, padding:'14px 16px', background:'#fff', borderRadius:16, border:'1px solid #f1f5f9', boxShadow:'0 2px 8px rgba(0,0,0,0.02)'}}>
-                    <div style={{width:42, height:42, borderRadius:21, background: clr.bg, display:'flex', alignItems:'center', justifyContent:'center'}}>
-                      <span className="material-symbols-outlined" style={{fontSize:20, color: clr.c}}>{clr.icon}</span>
-                    </div>
-                    <div style={{flex:1}}>
-                      <p style={{margin:0, fontSize:15, fontWeight:800, color:'#1a1500'}}>{item.student}</p>
-                      <p style={{margin:'2px 0 0', fontSize:12, fontWeight:600, color:'#64748b'}}>{item.date} · {item.meal} {cookHistFood !== 'All Food Items' ? '· ' + item.food : ''}</p>
-                    </div>
-                    <div style={{textAlign:'right'}}>
-                      <p style={{margin:0, fontSize:13, fontWeight:800, color: clr.c}}>{item.status}</p>
-                    </div>
-                  </div>
-                );
-              })}
+              {(() => {
+                 const groupedHist = filteredHist.reduce((acc, item) => {
+                    if (!acc[item.status]) acc[item.status] = [];
+                    acc[item.status].push(item);
+                    return acc;
+                 }, {});
+
+                 return Object.keys(groupedHist).map(statusKey => {
+                    const groupItems = groupedHist[statusKey];
+                    return (
+                       <div key={statusKey} style={{display:'flex', flexDirection:'column', gap:12}}>
+                          <h3 style={{margin:0, fontSize:16, fontWeight:900, color:'#000', paddingLeft:8}}>{statusKey} {groupItems.length}</h3>
+                          {groupItems.map(item => {
+                             const getColors = (status) => {
+                               switch(status) {
+                                 case 'Eaten': return { bg:'#dcfce7', c:'#15803d', icon:'restaurant' };
+                                 case 'Not Eaten': return { bg:'#fee2e2', c:'#b91c1c', icon:'no_meals' };
+                                 case 'To Pack': return { bg:'#fef08a', c:'#a16207', icon:'takeout_dining' };
+                                 case 'Extra Plate': return { bg:'#e0e7ff', c:'#4338ca', icon:'local_dining' };
+                                 default: return { bg:'#f1f5f9', c:'#475569', icon:'notifications' };
+                               }
+                             };
+                             const clr = getColors(item.status);
+                             const isExpanded = expandedCookHistId === item.id;
+                             const isClickable = item.status === 'To Pack' || item.status === 'Extra Plate';
+                             
+                             return (
+                               <div key={item.id} onClick={() => isClickable && setExpandedCookHistId(isExpanded ? null : item.id)} style={{display:'flex', flexDirection:'column', background:'#fff', borderRadius:16, border:'1px solid #f1f5f9', boxShadow:'0 2px 8px rgba(0,0,0,0.02)', cursor: isClickable ? 'pointer' : 'default', overflow:'hidden', transition:'all 0.2s'}}>
+                                 <div style={{display:'flex', alignItems:'center', gap:14, padding:'14px 16px'}}>
+                                   <div style={{width:42, height:42, borderRadius:21, background: clr.bg, display:'flex', alignItems:'center', justifyContent:'center'}}>
+                                     <span className="material-symbols-outlined" style={{fontSize:20, color: clr.c}}>{clr.icon}</span>
+                                   </div>
+                                   <div style={{flex:1}}>
+                                     <p style={{margin:0, fontSize:15, fontWeight:800, color:'#1a1500'}}>{item.student}</p>
+                                     <p style={{margin:'2px 0 0', fontSize:12, fontWeight:600, color:'#64748b'}}>{item.date} · {item.meal} {cookHistFood !== 'All Food Items' ? '· ' + item.food : ''}</p>
+                                   </div>
+                                   <div style={{textAlign:'right', display:'flex', flexDirection:'column', alignItems:'flex-end'}}>
+                                     <p style={{margin:0, fontSize:13, fontWeight:800, color: clr.c}}>{item.status}</p>
+                                     {isClickable && <span className="material-symbols-outlined" style={{fontSize:16, color:C.muted, marginTop:4}}>{isExpanded ? 'expand_less' : 'expand_more'}</span>}
+                                   </div>
+                                 </div>
+                                 
+                                 {isExpanded && item.status === 'To Pack' && (
+                                    <div style={{padding:'12px 16px', background:'#f8fafc', borderTop:'1px solid #f1f5f9', fontSize:13, color:'#475569', fontWeight:600}}>
+                                       <div style={{display:'flex', justifyContent:'space-between', marginBottom:6}}><span>Date Requested:</span> <span style={{fontWeight:800, color:'#000'}}>{item.date}</span></div>
+                                       <div style={{display:'flex', justifyContent:'space-between'}}><span>Food Items:</span> <span style={{fontWeight:800, color:'#000'}}>{item.food} (x1)</span></div>
+                                    </div>
+                                 )}
+                                 
+                                 {isExpanded && item.status === 'Extra Plate' && (
+                                    <div style={{padding:'12px 16px', background:'#f8fafc', borderTop:'1px solid #f1f5f9', fontSize:13, color:'#475569', fontWeight:600}}>
+                                       <div style={{display:'flex', justifyContent:'space-between', marginBottom:6}}><span>Visitor Name:</span> <span style={{fontWeight:800, color:'#000'}}>Guest of {item.student}</span></div>
+                                       <div style={{display:'flex', justifyContent:'space-between', marginBottom:6}}><span>Food Items:</span> <span style={{fontWeight:800, color:'#000'}}>{item.food} (x1)</span></div>
+                                       <div style={{display:'flex', justifyContent:'space-between', borderTop:'1px dashed #cbd5e1', paddingTop:6, marginTop:2}}><span>Total Charge:</span> <span style={{fontWeight:900, color:'#10b981'}}>₹80</span></div>
+                                    </div>
+                                 )}
+                               </div>
+                             );
+                          })}
+                       </div>
+                    );
+                 });
+              })()}
             </div>
           </div>
         );
