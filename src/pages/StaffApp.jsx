@@ -761,6 +761,7 @@ export default function StaffApp(){
   const [gkPhoto, setGkPhoto] = useState(null);
   const [gkIdType, setGkIdType] = useState('Aadhar');
   const [gkIdNumber, setGkIdNumber] = useState('');
+  const [gkRelation, setGkRelation] = useState('');
 
   const [visitorLogs, setVisitorLogs] = useState([
     { id: 1, name: 'Ramesh Singh', phone: '9876543210', room: '102', purpose: 'Parent', timeIn: '10:30 AM', timeOut: null },
