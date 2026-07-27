@@ -409,7 +409,88 @@ function usePersistentState(key, defaultValue) {
   return [state, setState];
 }
 
+
+// ─── Inventory View Component ──────────────────────────────────────────────────
+function InventoryView({ staffRole, setView, showToast }) {
+  const getInventoryForRole = (role) => {
+    const common = [
+      { id: '1', name: 'Uniform', icon: 'checkroom', qty: 2 },
+      { id: '2', name: 'ID Card', icon: 'badge', qty: 1 }
+    ];
+    if (role === 'Cleaner') return [...common, { id: '3', name: 'Apron', icon: 'dry_cleaning', qty: 2 }, { id: '4', name: 'Gloves', icon: 'front_hand', qty: 3 }, { id: '5', name: 'Mop', icon: 'cleaning_services', qty: 2 }, { id: '6', name: 'Broom', icon: 'mop', qty: 1 }, { id: '7', name: 'Bucket', icon: 'water_drop', qty: 2 }, { id: '8', name: 'Cleaning Spray', icon: 'sanitizer', qty: 3 }, { id: '9', name: 'Dustpan', icon: 'delete_sweep', qty: 1 }];
+    if (role === 'Security Guard') return [...common, { id: '3', name: 'Whistle', icon: 'sports', qty: 1 }, { id: '4', name: 'Torch / Flashlight', icon: 'flashlight_on', qty: 1 }, { id: '5', name: 'Baton', icon: 'gavel', qty: 1 }, { id: '6', name: 'Raincoat', icon: 'umbrella', qty: 1 }, { id: '7', name: 'Walkie-Talkie', icon: 'settings_remote', qty: 1 }];
+    if (role === 'Cook') return [...common, { id: '3', name: 'Chef Hat', icon: 'restaurant_menu', qty: 2 }, { id: '4', name: 'Apron', icon: 'dry_cleaning', qty: 3 }, { id: '5', name: 'Kitchen Gloves', icon: 'front_hand', qty: 4 }, { id: '6', name: 'Thermometer', icon: 'device_thermostat', qty: 1 }];
+    if (role === 'Bus Driver') return [...common, { id: '3', name: 'License Badge', icon: 'directions_bus', qty: 1 }, { id: '4', name: 'First Aid Kit', icon: 'medical_services', qty: 1 }, { id: '5', name: 'Reflective Vest', icon: 'safety_divider', qty: 1 }];
+    if (['Plumber', 'Electrician', 'Carpenter', 'Maintenance'].includes(role)) return [...common, { id: '3', name: 'Safety Helmet', icon: 'engineering', qty: 1 }, { id: '4', name: 'Toolbelt', icon: 'home_repair_service', qty: 1 }, { id: '5', name: 'Safety Shoes', icon: 'snowshoeing', qty: 1 }, { id: '6', name: 'Heavy Gloves', icon: 'front_hand', qty: 2 }];
+    if (['HR', 'Sales Manager', 'Purchase Manager'].includes(role)) return [...common, { id: '3', name: 'Laptop', icon: 'laptop_mac', qty: 1 }, { id: '4', name: 'Tablet', icon: 'tablet_mac', qty: 1 }, { id: '5', name: 'Notebook', icon: 'menu_book', qty: 2 }];
+    return [...common, { id: '3', name: 'Notebook', icon: 'menu_book', qty: 1 }, { id: '4', name: 'Safety Vest', icon: 'safety_divider', qty: 1 }];
+  };
+
+  const [myInventory, setMyInventory] = useState(() => getInventoryForRole(staffRole));
+
+  const updateQty = (id, newQty) => {
+    if(newQty < 0) return;
+    setMyInventory(prev => prev.map(item => item.id === id ? { ...item, qty: newQty } : item));
+  };
+
+  const removeItem = (id) => {
+    if(window.confirm('Remove this item from your allotted inventory?')) {
+      setMyInventory(prev => prev.filter(item => item.id !== id));
+    }
+  };
+
+  const saveInventory = () => {
+    showToast('Inventory saved successfully!', 'success');
+  };
+
+  return (
+    <div style={{padding:'0', display:'flex', flexDirection:'column', gap:0, background:'#f8fafc', minHeight:'100vh'}}>
+      {/* Top Bar for Inventory */}
+      <div style={{background:'#fff', padding:'16px 20px', display:'flex', justifyContent:'space-between', alignItems:'center', borderBottom:'1px solid #e2e8f0', position:'sticky', top:0, zIndex:10}}>
+        <div style={{display:'flex', alignItems:'center', gap:12}}>
+          <button onClick={() => setView('work')} style={{background:'none', border:'none', color:'#0891b2', display:'flex', alignItems:'center', cursor:'pointer', padding:0}}>
+            <span className="material-symbols-outlined">arrow_back</span>
+          </button>
+          <h3 style={{margin:0, fontSize:17, fontWeight:800, color:'#0f172a'}}>Allotted Inventory</h3>
+        </div>
+        <button onClick={saveInventory} style={{background:'#0891b2', color:'#fff', border:'none', borderRadius:20, padding:'6px 16px', fontSize:14, fontWeight:700, cursor:'pointer'}}>
+          Save
+        </button>
+      </div>
+
+      <div style={{padding:'20px 16px', display:'flex', flexDirection:'column', gap:12}}>
+        {myInventory.map(item => (
+          <div key={item.id} style={{background:'#fff', borderRadius:16, border:'1px solid #e2e8f0', padding:'16px 20px', display:'flex', justifyContent:'space-between', alignItems:'center', boxShadow:'0 2px 8px rgba(15,23,42,0.03)'}}>
+            <div style={{display:'flex', alignItems:'center', gap:12}}>
+              <span className="material-symbols-outlined" style={{color:'#0891b2', fontSize:22}}>{item.icon}</span>
+              <span style={{fontSize:15, fontWeight:700, color:'#334155'}}>{item.name}</span>
+            </div>
+            <div style={{display:'flex', alignItems:'center', gap:16}}>
+              <input 
+                type="number" 
+                value={item.qty}
+                onChange={(e) => updateQty(item.id, parseInt(e.target.value) || 0)}
+                style={{width:48, height:32, border:'1px solid #0891b2', borderRadius:8, textAlign:'center', fontSize:15, fontWeight:700, color:'#0f172a', outline:'none'}}
+              />
+              <button onClick={() => removeItem(item.id)} style={{background:'none', border:'none', color:'#ef4444', display:'flex', alignItems:'center', cursor:'pointer', padding:0}}>
+                <span className="material-symbols-outlined" style={{fontSize:22}}>delete</span>
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+      
+      <button 
+        onClick={() => showToast('Adding custom item...', 'success')}
+        style={{position:'fixed', bottom:100, right:24, width:56, height:56, borderRadius:'50%', background:'#0891b2', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', border:'none', boxShadow:'0 4px 12px rgba(8, 145, 178, 0.4)', cursor:'pointer', zIndex:20}}>
+        <span className="material-symbols-outlined" style={{fontSize:28}}>add</span>
+      </button>
+    </div>
+  );
+}
+
 export default function StaffApp(){
+
     const {user,logout} = useAuth();
   const [toast, setToast] = useState(null);
 
@@ -3396,88 +3477,7 @@ export default function StaffApp(){
       {/* ══════════════════════════════════════════════════════════════════════
           ITEM LIST
          ══════════════════════════════════════════════════════════════════════ */}
-      {view === 'items' && (() => {
-        // Generate role-specific inventory defaults
-        const getInventoryForRole = (role) => {
-          const common = [
-            { id: '1', name: 'Uniform', icon: 'checkroom', qty: 2 },
-            { id: '2', name: 'ID Card', icon: 'badge', qty: 1 }
-          ];
-          if (role === 'Cleaner') return [...common, { id: '3', name: 'Apron', icon: 'dry_cleaning', qty: 2 }, { id: '4', name: 'Gloves', icon: 'front_hand', qty: 3 }, { id: '5', name: 'Mop', icon: 'cleaning_services', qty: 2 }, { id: '6', name: 'Broom', icon: 'mop', qty: 1 }, { id: '7', name: 'Bucket', icon: 'water_drop', qty: 2 }, { id: '8', name: 'Cleaning Spray', icon: 'sanitizer', qty: 3 }, { id: '9', name: 'Dustpan', icon: 'delete_sweep', qty: 1 }];
-          if (role === 'Security Guard') return [...common, { id: '3', name: 'Whistle', icon: 'sports', qty: 1 }, { id: '4', name: 'Torch / Flashlight', icon: 'flashlight_on', qty: 1 }, { id: '5', name: 'Baton', icon: 'gavel', qty: 1 }, { id: '6', name: 'Raincoat', icon: 'umbrella', qty: 1 }, { id: '7', name: 'Walkie-Talkie', icon: 'settings_remote', qty: 1 }];
-          if (role === 'Cook') return [...common, { id: '3', name: 'Chef Hat', icon: 'restaurant_menu', qty: 2 }, { id: '4', name: 'Apron', icon: 'dry_cleaning', qty: 3 }, { id: '5', name: 'Kitchen Gloves', icon: 'front_hand', qty: 4 }, { id: '6', name: 'Thermometer', icon: 'device_thermostat', qty: 1 }];
-          if (role === 'Bus Driver') return [...common, { id: '3', name: 'License Badge', icon: 'directions_bus', qty: 1 }, { id: '4', name: 'First Aid Kit', icon: 'medical_services', qty: 1 }, { id: '5', name: 'Reflective Vest', icon: 'safety_divider', qty: 1 }];
-          if (['Plumber', 'Electrician', 'Carpenter', 'Maintenance'].includes(role)) return [...common, { id: '3', name: 'Safety Helmet', icon: 'engineering', qty: 1 }, { id: '4', name: 'Toolbelt', icon: 'home_repair_service', qty: 1 }, { id: '5', name: 'Safety Shoes', icon: 'snowshoeing', qty: 1 }, { id: '6', name: 'Heavy Gloves', icon: 'front_hand', qty: 2 }];
-          if (['HR', 'Sales Manager', 'Purchase Manager'].includes(role)) return [...common, { id: '3', name: 'Laptop', icon: 'laptop_mac', qty: 1 }, { id: '4', name: 'Tablet', icon: 'tablet_mac', qty: 1 }, { id: '5', name: 'Notebook', icon: 'menu_book', qty: 2 }];
-          return [...common, { id: '3', name: 'Notebook', icon: 'menu_book', qty: 1 }, { id: '4', name: 'Safety Vest', icon: 'safety_divider', qty: 1 }];
-        };
-
-        const initialInventory = getInventoryForRole(staffRole);
-        // Ensure state relies on staffRole changes or just initialize based on role. 
-        // We'll use a local state derived from a persistent key if needed, or simply useState synced with effect.
-        // For simplicity and immediate rendering, we use a simple state here.
-        const [myInventory, setMyInventory] = useState(initialInventory);
-
-        const updateQty = (id, newQty) => {
-          if(newQty < 0) return;
-          setMyInventory(prev => prev.map(item => item.id === id ? { ...item, qty: newQty } : item));
-        };
-
-        const removeItem = (id) => {
-          if(window.confirm('Remove this item from your allotted inventory?')) {
-            setMyInventory(prev => prev.filter(item => item.id !== id));
-          }
-        };
-
-        const saveInventory = () => {
-          showToast('Inventory saved successfully!', 'success');
-        };
-
-        return (
-          <div style={{padding:'0', display:'flex', flexDirection:'column', gap:0, background:'#f8fafc', minHeight:'100vh'}}>
-            {/* Top Bar for Inventory */}
-            <div style={{background:'#fff', padding:'16px 20px', display:'flex', justifyContent:'space-between', alignItems:'center', borderBottom:'1px solid #e2e8f0', position:'sticky', top:0, zIndex:10}}>
-              <div style={{display:'flex', alignItems:'center', gap:12}}>
-                <button onClick={() => setView('work')} style={{background:'none', border:'none', color:'#0891b2', display:'flex', alignItems:'center', cursor:'pointer', padding:0}}>
-                  <span className="material-symbols-outlined">arrow_back</span>
-                </button>
-                <h3 style={{margin:0, fontSize:17, fontWeight:800, color:'#0f172a'}}>Allotted Inventory</h3>
-              </div>
-              <button onClick={saveInventory} style={{background:'#0891b2', color:'#fff', border:'none', borderRadius:20, padding:'6px 16px', fontSize:14, fontWeight:700, cursor:'pointer'}}>
-                Save
-              </button>
-            </div>
-
-            <div style={{padding:'20px 16px', display:'flex', flexDirection:'column', gap:12}}>
-              {myInventory.map(item => (
-                <div key={item.id} style={{background:'#fff', borderRadius:16, border:'1px solid #e2e8f0', padding:'16px 20px', display:'flex', justifyContent:'space-between', alignItems:'center', boxShadow:'0 2px 8px rgba(15,23,42,0.03)'}}>
-                  <div style={{display:'flex', alignItems:'center', gap:12}}>
-                    <span className="material-symbols-outlined" style={{color:'#0891b2', fontSize:22}}>{item.icon}</span>
-                    <span style={{fontSize:15, fontWeight:700, color:'#334155'}}>{item.name}</span>
-                  </div>
-                  <div style={{display:'flex', alignItems:'center', gap:16}}>
-                    <input 
-                      type="number" 
-                      value={item.qty}
-                      onChange={(e) => updateQty(item.id, parseInt(e.target.value) || 0)}
-                      style={{width:48, height:32, border:'1px solid #0891b2', borderRadius:8, textAlign:'center', fontSize:15, fontWeight:700, color:'#0f172a', outline:'none'}}
-                    />
-                    <button onClick={() => removeItem(item.id)} style={{background:'none', border:'none', color:'#ef4444', display:'flex', alignItems:'center', cursor:'pointer', padding:0}}>
-                      <span className="material-symbols-outlined" style={{fontSize:22}}>delete</span>
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-            
-            <button 
-              onClick={() => showToast('Adding custom item...', 'success')}
-              style={{position:'fixed', bottom:100, right:24, width:56, height:56, borderRadius:'50%', background:'#0891b2', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', border:'none', boxShadow:'0 4px 12px rgba(8, 145, 178, 0.4)', cursor:'pointer', zIndex:20}}>
-              <span className="material-symbols-outlined" style={{fontSize:28}}>add</span>
-            </button>
-          </div>
-        );
-      })()}
+      {view === 'items' && <InventoryView staffRole={staffRole} setView={setView} showToast={showToast} />}
 
       {/* ══════════════════════════════════════════════════════════════════════
           CHAT — WHATSAPP STYLE WITH REMINDERS
