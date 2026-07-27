@@ -758,6 +758,10 @@ export default function StaffApp(){
   const [gkPhone, setGkPhone] = useState('');
   const [gkRoom, setGkRoom] = useState('');
   const [gkPurpose, setGkPurpose] = useState('');
+  const [gkPhoto, setGkPhoto] = useState(null);
+  const [gkIdType, setGkIdType] = useState('Aadhar');
+  const [gkIdNumber, setGkIdNumber] = useState('');
+
   const [visitorLogs, setVisitorLogs] = useState([
     { id: 1, name: 'Ramesh Singh', phone: '9876543210', room: '102', purpose: 'Parent', timeIn: '10:30 AM', timeOut: null },
     { id: 2, name: 'Swiggy Delivery', phone: '', room: '304', purpose: 'Food', timeIn: '11:15 AM', timeOut: '11:20 AM' }
@@ -2262,46 +2266,7 @@ export default function StaffApp(){
             </div>
 
             {/* Modal for New Visitor */}
-            {showGatekeeperModal && (
-               <div style={{position:'fixed', inset:0, background:'rgba(15,23,42,0.6)', zIndex:100, display:'flex', flexDirection:'column', justifyContent:'flex-end', animation:'sheetUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)'}}>
-                 <div style={{background:'#fff', padding:'24px 20px 32px', borderTopLeftRadius:24, borderTopRightRadius:24, display:'flex', flexDirection:'column', gap:16}}>
-                   <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-                     <p style={{margin:0, fontSize:18, fontWeight:900, color:'#1a1500'}}>New Visitor Entry</p>
-                     <button onClick={() => setShowGatekeeperModal(false)} style={{background:'#f8fafc', border:'none', borderRadius:10, width:32, height:32, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer'}}>
-                       <span className="material-symbols-outlined" style={{fontSize:18, color:'#64748b'}}>close</span>
-                     </button>
-                   </div>
-                   
-                   <div style={{display:'flex', flexDirection:'column', gap:12}}>
-                     <input type="text" placeholder="Visitor Name" value={gkName} onChange={e=>setGkName(e.target.value)} style={{padding:'14px', borderRadius:12, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:15, fontWeight:600}} />
-                     <input type="tel" placeholder="Phone Number" value={gkPhone} onChange={e=>setGkPhone(e.target.value)} style={{padding:'14px', borderRadius:12, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:15, fontWeight:600}} />
-                     <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
-                        <input type="text" placeholder="Room No." value={gkRoom} onChange={e=>setGkRoom(e.target.value)} style={{padding:'14px', borderRadius:12, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:15, fontWeight:600}} />
-                        <select value={gkPurpose} onChange={e=>setGkPurpose(e.target.value)} style={{padding:'14px', borderRadius:12, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:15, fontWeight:600}}>
-                           <option value="" disabled>Purpose</option>
-                           <option value="Parent/Family">Parent/Family</option>
-                           <option value="Delivery">Delivery</option>
-                           <option value="Guest">Guest</option>
-                        </select>
-                     </div>
-                   </div>
-                   
-                   <button 
-                     onClick={() => {
-                       if(!gkName || !gkRoom) return showToast('Name and Room are required', 'warning');
-                       setVisitorLogs([{ id: Date.now(), name: gkName, phone: gkPhone, room: gkRoom, purpose: gkPurpose, timeIn: new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}), timeOut: null }, ...(visitorLogs || [])]);
-                       setShowGatekeeperModal(false);
-                       setGkName(''); setGkPhone(''); setGkRoom(''); setGkPurpose('');
-                       showToast("Alert sent to Student and Admin!", "success");
-                     }}
-                     style={{marginTop:10, padding:'14px', background:'#3b82f6', color:'#fff', border:'none', borderRadius:12, fontSize:15, fontWeight:900, cursor:'pointer', fontFamily:'inherit', boxShadow:'0 4px 12px rgba(59,130,246,0.3)'}}
-                   >
-                     Allow Entry & Notify
-                   </button>
-                 </div>
-               </div>
-            )}
-          </>)}
+            </>)}
 
           {/* 🚌 BUS DRIVER ROLE VIEW */}
           {(staffRole === 'Bus Driver' || staffRole === 'Driver' || staffRole === 'Shuttle Driver') && (() => {
