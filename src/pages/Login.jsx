@@ -6,7 +6,7 @@ const roles = [
   'HR', 'Manager', 'Sales Manager', 'Purchase Manager', 
   'Cook', 'Cleaner', 'Helper', 
   'Plumber', 'Electrician', 'Carpenter', 
-  'Security Guard', 'Others'
+  'Security Guard', 'Bus Driver', 'Others'
 ];
 
 const Field = ({ icon, placeholder, type = 'text', value, onChange, disabled, maxLength }) => (
