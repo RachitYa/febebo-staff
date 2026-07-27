@@ -486,6 +486,13 @@ export default function StaffApp(){
   const [bMeal,setBMeal]        = useState('Breakfast');
 
   // Interactive Modals & Transport States
+  const [showParcelModal, setShowParcelModal] = useState(false);
+  const [parcelItemName, setParcelItemName] = useState('');
+  const [parcelStudent, setParcelStudent] = useState('');
+  const [parcelRoom, setParcelRoom] = useState('');
+  const [parcelCarrier, setParcelCarrier] = useState('Amazon');
+  const [parcelDate, setParcelDate] = useState(new Date().toISOString().split('T')[0]);
+  const [parcels, setParcels] = usePersistentState('febebo_parcels', INIT_PARCELS);
   const [showRefillModal, setShowRefillModal] = useState(false);
   const [showMoveOutModal, setShowMoveOutModal] = useState(false);
   const [showFuelModal, setShowFuelModal] = useState(false);
@@ -624,7 +631,7 @@ export default function StaffApp(){
 
   // Security
   const [visitors,setVisitors]  = useState(INIT_VISITORS);
-  const [parcels,setParcels]    = useState(INIT_PARCELS);
+
   const [showVisitor,setShowVisitor]=useState(false);
   const [showParcel,setShowParcel]  =useState(false);
   const [vName,setVName]=useState(''); const [vPhone,setVPhone]=useState(''); const [vPurp,setVPurp]=useState('');
@@ -2099,6 +2106,49 @@ export default function StaffApp(){
                <button onClick={()=>setShowGatekeeperModal(true)} style={{padding:'14px', background:'#3b82f6', color:'#fff', border:'none', borderRadius:14, fontWeight:900, fontSize:15, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:8, fontFamily:'inherit', zIndex:5, boxShadow:'0 4px 12px rgba(59,130,246,0.3)'}}>
                   <span className="material-symbols-outlined" style={{fontSize:20}}>person_add</span> Log New Visitor
                </button>
+            </div>
+
+            {/* 📦 GATE PARCEL REGISTER SECTION */}
+            <div style={{marginTop:20, background:'#fff', borderRadius:20, border:'1.5px solid #e2e8f0', padding:'18px', boxShadow:'0 4px 14px rgba(15,23,42,0.04)'}}>
+               <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:14}}>
+                  <div>
+                     <h3 style={{margin:0, fontSize:17, fontWeight:900, color:'#0f172a'}}>📦 Gate Parcel Register</h3>
+                     <p style={{margin:'2px 0 0', fontSize:12, fontWeight:600, color:'#64748b'}}>Parcels received at gate for absent students</p>
+                  </div>
+                  <button onClick={() => setShowParcelModal(true)} style={{padding:'10px 14px', background:'#fde047', border:'none', borderRadius:12, color:'#0f172a', fontSize:12, fontWeight:900, cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', gap:6, boxShadow:'0 2px 8px rgba(0,0,0,0.05)'}}>
+                     <span className="material-symbols-outlined" style={{fontSize:18}}>add_box</span> Log Parcel
+                  </button>
+               </div>
+
+               {/* Parcel List Cards */}
+               <div style={{display:'flex', flexDirection:'column', gap:10}}>
+                  {parcels.map(p => (
+                     <div key={p.id} style={{background:'#f8fafc', borderRadius:14, padding:'14px', border:'1px solid #f1f5f9', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                        <div>
+                           <div style={{display:'flex', alignItems:'center', gap:8}}>
+                              <span style={{fontSize:14, fontWeight:900, color:'#0f172a'}}>📦 {p.itemName || p.carrier + ' Parcel'}</span>
+                              <span style={{fontSize:10, fontWeight:800, padding:'2px 8px', borderRadius:6, background: p.status === 'Claimed' ? '#dcfce7' : '#fef08a', color: p.status === 'Claimed' ? '#15803d' : '#92400e'}}>
+                                 {p.status === 'Claimed' ? 'Handed Over ✅' : 'Pending Claim ⏳'}
+                              </span>
+                           </div>
+                           <p style={{margin:'4px 0 0', fontSize:13, fontWeight:700, color:'#334155'}}>Student: <strong>{p.student}</strong> · Rm <strong>{p.room}</strong></p>
+                           <p style={{margin:'2px 0 0', fontSize:11, fontWeight:600, color:'#94a3b8'}}>Carrier: {p.carrier || 'Amazon'} · Received: {p.date || 'Today'}</p>
+                        </div>
+
+                        {p.status !== 'Claimed' && (
+                           <button onClick={() => {
+                              setParcels(prev => prev.map(item => item.id === p.id ? {...item, status: 'Claimed'} : item));
+                              showToast(`✅ Parcel handed over to ${p.student}!`, 'success');
+                           }} style={{padding:'8px 14px', background:'#0f172a', color:'#fde047', border:'none', borderRadius:10, fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit', flexShrink:0}}>
+                              Hand Over
+                           </button>
+                        )}
+                     </div>
+                  ))}
+                  {parcels.length === 0 && (
+                     <p style={{textAlign:'center', color:'#94a3b8', fontSize:13, margin:'10px 0'}}>No parcels recorded yet today.</p>
+                  )}
+               </div>
             </div>
 
             {/* Current Visitors Inside */}
