@@ -1026,13 +1026,13 @@ export default function StaffApp(){
       {/* ── HEADER (always visible) ──────────────────────────────────────── */}
       {view === 'home' ? (
         // Home Hero Header
-        <div style={{background: 'rgba(15, 23, 42, 0.75)', backdropFilter: 'blur(20px) saturate(180%)', padding:'0 16px 20px', color: '#f8fafc', borderBottom: '1px solid rgba(255, 255, 255, 0.12)', boxShadow: '0 8px 32px rgba(0,0,0,0.37)'}}>
+        <div style={{background: 'linear-gradient(to bottom, #fffef2, #fffdf0)', padding:'0 16px 20px', color: '#1a1500', borderBottom: '1.5px solid #e8df9a'}}>
           <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', height:60, position:'relative'}}>
             <button onClick={()=>setSidebar(true)} style={{background: '#fefce8', border: '1.5px solid #e8df9a', borderRadius:12, width:38, height:38, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', position:'relative', zIndex:10}}>
-              <span className="material-symbols-outlined" style={{fontSize:20, color: '#c084fc'}}>menu</span>
+              <span className="material-symbols-outlined" style={{fontSize:20, color: '#ca8a04'}}>menu</span>
             </button>
             <div style={{position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', zIndex:5, pointerEvents:'none'}}>
-              <p style={{fontFamily:"'Hanken Grotesk',sans-serif", fontSize:24, fontWeight:900, color: '#f8fafc', margin:0, letterSpacing:-.5, pointerEvents:'auto'}}>febebo</p>
+              <p style={{fontFamily:"'Hanken Grotesk',sans-serif", fontSize:24, fontWeight:900, color: '#1a1500', margin:0, letterSpacing:-.5, pointerEvents:'auto'}}>febebo</p>
             </div>
             <button onClick={()=>setView('profile_view')} style={{background: '#fefce8', border: '1.5px solid #e8df9a', borderRadius:50, width:44, height:44, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', position:'relative', zIndex:10, overflow:'hidden', padding:0}}>
               {profilePic ? (
