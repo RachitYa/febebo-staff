@@ -2177,66 +2177,7 @@ export default function StaffApp(){
              );
           })()}
 
-          {/* 🚌 BUS DRIVER ROLE VIEW */}
-          {(staffRole === 'Bus Driver' || staffRole === 'Driver' || staffRole === 'Shuttle Driver') && (() => {
-             return (
-                <div style={{display:'flex', flexDirection:'column', gap:14}}>
-                   {/* Driver Route Card */}
-                   <div style={{background:'linear-gradient(135deg, #0f172a, #1e293b)', borderRadius:20, padding:'20px', color:'#fff', boxShadow:'0 8px 20px rgba(15,23,42,0.15)'}}>
-                      <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10}}>
-                         <span style={{fontSize:11, fontWeight:800, textTransform:'uppercase', color:'#fde047', letterSpacing:1}}>🚌 Route #1 · Campus Express</span>
-                         <span style={{fontSize:10, fontWeight:800, padding:'3px 8px', borderRadius:6, background:'#22c55e', color:'#fff'}}>ON TRIP</span>
-                      </div>
-                      <h2 style={{margin:0, fontSize:22, fontWeight:900, color:'#fff'}}>PG Hostel ➔ Sector 62 Metro</h2>
-                      <p style={{margin:'4px 0 0', fontSize:12, fontWeight:600, color:'#94a3b8'}}>Morning Shift: 08:00 AM – 09:30 AM | Bus: UP 16 AB 4021</p>
-                      
-                      <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginTop:16}}>
-                         <button onClick={()=>setShowFuelModal(true)} style={{padding:'10px', background:'rgba(255,255,255,0.1)', border:'1px solid rgba(255,255,255,0.2)', borderRadius:12, color:'#fff', fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', justifyContent:'center', gap:6}}>
-                            <span className="material-symbols-outlined" style={{fontSize:16}}>local_gas_station</span> Log Fuel Expense
-                         </button>
-                         <button onClick={()=>alert('📢 Broadcast notification sent to all 6 shuttle passengers!')} style={{padding:'10px', background:'#fde047', border:'none', borderRadius:12, color:'#0f172a', fontSize:12, fontWeight:900, cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', justifyContent:'center', gap:6}}>
-                            <span className="material-symbols-outlined" style={{fontSize:16}}>campaign</span> Alert Passengers
-                         </button>
-                      </div>
-                   </div>
 
-                   {/* Student Passenger Roster */}
-                   <div style={{background:'#fff', borderRadius:18, border:'1.5px solid #e2e8f0', padding:'16px', boxShadow:'0 4px 14px rgba(15,23,42,0.04)'}}>
-                      <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12}}>
-                         <div>
-                            <h3 style={{margin:0, fontSize:16, fontWeight:900, color:'#0f172a'}}>Passenger Checklist</h3>
-                            <p style={{margin:'2px 0 0', fontSize:12, fontWeight:600, color:'#64748b'}}>{passengers.filter(p=>p.status==='Boarded').length} / {passengers.length} Boarded</p>
-                         </div>
-                         <span style={{fontSize:12, fontWeight:800, padding:'4px 10px', borderRadius:20, background:'#f1f5f9', color:'#475569'}}>{passengers.length} Total</span>
-                      </div>
-
-                      <div style={{display:'flex', flexDirection:'column', gap:10}}>
-                         {passengers.map(p => (
-                            <div key={p.id} style={{background:'#f8fafc', borderRadius:14, padding:'12px 14px', border:'1px solid #f1f5f9', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-                               <div>
-                                  <div style={{display:'flex', alignItems:'center', gap:8}}>
-                                     <span style={{fontSize:14, fontWeight:900, color:'#0f172a'}}>{p.name}</span>
-                                     <span style={{fontSize:11, fontWeight:700, color:'#64748b'}}>Rm {p.room}</span>
-                                  </div>
-                                  <p style={{margin:'2px 0 0', fontSize:11, fontWeight:600, color:'#94a3b8'}}>Pickup: {p.time}</p>
-                               </div>
-                               <div style={{display:'flex', gap:6, alignItems:'center'}}>
-                                  <a href={`tel:${p.phone}`} style={{width:32, height:32, borderRadius:10, background:'#e0f2fe', color:'#0369a1', display:'flex', alignItems:'center', justifyContent:'center', textDecoration:'none'}}>
-                                     <span className="material-symbols-outlined" style={{fontSize:16}}>phone</span>
-                                  </a>
-                                  <button onClick={()=>{
-                                     setPassengers(prev => prev.map(x => x.id === p.id ? {...x, status: x.status==='Boarded' ? 'Waiting' : x.status==='Waiting' ? 'Absent' : 'Boarded'} : x));
-                                  }} style={{padding:'6px 12px', borderRadius:8, border:'none', background: p.status==='Boarded' ? '#dcfce7' : p.status==='Waiting' ? '#fef08a' : '#fee2e2', color: p.status==='Boarded' ? '#15803d' : p.status==='Waiting' ? '#92400e' : '#b91c1c', fontSize:11, fontWeight:800, cursor:'pointer', fontFamily:'inherit'}}>
-                                     {p.status}
-                                  </button>
-                               </div>
-                            </div>
-                         ))}
-                      </div>
-                   </div>
-                </div>
-             );
-          })()}
 
           {/* HELPER / OTHERS TASK DASHBOARD */}
           {(staffRole === 'Helper' || staffRole === 'Others') && (<>
