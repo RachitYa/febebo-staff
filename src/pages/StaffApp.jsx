@@ -389,8 +389,34 @@ const Sheet = ({show,onClose,title,sub,children})=>{
 };
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
+// ─── Custom Persistent State Hook ───────────────────────────────────────────────
+function usePersistentState(key, defaultValue) {
+  const [state, setState] = useState(() => {
+    try {
+      const saved = localStorage.getItem(key);
+      return saved !== null ? JSON.parse(saved) : defaultValue;
+    } catch (e) {
+      return defaultValue;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(key, JSON.stringify(state));
+    } catch (e) {}
+  }, [key, state]);
+
+  return [state, setState];
+}
+
 export default function StaffApp(){
-  const {user,logout} = useAuth();
+    const {user,logout} = useAuth();
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3200);
+  };
 
   const staffRole = user?.staffRole || 'Cook';
   const staffName = user?.name     || 'Staff Member';
@@ -402,16 +428,16 @@ export default function StaffApp(){
   const [view,     setView]     = useState('home');   // home | work | inout | salary | items | chat | reports | requests
 
   // Clock
-  const [clocked, setClocked]   = useState(true);
+  const [clocked, setClocked]   = usePersistentState('febebo_clocked', true);
   const [clockIn]               = useState('08:30 AM');
-  const [punchLog,setPunchLog]  = useState([
+  const [punchLog,setPunchLog]  = usePersistentState('febebo_punch_log', [
     {id:1,date:'Today, 23 Jul 2026',inT:'08:30 AM',outT:null,hrs:null},
     {id:2,date:'Yesterday, 22 Jul',  inT:'08:15 AM',outT:'06:30 PM',hrs:'10 h 15 m'},
     {id:3,date:'21 Jul 2026',        inT:'08:30 AM',outT:'06:00 PM',hrs:'9 h 30 m'},
   ]);
 
   // Cook
-  const [students,setStudents]  = useState(STUDENTS);
+  const [students,setStudents]  = usePersistentState('febebo_students', STUDENTS);
   const [timeFilter, setTimeFilter] = useState('Daily'); // Daily | Weekly | Monthly
   const [mealTab, setMealTab]   = useState('Breakfast'); // Breakfast | Lunch | Snacks | Dinner
   const [selectedStat, setSelectedStat] = useState('notEaten'); // requested | pack | extra | eaten | notEaten
@@ -490,14 +516,14 @@ export default function StaffApp(){
   ]);
 
   // Cleaner state
-  const [cleaning, setCleaning] = useState(INIT_CLEANING);
+  const [cleaning, setCleaning] = usePersistentState('febebo_cleaning', INIT_CLEANING);
   const [cleanerTimeFilter, setCleanerTimeFilter] = useState('Daily'); // Daily | Weekly | Monthly
   const [cleanerDate, setCleanerDate] = useState(new Date().toISOString().split('T')[0]);
   const [cleanerSlotFilter, setCleanerSlotFilter] = useState('all'); // all | active | upcoming | completed
   const [cleanerTypeFilter, setCleanerTypeFilter] = useState('All'); // All | Full Room Clean | Dusting & Mop | Bathroom Sanitise | Mopping | Basic Cleaning
 
   // Maintenance
-  const [tickets,setTickets]    = useState(INIT_TICKETS);
+  const [tickets,setTickets]    = usePersistentState('febebo_tickets', INIT_TICKETS);
 
   // HR state
   const [candidates, setCandidates] = useState(INIT_CANDIDATES);
@@ -692,7 +718,7 @@ export default function StaffApp(){
 
   const sendItemRequest = () => {
     const selected = itemReqItems.filter(i => i.checked);
-    if (selected.length === 0) { alert('Please select at least one item.'); return; }
+    if (selected.length === 0) { showToast('Please select at least one item.', 'warning'); return; }
     const itemStrings = selected.map(i => i.qty ? (i.name + ' \u2014 ' + i.qty + ' ' + i.unit) : i.name);
     const req = {
       id: Date.now(),
@@ -704,7 +730,7 @@ export default function StaffApp(){
     };
     setItemReqSentList(prev => [req, ...prev]);
     setShowItemRequestModal(false);
-    alert('Item request sent to ' + itemReqSendTo + '!');
+    showToast('Item request sent to ' + itemReqSendTo + '!', 'success');
   };
 
   // Salary Pay Slip Details
@@ -833,7 +859,7 @@ export default function StaffApp(){
     if(!rptText.trim()) return;
     setRptHist(p=>[{id:Date.now(),date:new Date().toLocaleDateString('en-GB'),summary:rptText.trim(),status:'Submitted'},...p]);
     setRptText('');
-    alert('Report submitted to Admin!');
+    showToast('Report submitted to Admin!', 'success');
   };
 
   const submitRequest = e=>{
@@ -841,7 +867,7 @@ export default function StaffApp(){
     if(!reqReason.trim()) return;
     setMyReqs(p=>[{id:Date.now(),type:reqType,date:new Date().toLocaleDateString('en-GB'),status:'Pending',amt:reqAmt?`₹${reqAmt}`:'-'},...p]);
     setReqReason(''); setReqAmt('');
-    alert('Request submitted!');
+    showToast('Request submitted!', 'success');
   };
 
   const submitDemand = e=>{
@@ -860,7 +886,7 @@ export default function StaffApp(){
     setDemands(p=>[newD, ...p]);
     setDItem(''); setDQty(''); setDNote('');
     setShowDemandForm(false);
-    alert('Requisition submitted to Admin!');
+    showToast('Requisition submitted to Admin!', 'success');
   };
 
   const addVisitor = e=>{
@@ -2131,11 +2157,11 @@ export default function StaffApp(){
                    
                    <button 
                      onClick={() => {
-                       if(!gkName || !gkRoom) return alert('Name and Room are required');
+                       if(!gkName || !gkRoom) return showToast('Name and Room are required', 'warning');
                        setVisitorLogs([{ id: Date.now(), name: gkName, phone: gkPhone, room: gkRoom, purpose: gkPurpose, timeIn: new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}), timeOut: null }, ...visitorLogs]);
                        setShowGatekeeperModal(false);
                        setGkName(''); setGkPhone(''); setGkRoom(''); setGkPurpose('');
-                       alert("Alert sent to Student and Admin!");
+                       showToast("Alert sent to Student and Admin!", "success");
                      }}
                      style={{marginTop:10, padding:'14px', background:'#3b82f6', color:'#fff', border:'none', borderRadius:12, fontSize:15, fontWeight:900, cursor:'pointer', fontFamily:'inherit', boxShadow:'0 4px 12px rgba(59,130,246,0.3)'}}
                    >
@@ -2163,7 +2189,7 @@ export default function StaffApp(){
                          <button onClick={()=>setShowFuelModal(true)} style={{padding:'10px', background:'rgba(255,255,255,0.1)', border:'1px solid rgba(255,255,255,0.2)', borderRadius:12, color:'#fff', fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', justifyContent:'center', gap:6}}>
                             <span className="material-symbols-outlined" style={{fontSize:16}}>local_gas_station</span> Log Fuel Expense
                          </button>
-                         <button onClick={()=>alert('📢 Broadcast notification sent to all 6 shuttle passengers!')} style={{padding:'10px', background:'#fde047', border:'none', borderRadius:12, color:'#0f172a', fontSize:12, fontWeight:900, cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', justifyContent:'center', gap:6}}>
+                         <button onClick={()=>showToast('📢 Broadcast notification sent to all 6 shuttle passengers!', 'info')} style={{padding:'10px', background:'#fde047', border:'none', borderRadius:12, color:'#0f172a', fontSize:12, fontWeight:900, cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', justifyContent:'center', gap:6}}>
                             <span className="material-symbols-outlined" style={{fontSize:16}}>campaign</span> Alert Passengers
                          </button>
                       </div>
@@ -2339,7 +2365,7 @@ export default function StaffApp(){
                       Call Student
                     </a>
                     <button 
-                      onClick={()=>alert('Opening Camera to upload job completion proof...')}
+                      onClick={()=>showToast('📸 Camera opened for job completion proof', 'info')}
                       style={{
                         padding:'8px 16px', 
                         borderRadius:12, 
@@ -3040,7 +3066,7 @@ export default function StaffApp(){
                 
                 <button 
                   onClick={() => {
-                    if(!leaveDate) return alert('Please select a date');
+                    if(!leaveDate) return showToast('Please select a leave date', 'warning');
                     setLeaveRequests([{ id: Date.now(), date: leaveDate, reason: leaveReason, status: 'Pending' }, ...leaveRequests]);
                     setShowLeaveModal(false);
                     setLeaveDate('');
@@ -3545,10 +3571,10 @@ export default function StaffApp(){
              </div>
              <button 
                 onClick={()=>{
-                   if(!meterElec && !meterWater) return alert("Please enter at least one reading.");
+                   if(!meterElec && !meterWater) return showToast("Please enter at least one reading", "warning");
                    setMeterReadings([{id:Date.now(), room:meterRoom, elec:meterElec, water:meterWater, date:'Today'}, ...meterReadings]);
                    setMeterElec(''); setMeterWater('');
-                   alert("Reading synced to Admin successfully!");
+                   showToast("⚡ Reading synced to Admin successfully!", "success");
                 }}
                 style={{marginTop:8, padding:'14px', background:'#0891b2', color:'#fff', border:'none', borderRadius:12, fontSize:15, fontWeight:800, cursor:'pointer', fontFamily:'inherit'}}>
                 Sync to Admin ☁️
@@ -4454,7 +4480,7 @@ export default function StaffApp(){
             onClick={() => {
               const selectedItems = purchaseItemsState.filter(i => i.checked);
               if (selectedItems.length === 0) {
-                alert('Please select at least one item.');
+                showToast('Please select at least one item.', 'warning');
                 return;
               }
               const totalCost = selectedItems.reduce((s, i) => s + (i.qty * i.rate), 0);
@@ -4612,7 +4638,7 @@ export default function StaffApp(){
             onClick={() => {
               const amt = Number(payAmount);
               if (!amt || amt <= 0) {
-                alert('Please enter a valid payment amount.');
+                showToast('Please enter a valid payment amount.', 'warning');
                 return;
               }
               
@@ -4635,7 +4661,7 @@ export default function StaffApp(){
               setSelectedVendor(prev => ({...prev, balance: prev.balance - amt}));
               
               setShowPayVendorModal(false);
-              alert(`Payment of ₹${amt.toLocaleString()} recorded successfully!`);
+              showToast(`Payment of ₹${amt.toLocaleString()} recorded successfully!`, 'success');
             }} 
             style={{width:'100%', padding:14, background:'#0891b2', border:'none', borderRadius:12, color:'#fff', fontSize:14, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}
           >
@@ -4657,7 +4683,7 @@ export default function StaffApp(){
           e.preventDefault();
           setShowBcast(false);
           const targetName = bTarget === 'All' ? 'All Students' : students.find(s=>s.id===Number(bStudentId))?.name;
-          alert(`📢 ${bMeal} broadcast sent to ${targetName}!`);
+          showToast(`📢 ${bMeal} broadcast sent to ${targetName}!`, 'info');
         }} style={{display:'flex',flexDirection:'column',gap:12}}>
           <SelectField label="Send To" value={bTarget} onChange={e=>setBTarget(e.target.value)}>
             <option value="All">All Students</option>
@@ -4770,7 +4796,7 @@ export default function StaffApp(){
             <div style={{display:'flex', gap:10, marginTop:4}}>
               <button 
                 type="button" 
-                onClick={() => alert(`Downloading PDF for ${selectedPaySlip.m}...`)} 
+                onClick={() => showToast(`📄 Downloading PDF for ${selectedPaySlip.m}...`, 'info')} 
                 style={{flex:1, padding:13, background:'#fff', color:'#000', border: '1px solid #e2e8f0', borderRadius:12, fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow: '0 2px 8px rgba(15,23,42,0.04)', display:'flex', alignItems:'center', justifyContent:'center', gap:6}}
               >
                 <span>📥</span> PDF
@@ -4783,7 +4809,7 @@ export default function StaffApp(){
                     navigator.share({ title: `${selectedPaySlip.m} Pay Slip`, text: shareText }).catch(() => {});
                   } else {
                     navigator.clipboard.writeText(shareText);
-                    alert('Pay Slip summary copied to clipboard! You can share it to any platform.');
+                    showToast('📋 Pay Slip summary copied to clipboard!', 'success');
                   }
                 }} 
                 style={{flex:2, padding:13, background:'#fef08a', color:'#000', border: '1px solid #e2e8f0', borderRadius:12, fontSize:13, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow: '0 2px 8px rgba(15,23,42,0.04)', display:'flex', alignItems:'center', justifyContent:'center', gap:6}}
@@ -4934,7 +4960,7 @@ export default function StaffApp(){
 
              <button onClick={() => {
                setShowRefillModal(false);
-               alert('✅ Refill order submitted to Purchase Manager! Vendor ledger & store inventory updated.');
+               showToast('📦 Refill order submitted to Purchase Manager!', 'success');
              }} style={{marginTop:10, padding:'15px', background:'#0284c7', color:'#fff', border:'none', borderRadius:14, fontSize:15, fontWeight:900, cursor:'pointer', fontFamily:'inherit', boxShadow:'0 4px 12px rgba(2,132,199,0.3)'}}>
                Submit Refill Order to Purchase Manager
              </button>
@@ -4991,16 +5017,16 @@ export default function StaffApp(){
                    ₹{moItems.reduce((acc, curr) => acc + curr.fine, 0)}
                  </p>
                </div>
-               <button onClick={() => alert('Camera opened for photo proof upload!')} style={{padding:'8px 12px', background:'#fff', border:'1px solid #fca5a5', borderRadius:10, color:'#b91c1c', fontSize:11, fontWeight:800, cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', gap:4}}>
+               <button onClick={() => showToast('📷 Camera opened for photo proof upload!', 'info')} style={{padding:'8px 12px', background:'#fff', border:'1px solid #fca5a5', borderRadius:10, color:'#b91c1c', fontSize:11, fontWeight:800, cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', gap:4}}>
                  <span className="material-symbols-outlined" style={{fontSize:16}}>add_a_photo</span> Photo Proof
                </button>
              </div>
 
              <button onClick={() => {
-               if (!moRoom) return alert('Please enter room number');
+               if (!moRoom) return showToast('Please enter room number', 'warning');
                const totalFine = moItems.reduce((acc, curr) => acc + curr.fine, 0);
                setShowMoveOutModal(false);
-               alert(`✅ Move-Out Inspection submitted for Room ${moRoom}! Total fine ₹${totalFine} synced to Admin Security Deposit Refund Settlement.`);
+               showToast(`✅ Move-Out Inspection submitted for Room ${moRoom}! Total fine ₹${totalFine} synced.`, 'success');
                setMoRoom(''); setMoTenant('');
              }} style={{padding:'15px', background:'#0f172a', color:'#fde047', border:'none', borderRadius:14, fontSize:15, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}>
                Submit Inspection &amp; Sync to Admin Deposit Settlement
@@ -5030,9 +5056,9 @@ export default function StaffApp(){
              </div>
 
              <button onClick={() => {
-               if (!fuelAmount) return alert('Please enter total amount');
+               if (!fuelAmount) return showToast('Please enter total fuel amount', 'warning');
                setShowFuelModal(false);
-               alert(`✅ Fuel expense of ₹${fuelAmount} logged & synced to Admin Petty Cash Ledger!`);
+               showToast(`⛽ Fuel expense of ₹${fuelAmount} logged successfully!`, 'success');
                setFuelLiters(''); setFuelAmount(''); setFuelPump('');
              }} style={{padding:'14px', background:'#0f172a', color:'#fde047', border:'none', borderRadius:14, fontSize:15, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}>
                Save Expense to Admin Ledger
@@ -5159,10 +5185,10 @@ export default function StaffApp(){
 
              <button
                onClick={() => {
-                 if (!gkName.trim()) return alert('Visitor name is required');
-                 if (!gkRoom.trim()) return alert('Room number is required');
-                 if (!gkRelation) return alert('Please select relation with student');
-                 if (!gkIdNumber.trim()) return alert('ID Proof number is required');
+                 if (!gkName.trim()) return showToast('Visitor name is required', 'warning');
+                 if (!gkRoom.trim()) return showToast('Room number is required', 'warning');
+                 if (!gkRelation) return showToast('Please select relation with student', 'warning');
+                 if (!gkIdNumber.trim()) return showToast('ID Proof number is required', 'warning');
                  setVisitorLogs([{
                    id: Date.now(),
                    name: gkName,
@@ -5178,7 +5204,7 @@ export default function StaffApp(){
                  setShowGatekeeperModal(false);
                  setGkName(''); setGkPhone(''); setGkRoom(''); setGkRelation('');
                  setGkPurpose(''); setGkIdNumber(''); setGkPhoto(null);
-                 alert('✅ Entry logged! Alert sent to Student and Admin.');
+                 showToast('✅ Entry logged! Alert sent to Student and Admin.', 'success');
                }}
                style={{marginTop:6, padding:'15px', background:'#0f172a', color:'#fde047', border:'none', borderRadius:14, fontSize:15, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}
              >
