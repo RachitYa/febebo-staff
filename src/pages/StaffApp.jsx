@@ -3508,28 +3508,75 @@ export default function StaffApp(){
           PERFORMANCE & FEEDBACK
          ══════════════════════════════════════════════════════════════════════ */}
       {view === 'performance' && (() => {
-        // Mock feedback based on role
+        // Realistic mock feedback based on staff role
         let feedbackData = [];
-        if (staffRole === 'Cook') {
-           feedbackData = [
-             { id: 1, text: "Dinner was amazing today, especially the Paneer!", rating: 5, author: "Rahul (Rm 102)", date: "Today, 08:30 PM" },
-             { id: 2, text: "Lunch was a bit too spicy.", rating: 3, author: "Aryan (Rm 205)", date: "Yesterday, 02:15 PM" },
-             { id: 3, text: "Great breakfast as always.", rating: 5, author: "Rohan (Rm 301)", date: "24 Jul 2026" }
-           ];
-        } else if (staffRole === 'Cleaner') {
-           feedbackData = [
-             { id: 1, text: "Room 102 bathroom wasn't cleaned properly.", rating: 2, author: "Rahul (Rm 102)", date: "Today, 10:30 AM" },
-             { id: 2, text: "Corridor looks spotless, great job!", rating: 5, author: "Admin", date: "Yesterday, 04:00 PM" }
-           ];
-        } else if (['Plumber', 'Electrician', 'Carpenter'].includes(staffRole)) {
-           feedbackData = [
-             { id: 1, text: "Issue fixed very quickly, thanks!", rating: 5, author: "Aryan (Rm 205)", date: "Today, 11:45 AM" },
-             { id: 2, text: "The repair took a bit long, but it works now.", rating: 4, author: "Rohan (Rm 301)", date: "22 Jul 2026" }
-           ];
-        } else {
-           feedbackData = [
-             { id: 1, text: "Excellent support and quick response.", rating: 5, author: "Student Council", date: "25 Jul 2026" }
-           ];
+        switch (staffRole) {
+          case 'Cook':
+            feedbackData = [
+              { id: 1, text: "Dinner was amazing today, especially the Paneer!", rating: 5, author: "Rahul (Rm 102)", date: "Today, 08:30 PM" },
+              { id: 2, text: "Lunch was a bit too spicy.", rating: 3, author: "Aryan (Rm 205)", date: "Yesterday, 02:15 PM" },
+              { id: 3, text: "Great breakfast as always.", rating: 5, author: "Rohan (Rm 301)", date: "24 Jul 2026" }
+            ];
+            break;
+          case 'Cleaner':
+            feedbackData = [
+              { id: 1, text: "Room 102 bathroom wasn't cleaned properly.", rating: 2, author: "Rahul (Rm 102)", date: "Today, 10:30 AM" },
+              { id: 2, text: "Corridor looks spotless, great job!", rating: 5, author: "Admin", date: "Yesterday, 04:00 PM" }
+            ];
+            break;
+          case 'Security Guard':
+            feedbackData = [
+              { id: 1, text: "Very polite at the gate, checked visitor ID properly.", rating: 5, author: "Admin", date: "Today, 11:00 AM" },
+              { id: 2, text: "Helped me carry my parcel, thank you!", rating: 5, author: "Priya (Rm 404)", date: "Yesterday, 05:30 PM" },
+              { id: 3, text: "Late night entry process was smooth.", rating: 4, author: "Kabir (Rm 112)", date: "23 Jul 2026" }
+            ];
+            break;
+          case 'Bus Driver':
+            feedbackData = [
+              { id: 1, text: "Drives safely and on time.", rating: 5, author: "Transport Dept", date: "Today, 09:15 AM" },
+              { id: 2, text: "Bus AC wasn't working in the morning.", rating: 3, author: "Student (Route A)", date: "Yesterday, 08:00 AM" },
+              { id: 3, text: "Very helpful with luggage during move-in.", rating: 5, author: "Neha (Rm 201)", date: "25 Jul 2026" }
+            ];
+            break;
+          case 'Plumber':
+          case 'Electrician':
+          case 'Carpenter':
+          case 'Maintenance':
+            feedbackData = [
+              { id: 1, text: "Issue fixed very quickly, thanks!", rating: 5, author: "Aryan (Rm 205)", date: "Today, 11:45 AM" },
+              { id: 2, text: "The repair took a bit long, but it works now.", rating: 4, author: "Rohan (Rm 301)", date: "22 Jul 2026" }
+            ];
+            break;
+          case 'Purchase Manager':
+            feedbackData = [
+              { id: 1, text: "Inventory records are perfectly maintained.", rating: 5, author: "Accounts Head", date: "Today, 10:00 AM" },
+              { id: 2, text: "Pending vegetable stock request cleared on time.", rating: 5, author: "Kitchen Head", date: "Yesterday, 03:00 PM" }
+            ];
+            break;
+          case 'HR':
+            feedbackData = [
+              { id: 1, text: "Payroll processing was very smooth this month.", rating: 5, author: "Accounts Head", date: "Today, 02:00 PM" },
+              { id: 2, text: "Staff induction was handled very professionally.", rating: 5, author: "Admin", date: "24 Jul 2026" }
+            ];
+            break;
+          case 'Sales Manager':
+            feedbackData = [
+              { id: 1, text: "Closed 5 new admissions this week, great work!", rating: 5, author: "Director", date: "Today, 04:30 PM" },
+              { id: 2, text: "Follow-up with parents was excellent.", rating: 4, author: "Admin", date: "Yesterday, 12:15 PM" }
+            ];
+            break;
+          case 'Helper':
+            feedbackData = [
+              { id: 1, text: "Very prompt in shifting luggage.", rating: 5, author: "Aditi (Rm 310)", date: "Today, 01:00 PM" },
+              { id: 2, text: "Helped set up the event chairs quickly.", rating: 5, author: "Admin", date: "25 Jul 2026" }
+            ];
+            break;
+          default:
+            feedbackData = [
+              { id: 1, text: "Excellent support and quick response.", rating: 5, author: "Student Council", date: "25 Jul 2026" },
+              { id: 2, text: "Always punctual and dedicated to duties.", rating: 5, author: "Admin", date: "20 Jul 2026" }
+            ];
+            break;
         }
 
         return (
