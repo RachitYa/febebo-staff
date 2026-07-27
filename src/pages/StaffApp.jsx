@@ -459,6 +459,36 @@ export default function StaffApp(){
   const [bMsg,setBMsg]          = useState('Fresh hot meal is ready! Please head to the mess hall. 🍽️');
   const [bMeal,setBMeal]        = useState('Breakfast');
 
+  // Interactive Modals & Transport States
+  const [showRefillModal, setShowRefillModal] = useState(false);
+  const [showMoveOutModal, setShowMoveOutModal] = useState(false);
+  const [showFuelModal, setShowFuelModal] = useState(false);
+  
+  const [moRoom, setMoRoom] = useState('');
+  const [moTenant, setMoTenant] = useState('');
+  const [moItems, setMoItems] = useState([
+    { id: 1, name: 'Bed & Frame', status: 'Intact', fine: 0 },
+    { id: 2, name: 'Mattress', status: 'Intact', fine: 0 },
+    { id: 3, name: 'Bedsheet & Pillow', status: 'Intact', fine: 0 },
+    { id: 4, name: 'Wardrobe / Almirah', status: 'Intact', fine: 0 },
+    { id: 5, name: 'Study Chair & Table', status: 'Intact', fine: 0 },
+    { id: 6, name: 'Kettle / Electricals', status: 'Intact', fine: 0 },
+  ]);
+  const [moNotes, setMoNotes] = useState('');
+  
+  const [fuelLiters, setFuelLiters] = useState('');
+  const [fuelAmount, setFuelAmount] = useState('');
+  const [fuelPump, setFuelPump] = useState('');
+  
+  const [passengers, setPassengers] = useState([
+    { id: 1, name: 'Arjun Mehta', room: '102', time: '08:10 AM', phone: '+91 9415227843', status: 'Boarded' },
+    { id: 2, name: 'Ravi Shankar', room: '103', time: '08:15 AM', phone: '+91 9839221456', status: 'Waiting' },
+    { id: 3, name: 'Priya Sharma', room: '205', time: '08:20 AM', phone: '+91 9977881234', status: 'Waiting' },
+    { id: 4, name: 'Deepak Verma', room: '301', time: '08:25 AM', phone: '+91 9412078800', status: 'Absent' },
+    { id: 5, name: 'Sneha Kapoor', room: '304', time: '08:30 AM', phone: '+91 9814567890', status: 'Boarded' },
+    { id: 6, name: 'Rajeev Kumar', room: '105', time: '08:35 AM', phone: '+91 9988776655', status: 'Waiting' },
+  ]);
+
   // Cleaner state
   const [cleaning, setCleaning] = useState(INIT_CLEANING);
   const [cleanerTimeFilter, setCleanerTimeFilter] = useState('Daily'); // Daily | Weekly | Monthly
