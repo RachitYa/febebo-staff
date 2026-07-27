@@ -2203,7 +2203,7 @@ export default function StaffApp(){
 
                {/* Parcel List Cards */}
                <div style={{display:'flex', flexDirection:'column', gap:10}}>
-                  {parcels.map(p => (
+                  {(parcels || []).map(p => (
                      <div key={p.id} style={{background:'#f8fafc', borderRadius:14, padding:'14px', border:'1px solid #f1f5f9', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
                         <div>
                            <div style={{display:'flex', alignItems:'center', gap:8}}>
@@ -2226,7 +2226,7 @@ export default function StaffApp(){
                         )}
                      </div>
                   ))}
-                  {parcels.length === 0 && (
+                  {(parcels || []).length === 0 && (
                      <p style={{textAlign:'center', color:'#94a3b8', fontSize:13, margin:'10px 0'}}>No parcels recorded yet today.</p>
                   )}
                </div>
@@ -2236,10 +2236,10 @@ export default function StaffApp(){
             <div style={{marginTop:16}}>
                <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12}}>
                   <h3 style={{margin:0, fontSize:16, fontWeight:900, color:'#1e293b'}}>Current Visitors Inside</h3>
-                  <span style={{background:'#dbeafe', color:'#1d4ed8', padding:'4px 10px', borderRadius:20, fontSize:12, fontWeight:800}}>{visitorLogs.filter(v=>!v.timeOut).length} Inside</span>
+                  <span style={{background:'#dbeafe', color:'#1d4ed8', padding:'4px 10px', borderRadius:20, fontSize:12, fontWeight:800}}>{(visitorLogs || []).filter(v=>!v.timeOut).length} Inside</span>
                </div>
                <div style={{display:'flex', flexDirection:'column', gap:10}}>
-                  {visitorLogs.map(v => (
+                  {(visitorLogs || []).map(v => (
                      <div key={v.id} style={{background:'#fff', borderRadius:16, padding:'16px', border:'1px solid #f1f5f9', boxShadow:'0 2px 8px rgba(0,0,0,0.02)', display:'flex', justifyContent:'space-between', alignItems:'center', opacity: v.timeOut ? 0.6 : 1}}>
                         <div>
                            <div style={{display:'flex', alignItems:'center', gap:6}}>
@@ -2289,7 +2289,7 @@ export default function StaffApp(){
                    <button 
                      onClick={() => {
                        if(!gkName || !gkRoom) return showToast('Name and Room are required', 'warning');
-                       setVisitorLogs([{ id: Date.now(), name: gkName, phone: gkPhone, room: gkRoom, purpose: gkPurpose, timeIn: new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}), timeOut: null }, ...visitorLogs]);
+                       setVisitorLogs([{ id: Date.now(), name: gkName, phone: gkPhone, room: gkRoom, purpose: gkPurpose, timeIn: new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}), timeOut: null }, ...(visitorLogs || [])]);
                        setShowGatekeeperModal(false);
                        setGkName(''); setGkPhone(''); setGkRoom(''); setGkPurpose('');
                        showToast("Alert sent to Student and Admin!", "success");
@@ -5354,7 +5354,7 @@ export default function StaffApp(){
                    photo: gkPhoto,
                    timeIn: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
                    timeOut: null
-                 }, ...visitorLogs]);
+                 }, ...(visitorLogs || [])]);
                  setShowGatekeeperModal(false);
                  setGkName(''); setGkPhone(''); setGkRoom(''); setGkRelation('');
                  setGkPurpose(''); setGkIdNumber(''); setGkPhoto(null);
@@ -5368,6 +5368,71 @@ export default function StaffApp(){
          </div>
       )}
 
-    </div>
+    
+      {/* 📦 PARCEL ENTRY MODAL */}
+      {showParcelModal && (
+        <div style={{position:'fixed', inset:0, background:'rgba(15,23,42,0.6)', zIndex:100, display:'flex', flexDirection:'column', justifyContent:'flex-end', animation:'sheetUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)'}}>
+          <div style={{background:'#fff', padding:'24px 20px 32px', borderTopLeftRadius:24, borderTopRightRadius:24, display:'flex', flexDirection:'column', gap:16}}>
+            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+              <p style={{margin:0, fontSize:18, fontWeight:900, color:'#1a1500'}}>Log New Parcel</p>
+              <button onClick={() => setShowParcelModal(false)} style={{background:'#f8fafc', border:'none', borderRadius:10, width:32, height:32, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer'}}>
+                <span className="material-symbols-outlined" style={{fontSize:18, color:'#64748b'}}>close</span>
+              </button>
+            </div>
+            
+            <form onSubmit={(e) => {
+               e.preventDefault();
+               const itemName = e.target.itemName.value;
+               const studentName = e.target.studentName.value;
+               const roomNo = e.target.roomNo.value;
+               const carrier = e.target.carrier.value;
+               
+               if(!itemName || !studentName || !roomNo) {
+                 return showToast('Item, Student, and Room are required', 'warning');
+               }
+               
+               const newParcel = {
+                 id: Date.now(),
+                 itemName,
+                 student: studentName,
+                 room: roomNo,
+                 carrier: carrier || 'Unknown',
+                 date: new Date().toLocaleDateString('en-GB'),
+                 status: 'Pending'
+               };
+               
+               setParcels([newParcel, ...(parcels || [])]);
+               setShowParcelModal(false);
+               showToast("Parcel Logged Successfully!", "success");
+            }} style={{display:'flex', flexDirection:'column', gap:12}}>
+              <input name="itemName" type="text" placeholder="Item Name / Description *" style={{padding:'14px', borderRadius:12, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:15, fontWeight:600}} required />
+              <input name="studentName" type="text" placeholder="Student Name *" style={{padding:'14px', borderRadius:12, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:15, fontWeight:600}} required />
+              <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
+                 <input name="roomNo" type="text" placeholder="Room No. *" style={{padding:'14px', borderRadius:12, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:15, fontWeight:600}} required />
+                 <select name="carrier" style={{padding:'14px', borderRadius:12, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:15, fontWeight:600}}>
+                    <option value="">Carrier (Optional)</option>
+                    <option value="Amazon">Amazon</option>
+                    <option value="Flipkart">Flipkart</option>
+                    <option value="Myntra">Myntra</option>
+                    <option value="Blinkit">Blinkit</option>
+                    <option value="Zepto">Zepto</option>
+                    <option value="Swiggy">Swiggy</option>
+                    <option value="Zomato">Zomato</option>
+                    <option value="Other">Other</option>
+                 </select>
+              </div>
+              
+              <button 
+                type="submit"
+                style={{marginTop:10, padding:'14px', background:'#0f172a', color:'#fde047', border:'none', borderRadius:12, fontSize:15, fontWeight:900, cursor:'pointer', fontFamily:'inherit', boxShadow:'0 4px 12px rgba(15,23,42,0.2)'}}
+              >
+                Log Parcel
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+</div>
   );
 }
