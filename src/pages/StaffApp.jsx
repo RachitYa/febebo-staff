@@ -11,6 +11,7 @@ const C = {
 
 const ROLE_META = {
   'Bus Driver':       { emoji:'🚌',   accent:'#38bdf8', accentBg:'#e0f2fe', dept:'Shuttle & Transport',     grad:'#38bdf8' },
+  'Bus Driver':       { emoji:'🚌',   accent:'#38bdf8', accentBg:'#e0f2fe', dept:'Shuttle & Transport',     grad:'#38bdf8' },
   'Cook':             { emoji:'👨‍🍳', accent:'#a78bfa', accentBg:'#ede9fe', dept:'Kitchen & Mess',      grad:'#a78bfa' },
   'Cleaner':          { emoji:'🧹',   accent:'#67e8f9', accentBg:'#cffafe', dept:'Housekeeping',        grad:'#67e8f9' },
   'Maintenance':      { emoji:'🛠️',   accent:'#fda4af', accentBg:'#ffe4e6', dept:'Repairs & Technical', grad:'#fda4af' },
@@ -596,6 +597,38 @@ export default function StaffApp(){
   const [itemReqSearchQ, setItemReqSearchQ] = useState('');
   const [itemReqSentTab, setItemReqSentTab] = useState('new');
 
+  // --- New Global States for 7-Feature Integration ---
+  
+  // 1. Leave Requests
+  const [showLeaveModal, setShowLeaveModal] = useState(false);
+  const [leaveDate, setLeaveDate] = useState('');
+  const [leaveReason, setLeaveReason] = useState('Sick Leave');
+  const [leaveRequests, setLeaveRequests] = useState([
+    { id: 1, date: '2026-07-28', reason: 'Sick Leave', status: 'Approved' },
+    { id: 2, date: '2026-08-05', reason: 'Family Emergency', status: 'Pending' }
+  ]);
+
+  // 2. Gatekeeper / Visitor Log
+  const [showGatekeeperModal, setShowGatekeeperModal] = useState(false);
+  const [gkName, setGkName] = useState('');
+  const [gkPhone, setGkPhone] = useState('');
+  const [gkRoom, setGkRoom] = useState('');
+  const [gkPurpose, setGkPurpose] = useState('');
+  const [visitorLogs, setVisitorLogs] = useState([
+    { id: 1, name: 'Ramesh Singh', phone: '9876543210', room: '102', purpose: 'Parent', timeIn: '10:30 AM', timeOut: null },
+    { id: 2, name: 'Swiggy Delivery', phone: '', room: '304', purpose: 'Food', timeIn: '11:15 AM', timeOut: '11:20 AM' }
+  ]);
+
+  // 3. Meter Reading
+  const [showMeterModal, setShowMeterModal] = useState(false);
+  const [meterRoom, setMeterRoom] = useState('101');
+  const [meterElec, setMeterElec] = useState('');
+  const [meterWater, setMeterWater] = useState('');
+  const [meterReadings, setMeterReadings] = useState([
+    { id: 1, room: '101', elec: '4502', water: '120', date: '25 Jul 2026' }
+  ]);
+
+
   const RECIPIENTS = ['Purchase Manager', 'Admin', 'Manager', 'Store Incharge', 'Supervisor'];
 
   const openItemRequest = () => {
@@ -824,12 +857,13 @@ export default function StaffApp(){
     {id:'salary',    label:'Salary',         sub:'₹18,500 Jul',      icon:'payments',               grad:'#eef2ff'},
     {id:'items',     label:'Item List',      sub:'Store Inventory',  icon:'inventory_2',            grad:'#eef2ff'},
     {id:'chat',      label:'Chat',           sub:'5 Messages',       icon:'forum',                  grad:'#eef2ff'},
-    {id:'reports',   label:'Reports',        sub:'Work Logs',        icon:'assessment',             grad:'#eef2ff'},
+    {id:'performance', label:'Performance',  sub:'Feedback & Ratings', icon:'star',             grad:'#eef2ff'},
     {id:'requests',  label:'Requests',       sub:'Leave / Advance',  icon:'approval',               grad:'#eef2ff'},
   ];
 
   // ─── Role quick stats ─────────────────────────────────────────────────────
   const roleStats = {
+  'Bus Driver':       [{l:'Passengers',v:6,icon:'groups'},{l:'Trips Today',v:2,icon:'directions_bus'},{l:'On Time',v:'100%',icon:'schedule'},{l:'Fuel Spent',v:'₹1,500',icon:'local_gas_station'}],
   'Bus Driver':       [{l:'Passengers',v:6,icon:'groups'},{l:'Trips Today',v:2,icon:'directions_bus'},{l:'On Time',v:'100%',icon:'schedule'},{l:'Fuel Spent',v:'₹1,500',icon:'local_gas_station'}],
     'HR':               [{l:'Applicants',v:INIT_CANDIDATES.filter(c=>c.status!=='Hired ✅').length,icon:'group_add'},{l:'Enquiries',v:INIT_ENQUIRIES.length,icon:'contact_phone'},{l:'Staff Hired',v:INIT_CANDIDATES.filter(c=>c.status==='Hired ✅').length,icon:'badge'},{l:'Open Jobs',v:3,icon:'work_outline'}],
     'Cook':             [{l:'Breakfast',v:30,icon:'coffee'},{l:'Lunch',v:28,icon:'lunch_dining'},{l:'Dinner',v:30,icon:'dinner_dining'},{l:'Snacks',v:30,icon:'bakery_dining'}],
@@ -893,7 +927,7 @@ export default function StaffApp(){
             {id:'salary',    icon:'payments',               label:'Salary & Pay'},
             {id:'items',     icon:'inventory_2',            label:'Item List'},
             {id:'chat',      icon:'forum',                  label:'Chat'},
-            {id:'reports',   icon:'assessment',             label:'Work Reports'},
+            {id:'performance', icon:'star',                   label:'Performance & Feedback'},
             {id:'requests',  icon:'approval',               label:'Requests'},
             {id:'profile_view', icon:'person',              label:'My Profile'},
           ].map(item => {
@@ -1029,7 +1063,7 @@ export default function StaffApp(){
             <span className="material-symbols-outlined" style={{fontSize:20,color:'#000'}}>arrow_back_ios_new</span>
           </button>
           <p style={{flex:1,margin:0,fontSize:18,fontWeight:900,color:'#000'}}>
-            {view==='work'?'My Work':view==='history'?'Work History':view==='itemreq'?'Request Items':view==='inventory'?'Inventory & Petty Cash':view==='inout'?'Attendance':view==='salary'?'Salary & Pay':view==='items'?'Item List':view==='chat'?'Chat':view==='reports'?'Work Reports':view==='requests'?'Requests':'My Profile'}
+            {view==='work'?'My Work':view==='history'?'Work History':view==='itemreq'?'Request Items':view==='inventory'?'Inventory & Petty Cash':view==='inout'?'Attendance':view==='salary'?'Salary & Pay':view==='items'?'Item List':view==='chat'?'Chat':view==='performance'?'Performance':view==='meter_reading'?'Meter Reading':view==='requests'?'Requests':'My Profile'}
           </p>
           {view==='items' && (
             <button onClick={()=>setShowDemandForm(true)} style={{background:C.primary,border: `1.5px solid ${C.border}`,borderRadius:10,padding:'6px 10px',color:'#000',fontSize:11,fontWeight:800,cursor:'pointer',display:'flex',alignItems:'center',gap:4,boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
@@ -1060,7 +1094,8 @@ export default function StaffApp(){
               {id:'salary',    label:'Salary',         icon:'payments',               bg:'#fefce8', c:'#eab308'},
               {id:'items',     label:'Item List',      icon:'inventory_2',            bg:'#fff7ed', c:'#f97316'},
               {id:'chat',      label:'Chat',           icon:'forum',                  bg:'#f0f9ff', c:'#0ea5e9'},
-              {id:'reports',   label:'Reports',        icon:'assessment',             bg:'#fff1f2', c:'#f43f5e'},
+              {id:'performance',label:'Performance',    icon:'star',                   bg:'#fff1f2', c:'#f43f5e'},
+              ...(['Electrician', 'Manager'].includes(staffRole) ? [{id:'meter_reading', label:'Meter', icon:'electric_meter', bg:'#ecfeff', c:'#06b6d4'}] : []),
               {id:'requests',  label:'Requests',       icon:'approval',               bg:'#f5f3ff', c:'#8b5cf6'},
               ...(staffRole === 'Cook' ? [{id:'foodMenu', label:'Food Menu', icon:'restaurant_menu', bg:'#ede9fe', c:'#a78bfa'}] : []),
             ].map(m => (
@@ -1401,6 +1436,58 @@ export default function StaffApp(){
 
           {/* COOK */}
           {staffRole === 'Cook' && (<>
+            {/* LIVE MESS HEADCOUNT CARD */}
+            <div style={{background: 'linear-gradient(135deg, #1e293b, #0f172a)', borderRadius:20, padding:'24px', color:'#fff', boxShadow:'0 10px 25px rgba(15,23,42,0.15)', display:'flex', flexDirection:'column', gap:16, position:'relative', overflow:'hidden', marginBottom:14}}>
+               <div style={{position:'absolute', right:-10, bottom:-10, opacity:0.1, pointerEvents:'none'}}>
+                  <span className="material-symbols-outlined" style={{fontSize:120}}>group</span>
+               </div>
+               <div>
+                  <div style={{display:'flex', alignItems:'center', gap:8}}>
+                     <span style={{position:'relative', display:'flex', height:10, width:10}}>
+                       <span style={{animation:'ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite', position:'absolute', display:'inline-flex', height:'100%', width:'100%', borderRadius:'50%', background:'#ef4444', opacity:0.75}}></span>
+                       <span style={{position:'relative', display:'inline-flex', borderRadius:'50%', height:10, width:10, background:'#dc2626'}}></span>
+                     </span>
+                     <span style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:1, color:'#f8fafc'}}>Live Headcount</span>
+                  </div>
+                  <h3 style={{margin:'6px 0 0', fontSize:18, fontWeight:900, color:'#f8fafc'}}>Students in Mess Hall</h3>
+               </div>
+               <div style={{display:'flex', alignItems:'flex-end', gap:12}}>
+                  <h1 style={{margin:0, fontSize:56, fontWeight:900, lineHeight:1, color:'#fde047'}}>{students.filter(s=>s.statusB==='eaten').length}</h1>
+                  <p style={{margin:'0 0 8px', fontSize:14, fontWeight:700, color:'#94a3b8'}}>/ 40 Eaten Today</p>
+               </div>
+            </div>
+
+            {/* 🌾 SMART KITCHEN INGREDIENT ESTIMATOR */}
+            <div style={{background:'#fff', borderRadius:18, border:'1.5px solid #e2e8f0', padding:'16px', boxShadow:'0 4px 14px rgba(15,23,42,0.04)', marginBottom:14}}>
+               <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12}}>
+                  <div>
+                     <span style={{fontSize:11, fontWeight:800, textTransform:'uppercase', color:'#0284c7', letterSpacing:0.5}}>🌾 Smart Kitchen Estimator</span>
+                     <h3 style={{margin:'2px 0 0', fontSize:16, fontWeight:900, color:'#0f172a'}}>Required Raw Ingredients</h3>
+                  </div>
+                  <button onClick={()=>setShowRefillModal(true)} style={{padding:'6px 12px', background:'#0284c7', color:'#fff', border:'none', borderRadius:10, fontSize:11, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow:'0 2px 8px rgba(2,132,199,0.2)'}}>
+                     + Request Refill
+                  </button>
+               </div>
+
+               <div style={{display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:8}}>
+                  {(() => {
+                     const count = students.filter(s=>s.statusB==='eaten').length || 32;
+                     return [
+                        { label: 'Rice', qty: (count * 0.125).toFixed(1) + ' kg', icon: 'rice_bowl' },
+                        { label: 'Atta/Roti', qty: (count * 0.10).toFixed(1) + ' kg', icon: 'bakery_dining' },
+                        { label: 'Dal', qty: (count * 0.08).toFixed(1) + ' kg', icon: 'soup_kitchen' },
+                        { label: 'Veggies', qty: (count * 0.15).toFixed(1) + ' kg', icon: 'nutrition' },
+                     ].map(i => (
+                        <div key={i.label} style={{background:'#f8fafc', borderRadius:12, padding:'10px 8px', textAlign:'center', border:'1px solid #f1f5f9'}}>
+                           <span className="material-symbols-outlined" style={{fontSize:18, color:'#0284c7'}}>{i.icon}</span>
+                           <p style={{margin:'2px 0 0', fontSize:14, fontWeight:900, color:'#0f172a'}}>{i.qty}</p>
+                           <p style={{margin:'1px 0 0', fontSize:10, fontWeight:700, color:'#64748b'}}>{i.label}</p>
+                        </div>
+                     ));
+                  })()}
+               </div>
+            </div>
+
             <button onClick={()=>setShowBcast(true)} style={{width:'100%',padding:14,background: C.primary,color:'#000',border: '1px solid #e2e8f0',borderRadius:16,fontSize:14,fontWeight:800,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:8,boxShadow: '0 4px 16px rgba(15,23,42,0.05)',fontFamily:'inherit'}}>
               <span className="material-symbols-outlined" style={{fontSize:20}}>campaign</span>
               Broadcast "Food is Ready!" 📢
@@ -1550,15 +1637,14 @@ export default function StaffApp(){
             })()}
           </>)}
 
-          {/* CLEANER ROLE - 2 HOUR WINDOW SLOT SYSTEM */}
+          {/* CLEANER ROLE - REDESIGNED */}
           {staffRole === 'Cleaner' && (() => {
             const mult = cleanerTimeFilter === 'Monthly' ? 30 : cleanerTimeFilter === 'Weekly' ? 7 : 1;
-            
             const activeSlots = cleaning.filter(c => c.slotStatus === 'active');
             const upcomingSlots = cleaning.filter(c => c.slotStatus === 'upcoming');
             const completedSlots = cleaning.filter(c => c.done);
+            const pendingSlots = cleaning.filter(c => !c.done);
 
-            // Filter by type
             const matchesType = (item) => {
               if (cleanerTypeFilter === 'All') return true;
               return item.type.toLowerCase().includes(cleanerTypeFilter.toLowerCase());
@@ -1574,253 +1660,150 @@ export default function StaffApp(){
 
             return (
               <>
-                {/* Header Controls: Calendar & Time Filters */}
-                <div style={{display:'flex', gap:10, alignItems:'center', flexWrap:'wrap'}}>
-                  {/* Date Selector */}
-                  <div style={{flex:1, display:'flex', alignItems:'center', gap:8, background:'#fff', padding:'6px 12px', border: '1px solid #e2e8f0', borderRadius:10, boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
-                    <span className="material-symbols-outlined" style={{fontSize:20, color:'#000'}}>calendar_month</span>
-                    <input 
-                      type="date" 
-                      value={cleanerDate} 
-                      onChange={e=>setCleanerDate(e.target.value)} 
-                      style={{border:'none', background:'transparent', fontSize:13, fontWeight:800, color:'#000', outline:'none', width:'100%', fontFamily:'inherit', cursor:'pointer'}} 
-                    />
+                {/* Today Header */}
+                <div style={{display:'flex', alignItems:'center', justifyContent:'space-between'}}>
+                  <div>
+                    <p style={{margin:0, fontSize:12, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:1}}>Today's Schedule</p>
+                    <h2 style={{margin:'2px 0 0', fontSize:22, fontWeight:900, color:'#0f172a'}}>Cleaning Jobs</h2>
                   </div>
-
-                  {/* Time Filter Tabs */}
-                  <div style={{display:'flex', flex:1, background:'#fff', borderRadius: 10, padding:3, border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
-                    {['Daily', 'Weekly', 'Monthly'].map(f => (
-                      <button key={f} onClick={()=>setCleanerTimeFilter(f)} style={{flex:1, padding:'6px 0', borderRadius:8, border:cleanerTimeFilter===f?'2px solid #000':'2px solid transparent', background:cleanerTimeFilter===f?C.primary:'transparent', color:'#000', fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit'}}>
-                        {f}
-                      </button>
-                    ))}
-                  </div>
+                  <input type="date" value={cleanerDate} onChange={e=>setCleanerDate(e.target.value)}
+                    style={{border:'1.5px solid #e2e8f0', borderRadius:10, padding:'8px 12px', fontSize:13, fontWeight:700, color:'#0f172a', fontFamily:'inherit', background:'#fff', outline:'none', cursor:'pointer'}} />
                 </div>
 
-                {/* Cleaning Type Filter Dropdown / Pills */}
-                <div style={{display:'flex', flexDirection:'column', gap:6}}>
-                  <span style={{fontSize:11, fontWeight:800, textTransform:'uppercase', color:C.muted}}>Filter By Cleaning Type</span>
-                  <div style={{display:'flex', gap:6, overflowX:'auto', scrollbarWidth:'none'}}>
-                    {['All', 'Full Room', 'Dusting', 'Mopping', 'Bathroom', 'Basic Cleaning'].map(t => (
-                      <button
-                        key={t}
-                        onClick={() => setCleanerTypeFilter(t)}
-                        style={{
-                          padding:'5px 12px', borderRadius:20, fontSize:11, fontWeight:800, cursor:'pointer', fontFamily:'inherit', whiteSpace:'nowrap',
-                          background: cleanerTypeFilter === t ? '#fde047' : '#fff',
-                          color: '#000',
-                          border: '1px solid #e2e8f0',
-                          boxShadow: cleanerTypeFilter === t ? '0 3px 8px rgba(120, 104, 10, 0.05)' : 'none'
-                        }}
-                      >
-                        {t === 'All' ? '🧹 All Types' : t}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* WEEKLY / MONTHLY DETAILED BREAKDOWN REPORT */}
-                {cleanerTimeFilter !== 'Daily' ? (
-                  <div style={{display:'flex', flexDirection:'column', gap:14}}>
-                    <div style={{background:C.primary, borderRadius:16, border: '1px solid #e2e8f0', padding:'16px', boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
-                      <p style={{margin:0, fontSize:12, fontWeight:800, textTransform:'uppercase'}}>📊 {cleanerTimeFilter} Cleaning Report ({cleanerTypeFilter} Filter)</p>
-                      <h3 style={{margin:'4px 0 0', fontSize:22, fontWeight:900}}>Overall Cleaned vs Uncleaned Summary</h3>
+                {/* Stats Row */}
+                <div style={{display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10}}>
+                  {[
+                    {label:'Done', value: completedSlots.length, onClick: ()=>setCleanerSlotFilter('completed'), active: cleanerSlotFilter==='completed', bg:'#f0fdf4', activeBg:'#dcfce7', c:'#15803d'},
+                    {label:'Active', value: activeSlots.length,  onClick: ()=>setCleanerSlotFilter('active'),    active: cleanerSlotFilter==='active',    bg:'#fefce8', activeBg:'#fde047', c:'#92400e'},
+                    {label:'Pending', value: pendingSlots.length, onClick: ()=>setCleanerSlotFilter('all'),     active: cleanerSlotFilter==='all',       bg:'#f8fafc', activeBg:'#f1f5f9', c:'#475569'},
+                  ].map(s => (
+                    <div key={s.label} onClick={s.onClick} style={{
+                      background: s.active ? s.activeBg : s.bg,
+                      borderRadius:16, padding:'16px 12px', textAlign:'center', cursor:'pointer',
+                      border: s.active ? `2px solid ${s.c}33` : '1.5px solid #e2e8f0',
+                      transition:'all 0.15s'
+                    }}>
+                      <p style={{margin:0, fontSize:28, fontWeight:900, color: s.active ? s.c : '#0f172a'}}>{s.value}</p>
+                      <p style={{margin:'4px 0 0', fontSize:11, fontWeight:800, color: s.active ? s.c : '#94a3b8', textTransform:'uppercase', letterSpacing:0.5}}>{s.label}</p>
                     </div>
+                  ))}
+                </div>
 
+                {/* Move-Out Inspection Banner */}
+                <div onClick={()=>setShowMoveOutModal(true)} style={{background:'#0f172a', borderRadius:16, padding:'16px 18px', display:'flex', alignItems:'center', justifyContent:'space-between', cursor:'pointer'}}>
+                  <div>
+                    <p style={{margin:0, fontSize:11, fontWeight:800, color:'#fde047', textTransform:'uppercase', letterSpacing:1}}>Move-Out</p>
+                    <p style={{margin:'2px 0 0', fontSize:15, fontWeight:900, color:'#f8fafc'}}>Start Room Inspection</p>
+                  </div>
+                  <div style={{width:40, height:40, borderRadius:20, background:'rgba(253,224,71,0.15)', display:'flex', alignItems:'center', justifyContent:'center'}}>
+                    <span className="material-symbols-outlined" style={{fontSize:20, color:'#fde047'}}>checklist</span>
+                  </div>
+                </div>
+
+                {/* Filter Pills */}
+                <div style={{display:'flex', gap:6, overflowX:'auto'}}>
+                  {[
+                    {id:'all', label:'All'},
+                    {id:'active', label:'Active Now'},
+                    {id:'upcoming', label:'Upcoming'},
+                    {id:'completed', label:'Cleaned'},
+                  ].map(tab => (
+                    <button key={tab.id} onClick={()=>setCleanerSlotFilter(tab.id)} style={{
+                      padding:'7px 16px', borderRadius:20, fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit', whiteSpace:'nowrap', border:'none',
+                      background: cleanerSlotFilter === tab.id ? '#0f172a' : '#f1f5f9',
+                      color: cleanerSlotFilter === tab.id ? '#fde047' : '#64748b',
+                      transition:'all 0.15s'
+                    }}>
+                      {tab.label}
+                    </button>
+                  ))}
+                  <div style={{width:'1px', background:'#e2e8f0', flexShrink:0, margin:'4px 0'}}/>
+                  {['All', 'Full Room', 'Dusting', 'Mopping', 'Bathroom'].map(t => (
+                    <button key={t} onClick={()=>setCleanerTypeFilter(t)} style={{
+                      padding:'7px 14px', borderRadius:20, fontSize:11, fontWeight:800, cursor:'pointer', fontFamily:'inherit', whiteSpace:'nowrap',
+                      background: cleanerTypeFilter === t ? '#fde047' : 'transparent',
+                      color: cleanerTypeFilter === t ? '#78350f' : '#94a3b8',
+                      border: cleanerTypeFilter === t ? 'none' : '1px solid #e2e8f0',
+                      transition:'all 0.15s'
+                    }}>
+                      {t}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Job Cards */}
+                <div style={{display:'flex', flexDirection:'column', gap:10}}>
+                  {filteredList.length === 0 && (
+                    <div style={{background:'#f8fafc', borderRadius:16, padding:'32px 16px', textAlign:'center'}}>
+                      <span className="material-symbols-outlined" style={{fontSize:36, color:'#cbd5e1'}}>mop</span>
+                      <p style={{margin:'8px 0 0', fontSize:14, color:'#94a3b8', fontWeight:700}}>All clear! No rooms in this filter.</p>
+                    </div>
+                  )}
+                  {filteredList.map(slot => (
+                    <div key={slot.id} style={{background:'#fff', borderRadius:18, border: slot.done ? '1.5px solid #86efac' : slot.slotStatus==='active' ? '1.5px solid #fde047' : '1.5px solid #e2e8f0', padding:'16px 16px 14px', boxShadow:'0 2px 12px rgba(15,23,42,0.04)'}}>
+                      
+                      {/* Top row */}
+                      <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
+                        <div>
+                          <div style={{display:'flex', alignItems:'center', gap:8, marginBottom:4}}>
+                            <span style={{fontSize:17, fontWeight:900, color:'#0f172a'}}>Room {slot.room}</span>
+                            <span style={{fontSize:10, fontWeight:800, padding:'3px 8px', borderRadius:20, background: slot.done ? '#dcfce7' : slot.slotStatus==='active' ? '#fef08a' : '#f1f5f9', color: slot.done ? '#15803d' : slot.slotStatus==='active' ? '#92400e' : '#64748b'}}>
+                              {slot.done ? '✓ Cleaned' : slot.slotStatus === 'active' ? '● Active' : '○ Upcoming'}
+                            </span>
+                          </div>
+                          <p style={{margin:0, fontSize:12, fontWeight:700, color:'#64748b'}}>{slot.type}</p>
+                        </div>
+                        <span style={{fontSize:11, fontWeight:700, color:'#94a3b8', textAlign:'right', marginTop:2}}>
+                          {slot.slot}
+                        </span>
+                      </div>
+
+                      {/* Divider */}
+                      <div style={{height:'1px', background:'#f1f5f9', margin:'12px 0'}}/>
+
+                      {/* Bottom row */}
+                      <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                        <div style={{display:'flex', alignItems:'center', gap:8}}>
+                          <div style={{width:28, height:28, borderRadius:14, background:'#f1f5f9', display:'flex', alignItems:'center', justifyContent:'center'}}>
+                            <span className="material-symbols-outlined" style={{fontSize:15, color:'#64748b'}}>person</span>
+                          </div>
+                          <div>
+                            <p style={{margin:0, fontSize:13, fontWeight:800, color:'#0f172a'}}>{slot.student}</p>
+                            {slot.note && <p style={{margin:'1px 0 0', fontSize:11, color:'#94a3b8', fontWeight:600}}>"{slot.note}"</p>}
+                          </div>
+                        </div>
+                        <div style={{display:'flex', gap:8, alignItems:'center'}}>
+                          <a href={`tel:${slot.phone.replace(/\s+/g, '')}`}
+                            style={{width:36, height:36, borderRadius:18, background:'#f0fdf4', border:'1px solid #dcfce7', display:'flex', alignItems:'center', justifyContent:'center', textDecoration:'none'}}>
+                            <span className="material-symbols-outlined" style={{fontSize:18, color:'#16a34a'}}>phone</span>
+                          </a>
+                          {!slot.done && (
+                            <button onClick={() => setCleaning(prev => prev.map(c => c.id === slot.id ? {...c, done:true, slotStatus:'completed'} : c))}
+                              style={{padding:'8px 16px', borderRadius:12, border:'none', background:'#0f172a', color:'#fde047', fontSize:12, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}>
+                              Done
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Weekly/Monthly Summary at the bottom */}
+                {cleanerTimeFilter !== 'Daily' && (
+                  <div style={{background:'#f8fafc', borderRadius:18, padding:'18px', border:'1.5px solid #e2e8f0'}}>
+                    <p style={{margin:'0 0 14px', fontSize:13, fontWeight:800, color:'#64748b', textTransform:'uppercase', letterSpacing:0.5}}>{cleanerTimeFilter} Summary</p>
                     <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:10}}>
-                      <div style={{background:'#bbf7d0', borderRadius:14, border: '1px solid #e2e8f0', padding:14, textAlign:'center', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
-                        <p style={{fontSize:28, fontWeight:900, color:'#000', margin:0}}>{completedSlots.length * mult}</p>
-                        <p style={{fontSize:12, fontWeight:800, color:'#000', margin:'2px 0 0', textTransform:'uppercase'}}>Total Cleaned</p>
+                      <div style={{background:'#dcfce7', borderRadius:14, padding:'14px', textAlign:'center'}}>
+                        <p style={{fontSize:30, fontWeight:900, color:'#15803d', margin:0}}>{completedSlots.length * mult}</p>
+                        <p style={{fontSize:11, fontWeight:800, color:'#15803d', margin:'4px 0 0', textTransform:'uppercase'}}>Cleaned</p>
                       </div>
-
-                      <div style={{background:'#fecaca', borderRadius:14, border: '1px solid #e2e8f0', padding:14, textAlign:'center', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
-                        <p style={{fontSize:28, fontWeight:900, color:'#000', margin:0}}>{(cleaning.length - completedSlots.length) * mult}</p>
-                        <p style={{fontSize:12, fontWeight:800, color:'#000', margin:'2px 0 0', textTransform:'uppercase'}}>Total Uncleaned</p>
-                      </div>
-                    </div>
-
-                    {/* Cleaned Rooms Section */}
-                    <div style={{background:'#fff', borderRadius:16, border: '1px solid #e2e8f0', padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
-                      <p style={{margin:'0 0 6px', fontSize:15, fontWeight:800, color:'#000'}}>✅ Cleaned Rooms Details ({cleanerTimeFilter})</p>
-                      
-                      {/* Cleaning Type Breakdown Pills */}
-                      <div style={{display:'flex', gap:6, flexWrap:'wrap', marginBottom:12}}>
-                        {['Full Room Clean', 'Dusting & Mop', 'Bathroom Sanitise', 'Bedsheet & Towel Change'].map(type => {
-                          const count = cleaning.filter(c => c.done && c.type.toLowerCase().includes(type.toLowerCase().split(' ')[0])).length * mult;
-                          return (
-                            <span key={type} style={{fontSize:10.5, fontWeight:800, background:'#fef08a', color:'#000', padding:'3px 8px', borderRadius:8, border: '1px solid #e8df9a'}}>
-                              {type}: {count}
-                            </span>
-                          );
-                        })}
-                      </div>
-
-                      <div style={{display:'flex', flexDirection:'column', gap:8}}>
-                        {cleaning.filter(c => c.done && matchesType(c)).map(c => (
-                          <div key={c.id} style={{background:'#f0fdf4', border: '1px solid #e2e8f0', borderRadius:12, padding:12, display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-                            <div>
-                              <div style={{display:'flex', alignItems:'center', gap:6}}>
-                                <span style={{fontSize:14, fontWeight:900, color:'#000'}}>Room {c.room}</span>
-                                <Chip label={c.type} color="#78680a" bg="#fefce8"/>
-                              </div>
-                              <p style={{margin:'2px 0 0', fontSize:11, color:C.muted, fontWeight:700}}>Student: {c.student} · Slot: {c.slot}</p>
-                            </div>
-                            <Chip label="Cleaned ✓" color="#166534" bg="#dcfce7"/>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Uncleaned Rooms Section */}
-                    <div style={{background:'#fff', borderRadius:16, border: '1px solid #e2e8f0', padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
-                      <p style={{margin:'0 0 6px', fontSize:15, fontWeight:800, color:'#000'}}>⏳ Uncleaned / Pending Rooms ({cleanerTimeFilter})</p>
-                      
-                      {/* Uncleaned Type Breakdown Pills */}
-                      <div style={{display:'flex', gap:6, flexWrap:'wrap', marginBottom:12}}>
-                        {['Full Room Clean', 'Dusting & Mop', 'Bathroom Sanitise', 'Bedsheet & Towel Change'].map(type => {
-                          const count = cleaning.filter(c => !c.done && c.type.toLowerCase().includes(type.toLowerCase().split(' ')[0])).length * mult;
-                          return (
-                            <span key={type} style={{fontSize:10.5, fontWeight:800, background:'#fecaca', color:'#000', padding:'3px 8px', borderRadius:8, border: '1px solid #e8df9a'}}>
-                              {type}: {count}
-                            </span>
-                          );
-                        })}
-                      </div>
-
-                      <div style={{display:'flex', flexDirection:'column', gap:8}}>
-                        {cleaning.filter(c => !c.done && matchesType(c)).map(c => (
-                          <div key={c.id} style={{background:'#fff1f2', border: '1px solid #e2e8f0', borderRadius:12, padding:12, display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-                            <div>
-                              <div style={{display:'flex', alignItems:'center', gap:6}}>
-                                <span style={{fontSize:14, fontWeight:900, color:'#000'}}>Room {c.room}</span>
-                                <Chip label={c.type} color="#78680a" bg="#fefce8"/>
-                              </div>
-                              <p style={{margin:'2px 0 0', fontSize:11, color:C.muted, fontWeight:700}}>Student: {c.student} · Slot: {c.slot}</p>
-                            </div>
-                            <Chip label="Pending ⏳" color="#b91c1c" bg="#fee2e2"/>
-                          </div>
-                        ))}
+                      <div style={{background:'#fee2e2', borderRadius:14, padding:'14px', textAlign:'center'}}>
+                        <p style={{fontSize:30, fontWeight:900, color:'#b91c1c', margin:0}}>{(cleaning.length - completedSlots.length) * mult}</p>
+                        <p style={{fontSize:11, fontWeight:800, color:'#b91c1c', margin:'4px 0 0', textTransform:'uppercase'}}>Pending</p>
                       </div>
                     </div>
                   </div>
-                ) : (
-                  /* DAILY VIEW */
-                  <>
-                    {/* Current Active Window Banner */}
-                    <div style={{background:'#fef08a', borderRadius:14, border: '1px solid #e2e8f0', padding:'12px 16px', display:'flex', justifyContent:'space-between', alignItems:'center', boxShadow: '0 3px 12px rgba(15,23,42,0.05)'}}>
-                      <div>
-                        <span style={{fontSize:11, fontWeight:800, textTransform:'uppercase', color:'#000'}}>⚡ Current 2-Hour Cleaning Slot</span>
-                        <h3 style={{margin:'2px 0 0', fontSize:18, fontWeight:900, color:'#000'}}>11:00 AM – 01:00 PM</h3>
-                      </div>
-                      <Chip label={`${activeSlots.length} Rooms Active`} color="#000" bg="#fff"/>
-                    </div>
-
-                    {/* Stat summary grid */}
-                    <div style={{display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:10}}>
-                      <div onClick={()=>setCleanerSlotFilter('active')} style={{background:cleanerSlotFilter==='active'?'#fef08a':'#fff', borderRadius:14, border: '1px solid #e2e8f0', padding:12, textAlign:'center', cursor:'pointer', boxShadow:cleanerSlotFilter==='active'?'3px 3px 0px #000':'none'}}>
-                        <p style={{fontSize:24, fontWeight:900, color:'#000', margin:0}}>{activeSlots.length}</p>
-                        <p style={{fontSize:11, fontWeight:800, color:'#000', margin:'2px 0 0', textTransform:'uppercase'}}>Active Now</p>
-                      </div>
-
-                      <div onClick={()=>setCleanerSlotFilter('upcoming')} style={{background:cleanerSlotFilter==='upcoming'?'#cffafe':'#fff', borderRadius:14, border: '1px solid #e2e8f0', padding:12, textAlign:'center', cursor:'pointer', boxShadow:cleanerSlotFilter==='upcoming'?'3px 3px 0px #000':'none'}}>
-                        <p style={{fontSize:24, fontWeight:900, color:'#000', margin:0}}>{upcomingSlots.length}</p>
-                        <p style={{fontSize:11, fontWeight:800, color:'#000', margin:'2px 0 0', textTransform:'uppercase'}}>Upcoming</p>
-                      </div>
-
-                      <div onClick={()=>setCleanerSlotFilter('completed')} style={{background:cleanerSlotFilter==='completed'?'#bbf7d0':'#fff', borderRadius:14, border: '1px solid #e2e8f0', padding:12, textAlign:'center', cursor:'pointer', boxShadow:cleanerSlotFilter==='completed'?'3px 3px 0px #000':'none'}}>
-                        <p style={{fontSize:24, fontWeight:900, color:'#000', margin:0}}>{completedSlots.length}</p>
-                        <p style={{fontSize:11, fontWeight:800, color:'#000', margin:'2px 0 0', textTransform:'uppercase'}}>Cleaned</p>
-                      </div>
-                    </div>
-
-                    {/* Filter Tabs for Slots */}
-                    <div style={{display:'flex', gap:6, overflowX:'auto', scrollbarWidth:'none'}}>
-                      {[
-                        {id:'all', label:'All Rooms'},
-                        {id:'active', label:'Active Slot (11-1 PM)'},
-                        {id:'upcoming', label:'Upcoming Today'},
-                        {id:'completed', label:'Cleaned ✓'}
-                      ].map(tab => (
-                        <button 
-                          key={tab.id} 
-                          onClick={()=>setCleanerSlotFilter(tab.id)}
-                          style={{
-                            padding:'6px 12px', borderRadius:20, fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit', whiteSpace:'nowrap',
-                            background: cleanerSlotFilter === tab.id ? '#000' : '#fff',
-                            color: cleanerSlotFilter === tab.id ? '#fff' : '#000',
-                            border: '1px solid #e2e8f0',
-                            boxShadow: cleanerSlotFilter === tab.id ? '2px 2px 0px #fde047' : 'none'
-                          }}
-                        >
-                          {tab.label}
-                        </button>
-                      ))}
-                    </div>
-
-                    {/* Room List */}
-                    <div style={{background:'#fff', borderRadius:18, border: '1px solid #e2e8f0', padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
-                      <p style={{margin:'0 0 12px', fontSize:15, fontWeight:800, color:'#000'}}>
-                        🧹 Cleaning Schedule <span style={{fontSize:12, fontWeight:600, color:C.muted}}>({cleanerDate})</span>
-                      </p>
-
-                      <div style={{display:'flex', flexDirection:'column', gap:10}}>
-                        {filteredList.map(slot => (
-                          <div key={slot.id} style={{background: slot.done ? '#f0fdf4' : slot.slotStatus==='active' ? '#fefce8' : '#fafafa', border: '1px solid #e2e8f0', borderRadius:14, padding:14, boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
-                            <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:6}}>
-                              <div>
-                                <div style={{display:'flex', alignItems:'center', gap:6}}>
-                                  <span style={{fontSize:16, fontWeight:900, color:'#000'}}>Room {slot.room}</span>
-                                  <Chip label={slot.type} color="#78680a" bg="#fefce8"/>
-                                </div>
-                                <p style={{margin:'4px 0 0', fontSize:12, fontWeight:700, color:C.muted}}>
-                                  👤 Student: <b>{slot.student}</b>
-                                </p>
-                              </div>
-
-                              <span style={{
-                                fontSize:11, fontWeight:800, padding:'4px 8px', borderRadius:8, border: '1px solid #e8df9a',
-                                background: slot.done ? '#bbf7d0' : slot.slotStatus==='active' ? '#fde047' : '#cffafe',
-                                color: '#000'
-                              }}>
-                                ⏰ {slot.slot}
-                              </span>
-                            </div>
-
-                            {slot.note && (
-                              <div style={{background:'#fff', padding:'6px 10px', borderRadius:8, border: '1px solid #e8df9a', fontSize:11, fontWeight:700, color:'#333', marginBottom:10}}>
-                                💬 Note: "{slot.note}"
-                              </div>
-                            )}
-
-                            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginTop:10, paddingTop:8, borderTop:'1px dashed #000'}}>
-                              <a href={`tel:${slot.phone.replace(/\s+/g, '')}`} 
-                                style={{padding:'6px 10px', borderRadius:8, border: '1px solid #e2e8f0', background:'#bbf7d0', color:'#000', textDecoration:'none', fontSize:11, fontWeight:800, display:'inline-flex', alignItems:'center', gap:4, boxShadow: '0 2px 6px rgba(120, 104, 10, 0.04)'}}>
-                                📞 Call Student
-                              </a>
-
-                              {slot.done ? (
-                                <Chip label="Cleaned ✅" color="#166534" bg="#dcfce7"/>
-                              ) : (
-                                <button 
-                                  onClick={() => setCleaning(prev => prev.map(c => c.id === slot.id ? {...c, done:true, slotStatus:'completed'} : c))}
-                                  style={{padding:'8px 14px', borderRadius:10, border: '1px solid #e2e8f0', background:'#fef08a', color:'#000', fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}
-                                >
-                                  Mark Cleaned ✅
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-
-                        {filteredList.length === 0 && (
-                          <div style={{textAlign:'center', padding:'30px 10px'}}>
-                            <span className="material-symbols-outlined" style={{fontSize:32, color:C.muted}}>mop</span>
-                            <p style={{fontSize:13, color:C.muted, margin:'8px 0 0', fontWeight:700}}>No rooms scheduled for this filter.</p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </>
                 )}
               </>
             );
@@ -2047,44 +2030,152 @@ export default function StaffApp(){
 
           {/* SECURITY */}
           {staffRole === 'Security Guard' && (<>
-            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
-              <button onClick={()=>setShowVisitor(true)} style={{padding:14,background:meta.grad,color:'#000',border: '1px solid #e2e8f0',borderRadius:14,fontWeight:800,fontSize:13,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6,fontFamily:'inherit',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
-                <span className="material-symbols-outlined" style={{fontSize:18}}>person_add</span>Log Visitor
-              </button>
-              <button onClick={()=>setShowParcel(true)} style={{padding:14,background: C.primary,color:'#000',border: '1px solid #e2e8f0',borderRadius:14,fontWeight:800,fontSize:13,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6,fontFamily:'inherit',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
-                <span className="material-symbols-outlined" style={{fontSize:18}}>package_2</span>Log Parcel
-              </button>
+            
+            {/* Gatekeeper Hero */}
+            <div style={{background: 'linear-gradient(135deg, #0f172a, #1e293b)', borderRadius:20, padding:'24px', color:'#fff', boxShadow:'0 10px 25px rgba(15,23,42,0.15)', display:'flex', flexDirection:'column', gap:16, position:'relative', overflow:'hidden'}}>
+               <div style={{position:'absolute', right:-10, bottom:-10, opacity:0.1, pointerEvents:'none'}}>
+                  <span className="material-symbols-outlined" style={{fontSize:120}}>shield_person</span>
+               </div>
+               <div>
+                  <h2 style={{margin:0, fontSize:22, fontWeight:900, color:'#f8fafc'}}>Gatekeeper</h2>
+                  <p style={{margin:'2px 0 0', fontSize:13, fontWeight:600, color:'#94a3b8'}}>Manage entries & exits securely.</p>
+               </div>
+               <button onClick={()=>setShowGatekeeperModal(true)} style={{padding:'14px', background:'#3b82f6', color:'#fff', border:'none', borderRadius:14, fontWeight:900, fontSize:15, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:8, fontFamily:'inherit', zIndex:5, boxShadow:'0 4px 12px rgba(59,130,246,0.3)'}}>
+                  <span className="material-symbols-outlined" style={{fontSize:20}}>person_add</span> Log New Visitor
+               </button>
             </div>
-            <div style={{background:'#fff',borderRadius:18,border: '1px solid #e2e8f0',padding:16}}>
-              <Row style={{marginBottom:12}}><p style={{margin:0,fontSize:15,fontWeight:800,color:C.text}}>🛡️ Gate Entry Log</p><Chip label={`${visitors.filter(v=>v.status==='Inside').length} Inside`} color={C.success} bg={C.successBg}/></Row>
-              {visitors.map(v=>(
-                <div key={v.id} style={{background:C.bg,border: '1px solid #e2e8f0',borderRadius:14,padding:12,marginBottom:8,display:'flex',justifyContent:'space-between',alignItems:'center',gap:10}}>
-                  <div style={{flex:1}}>
-                    <div style={{display:'flex',alignItems:'center',gap:6}}><span style={{fontSize:14,fontWeight:800,color:C.text}}>{v.name}</span><span style={{width:6,height:6,borderRadius:'50%',background:v.status==='Inside'?C.success:'#94a3b8',display:'inline-block'}}/></div>
-                    <p style={{margin:'3px 0 0',fontSize:11,color:C.muted}}>{v.purpose} · In: {v.inTime}{v.outTime?` | Out: ${v.outTime}`:''}</p>
-                  </div>
-                  {v.status==='Inside' && <button onClick={()=>setVisitors(p=>p.map(x=>x.id===v.id?{...x,outTime:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),status:'Exited'}:x))} style={{padding:'7px 10px',background:C.dangerBg,border:`1px solid ${C.danger}`,borderRadius:10,color:C.danger,fontSize:11,fontWeight:800,cursor:'pointer',fontFamily:'inherit',whiteSpace:'nowrap'}}>Exit 🚪</button>}
-                </div>
-              ))}
+
+            {/* Current Visitors Inside */}
+            <div style={{marginTop:16}}>
+               <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12}}>
+                  <h3 style={{margin:0, fontSize:16, fontWeight:900, color:'#1e293b'}}>Current Visitors Inside</h3>
+                  <span style={{background:'#dbeafe', color:'#1d4ed8', padding:'4px 10px', borderRadius:20, fontSize:12, fontWeight:800}}>{visitorLogs.filter(v=>!v.timeOut).length} Inside</span>
+               </div>
+               <div style={{display:'flex', flexDirection:'column', gap:10}}>
+                  {visitorLogs.map(v => (
+                     <div key={v.id} style={{background:'#fff', borderRadius:16, padding:'16px', border:'1px solid #f1f5f9', boxShadow:'0 2px 8px rgba(0,0,0,0.02)', display:'flex', justifyContent:'space-between', alignItems:'center', opacity: v.timeOut ? 0.6 : 1}}>
+                        <div>
+                           <div style={{display:'flex', alignItems:'center', gap:6}}>
+                              <span style={{fontSize:15, fontWeight:900, color:'#0f172a'}}>{v.name}</span>
+                              {!v.timeOut && <span style={{width:8, height:8, borderRadius:4, background:'#22c55e'}}></span>}
+                           </div>
+                           <p style={{margin:'4px 0 0', fontSize:13, fontWeight:700, color:'#64748b'}}>Visiting Room {v.room} · {v.purpose}</p>
+                           <p style={{margin:'4px 0 0', fontSize:11, fontWeight:600, color:'#94a3b8'}}>In: {v.timeIn} {v.timeOut && `| Out: ${v.timeOut}`}</p>
+                        </div>
+                        {!v.timeOut && (
+                           <button onClick={()=>{
+                              setVisitorLogs(prev => prev.map(log => log.id === v.id ? {...log, timeOut: new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} : log));
+                           }} style={{padding:'8px 16px', background:'#fee2e2', color:'#b91c1c', border:'none', borderRadius:10, fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit'}}>
+                              Mark Exited
+                           </button>
+                        )}
+                     </div>
+                  ))}
+               </div>
             </div>
-            <div style={{background:'#fff',borderRadius:18,border: '1px solid #e2e8f0',padding:16}}>
-              <Row style={{marginBottom:12}}><p style={{margin:0,fontSize:15,fontWeight:800,color:C.text}}>📦 Courier Parcels</p><Chip label={`${parcels.filter(p=>p.status==='Pending').length} unclaimed`} color={C.warn} bg={C.warnBg}/></Row>
-              {parcels.map(p=>(
-                <div key={p.id} style={{background:C.bg,border: '1px solid #e2e8f0',borderRadius:14,padding:12,marginBottom:8,display:'flex',justifyContent:'space-between',alignItems:'center',gap:10}}>
-                  <div style={{flex:1}}>
-                    <p style={{margin:0,fontSize:13,fontWeight:800,color:C.text}}>{p.student} · <span style={{color:C.primary}}>Rm {p.room}</span></p>
-                    <p style={{margin:'3px 0 0',fontSize:11,color:C.muted}}>{p.carrier} · {p.tracking} · {p.date}</p>
-                  </div>
-                  <button onClick={()=>setParcels(prev=>prev.map(x=>x.id===p.id?{...x,status:x.status==='Pending'?'Claimed':'Pending'}:x))} style={{padding:'7px 10px',background:p.status==='Claimed'?C.successBg:meta.accentBg,border:`1px solid ${p.status==='Claimed'?C.success:meta.accent}`,borderRadius:10,color:p.status==='Claimed'?C.success:meta.accent,fontSize:11,fontWeight:800,cursor:'pointer',fontFamily:'inherit',whiteSpace:'nowrap'}}>
-                    {p.status==='Claimed'?'Claimed ✅':'Hand Over'}
-                  </button>
-                </div>
-              ))}
-            </div>
-            <button onClick={()=>alert('🚨 EMERGENCY ALERT sent to Admin & Security!')} style={{width:'100%',padding:16,background: C.primary,color:'#000',border: '1px solid #e2e8f0',borderRadius:14,fontSize:15,fontWeight:900,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:8,boxShadow: '0 4px 16px rgba(15,23,42,0.05)',fontFamily:'inherit'}}>
-              <span className="material-symbols-outlined" style={{fontSize:22}}>warning</span>EMERGENCY SOS ALERT 🚨
-            </button>
+
+            {/* Modal for New Visitor */}
+            {showGatekeeperModal && (
+               <div style={{position:'fixed', inset:0, background:'rgba(15,23,42,0.6)', zIndex:100, display:'flex', flexDirection:'column', justifyContent:'flex-end', animation:'sheetUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)'}}>
+                 <div style={{background:'#fff', padding:'24px 20px 32px', borderTopLeftRadius:24, borderTopRightRadius:24, display:'flex', flexDirection:'column', gap:16}}>
+                   <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                     <p style={{margin:0, fontSize:18, fontWeight:900, color:'#1a1500'}}>New Visitor Entry</p>
+                     <button onClick={() => setShowGatekeeperModal(false)} style={{background:'#f8fafc', border:'none', borderRadius:10, width:32, height:32, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer'}}>
+                       <span className="material-symbols-outlined" style={{fontSize:18, color:'#64748b'}}>close</span>
+                     </button>
+                   </div>
+                   
+                   <div style={{display:'flex', flexDirection:'column', gap:12}}>
+                     <input type="text" placeholder="Visitor Name" value={gkName} onChange={e=>setGkName(e.target.value)} style={{padding:'14px', borderRadius:12, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:15, fontWeight:600}} />
+                     <input type="tel" placeholder="Phone Number" value={gkPhone} onChange={e=>setGkPhone(e.target.value)} style={{padding:'14px', borderRadius:12, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:15, fontWeight:600}} />
+                     <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
+                        <input type="text" placeholder="Room No." value={gkRoom} onChange={e=>setGkRoom(e.target.value)} style={{padding:'14px', borderRadius:12, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:15, fontWeight:600}} />
+                        <select value={gkPurpose} onChange={e=>setGkPurpose(e.target.value)} style={{padding:'14px', borderRadius:12, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:15, fontWeight:600}}>
+                           <option value="" disabled>Purpose</option>
+                           <option value="Parent/Family">Parent/Family</option>
+                           <option value="Delivery">Delivery</option>
+                           <option value="Guest">Guest</option>
+                        </select>
+                     </div>
+                   </div>
+                   
+                   <button 
+                     onClick={() => {
+                       if(!gkName || !gkRoom) return alert('Name and Room are required');
+                       setVisitorLogs([{ id: Date.now(), name: gkName, phone: gkPhone, room: gkRoom, purpose: gkPurpose, timeIn: new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}), timeOut: null }, ...visitorLogs]);
+                       setShowGatekeeperModal(false);
+                       setGkName(''); setGkPhone(''); setGkRoom(''); setGkPurpose('');
+                       alert("Alert sent to Student and Admin!");
+                     }}
+                     style={{marginTop:10, padding:'14px', background:'#3b82f6', color:'#fff', border:'none', borderRadius:12, fontSize:15, fontWeight:900, cursor:'pointer', fontFamily:'inherit', boxShadow:'0 4px 12px rgba(59,130,246,0.3)'}}
+                   >
+                     Allow Entry & Notify
+                   </button>
+                 </div>
+               </div>
+            )}
           </>)}
+
+          {/* 🚌 BUS DRIVER ROLE VIEW */}
+          {(staffRole === 'Bus Driver' || staffRole === 'Driver' || staffRole === 'Shuttle Driver') && (() => {
+             return (
+                <div style={{display:'flex', flexDirection:'column', gap:14}}>
+                   {/* Driver Route Card */}
+                   <div style={{background:'linear-gradient(135deg, #0f172a, #1e293b)', borderRadius:20, padding:'20px', color:'#fff', boxShadow:'0 8px 20px rgba(15,23,42,0.15)'}}>
+                      <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10}}>
+                         <span style={{fontSize:11, fontWeight:800, textTransform:'uppercase', color:'#fde047', letterSpacing:1}}>🚌 Route #1 · Campus Express</span>
+                         <span style={{fontSize:10, fontWeight:800, padding:'3px 8px', borderRadius:6, background:'#22c55e', color:'#fff'}}>ON TRIP</span>
+                      </div>
+                      <h2 style={{margin:0, fontSize:22, fontWeight:900, color:'#fff'}}>PG Hostel ➔ Sector 62 Metro</h2>
+                      <p style={{margin:'4px 0 0', fontSize:12, fontWeight:600, color:'#94a3b8'}}>Morning Shift: 08:00 AM – 09:30 AM | Bus: UP 16 AB 4021</p>
+                      
+                      <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginTop:16}}>
+                         <button onClick={()=>setShowFuelModal(true)} style={{padding:'10px', background:'rgba(255,255,255,0.1)', border:'1px solid rgba(255,255,255,0.2)', borderRadius:12, color:'#fff', fontSize:12, fontWeight:800, cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', justifyContent:'center', gap:6}}>
+                            <span className="material-symbols-outlined" style={{fontSize:16}}>local_gas_station</span> Log Fuel Expense
+                         </button>
+                         <button onClick={()=>alert('📢 Broadcast notification sent to all 6 shuttle passengers!')} style={{padding:'10px', background:'#fde047', border:'none', borderRadius:12, color:'#0f172a', fontSize:12, fontWeight:900, cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', justifyContent:'center', gap:6}}>
+                            <span className="material-symbols-outlined" style={{fontSize:16}}>campaign</span> Alert Passengers
+                         </button>
+                      </div>
+                   </div>
+
+                   {/* Student Passenger Roster */}
+                   <div style={{background:'#fff', borderRadius:18, border:'1.5px solid #e2e8f0', padding:'16px', boxShadow:'0 4px 14px rgba(15,23,42,0.04)'}}>
+                      <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12}}>
+                         <div>
+                            <h3 style={{margin:0, fontSize:16, fontWeight:900, color:'#0f172a'}}>Passenger Checklist</h3>
+                            <p style={{margin:'2px 0 0', fontSize:12, fontWeight:600, color:'#64748b'}}>{passengers.filter(p=>p.status==='Boarded').length} / {passengers.length} Boarded</p>
+                         </div>
+                         <span style={{fontSize:12, fontWeight:800, padding:'4px 10px', borderRadius:20, background:'#f1f5f9', color:'#475569'}}>{passengers.length} Total</span>
+                      </div>
+
+                      <div style={{display:'flex', flexDirection:'column', gap:10}}>
+                         {passengers.map(p => (
+                            <div key={p.id} style={{background:'#f8fafc', borderRadius:14, padding:'12px 14px', border:'1px solid #f1f5f9', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                               <div>
+                                  <div style={{display:'flex', alignItems:'center', gap:8}}>
+                                     <span style={{fontSize:14, fontWeight:900, color:'#0f172a'}}>{p.name}</span>
+                                     <span style={{fontSize:11, fontWeight:700, color:'#64748b'}}>Rm {p.room}</span>
+                                  </div>
+                                  <p style={{margin:'2px 0 0', fontSize:11, fontWeight:600, color:'#94a3b8'}}>Pickup: {p.time}</p>
+                               </div>
+                               <div style={{display:'flex', gap:6, alignItems:'center'}}>
+                                  <a href={`tel:${p.phone}`} style={{width:32, height:32, borderRadius:10, background:'#e0f2fe', color:'#0369a1', display:'flex', alignItems:'center', justifyContent:'center', textDecoration:'none'}}>
+                                     <span className="material-symbols-outlined" style={{fontSize:16}}>phone</span>
+                                  </a>
+                                  <button onClick={()=>{
+                                     setPassengers(prev => prev.map(x => x.id === p.id ? {...x, status: x.status==='Boarded' ? 'Waiting' : x.status==='Waiting' ? 'Absent' : 'Boarded'} : x));
+                                  }} style={{padding:'6px 12px', borderRadius:8, border:'none', background: p.status==='Boarded' ? '#dcfce7' : p.status==='Waiting' ? '#fef08a' : '#fee2e2', color: p.status==='Boarded' ? '#15803d' : p.status==='Waiting' ? '#92400e' : '#b91c1c', fontSize:11, fontWeight:800, cursor:'pointer', fontFamily:'inherit'}}>
+                                     {p.status}
+                                  </button>
+                               </div>
+                            </div>
+                         ))}
+                      </div>
+                   </div>
+                </div>
+             );
+          })()}
 
           {/* 🚌 BUS DRIVER ROLE VIEW */}
           {(staffRole === 'Bus Driver' || staffRole === 'Driver' || staffRole === 'Shuttle Driver') && (() => {
@@ -2218,6 +2309,7 @@ export default function StaffApp(){
                       <div style={{display:'flex', alignItems:'center', gap:8, marginBottom:6}}>
                         <span style={{fontSize:15, fontWeight:900, color:'#1a1500'}}>Room {j.room}</span>
                         <span style={{fontSize:10, fontWeight:800, padding:'2px 8px', borderRadius:6, background: j.priority==='High'?'#fef2f2':'#f8fafc', color: j.priority==='High'?'#b91c1c':'#475569'}}>{j.priority}</span>
+                        <span style={{fontSize:10, fontWeight:800, padding:'2px 8px', borderRadius:6, background: '#fce7f3', color:'#be185d', display:'flex', alignItems:'center', gap:4, boxShadow:'0 2px 4px rgba(190,24,93,0.1)'}}><span className="material-symbols-outlined" style={{fontSize:12}}>record_voice_over</span>Student Complaint</span>
                       </div>
                       <p style={{margin:0, fontSize:15, fontWeight:800, color:'#1a1500'}}>{j.issue}</p>
                       <p style={{margin:'6px 0 0', fontSize:11.5, fontWeight:600, color:C.muted}}>by {j.student} · {j.date}</p>
@@ -2275,6 +2367,26 @@ export default function StaffApp(){
                       <span className="material-symbols-outlined" style={{fontSize:14}}>phone</span>
                       Call Student
                     </a>
+                    <button 
+                      onClick={()=>alert('Opening Camera to upload job completion proof...')}
+                      style={{
+                        padding:'8px 16px', 
+                        borderRadius:12, 
+                        background:'#f1f5f9', 
+                        border:'1px solid #e2e8f0', 
+                        color:'#475569', 
+                        fontSize:12, 
+                        fontWeight:900, 
+                        cursor:'pointer',
+                        display:'flex',
+                        alignItems:'center',
+                        gap:6,
+                        fontFamily:'inherit'
+                      }}
+                    >
+                      <span className="material-symbols-outlined" style={{fontSize:14}}>add_a_photo</span>
+                      Upload Photo
+                    </button>
                   </div>
                 </div>
               ))}
@@ -2308,6 +2420,7 @@ export default function StaffApp(){
                       <div style={{display:'flex', alignItems:'center', gap:8, marginBottom:6}}>
                         <span style={{fontSize:15, fontWeight:900, color:'#1a1500'}}>Room {j.room}</span>
                         <span style={{fontSize:10, fontWeight:800, padding:'2px 8px', borderRadius:6, background: j.priority==='High'?'#fef2f2':'#f8fafc', color: j.priority==='High'?'#b91c1c':'#475569'}}>{j.priority}</span>
+                        <span style={{fontSize:10, fontWeight:800, padding:'2px 8px', borderRadius:6, background: '#fce7f3', color:'#be185d', display:'flex', alignItems:'center', gap:4, boxShadow:'0 2px 4px rgba(190,24,93,0.1)'}}><span className="material-symbols-outlined" style={{fontSize:12}}>record_voice_over</span>Student Complaint</span>
                       </div>
                       <p style={{margin:0, fontSize:15, fontWeight:800, color:'#1a1500'}}>{j.issue}</p>
                       <p style={{margin:'6px 0 0', fontSize:11.5, fontWeight:600, color:C.muted}}>by {j.student} · {j.date}</p>
@@ -2842,7 +2955,19 @@ export default function StaffApp(){
             {/* Day cells */}
             <div style={{display:'grid', gridTemplateColumns:'repeat(7,1fr)', gap:3}}>
               {Array.from({length: cur.daysInMonth}, (_, i) => i+1).map(day => {
-                const status = cur.data[day]; // 'present', 'absent', 'leave' or undefined
+                let status = cur.data[day]; // 'present', 'absent', 'leave' or undefined
+                
+                // Dynamic Leave Request Integration
+                // Check if this day matches an approved leave request
+                // We construct the date string, assuming cur.m like 'July 2026' (month index 6)
+                const monthStr = cur.m.split(' ')[0];
+                const yearStr = cur.m.split(' ')[1];
+                const monthIdx = ['January','February','March','April','May','June','July','August','September','October','November','December'].indexOf(monthStr);
+                const checkDateStr = `${yearStr}-${String(monthIdx + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                
+                if (leaveRequests.some(lr => lr.date === checkDateStr && lr.status === 'Approved')) {
+                  status = 'leave';
+                }
                 let bg = '#f8fafc';
                 let border = '1px solid #f1f5f9';
                 let color = '#94a3b8';
@@ -2880,6 +3005,82 @@ export default function StaffApp(){
               </div>
             </div>
           </div>
+
+          {/* Leave Requests Module */}
+          <div style={{marginTop:12}}>
+            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12}}>
+              <p style={{margin:0, fontSize:15, fontWeight:900, color:'#1a1500'}}>My Leave Requests</p>
+              <button onClick={() => setShowLeaveModal(true)} style={{padding:'6px 12px', background:'#ca8a04', color:'#fff', border:'none', borderRadius:8, fontSize:12, fontWeight:800, cursor:'pointer', display:'flex', alignItems:'center', gap:4}}>
+                <span className="material-symbols-outlined" style={{fontSize:16}}>add</span> Apply
+              </button>
+            </div>
+            <div style={{display:'flex', flexDirection:'column', gap:8}}>
+              {leaveRequests.length === 0 ? (
+                <p style={{textAlign:'center', fontSize:13, color:'#94a3b8', margin:'20px 0'}}>No leave requests found.</p>
+              ) : (
+                leaveRequests.map(lr => (
+                  <div key={lr.id} style={{background:'#fff', borderRadius:12, padding:'14px', border:'1px solid #f1f5f9', display:'flex', justifyContent:'space-between', alignItems:'center', boxShadow:'0 2px 8px rgba(0,0,0,0.02)'}}>
+                    <div>
+                      <p style={{margin:0, fontSize:14, fontWeight:800, color:'#1a1500'}}>{new Date(lr.date).toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'})}</p>
+                      <p style={{margin:'2px 0 0', fontSize:12, color:'#64748b', fontWeight:600}}>{lr.reason}</p>
+                    </div>
+                    <div>
+                      <span style={{
+                        padding:'4px 10px', borderRadius:20, fontSize:11, fontWeight:800,
+                        background: lr.status === 'Approved' ? '#dcfce7' : lr.status === 'Pending' ? '#fefce8' : '#fee2e2',
+                        color: lr.status === 'Approved' ? '#15803d' : lr.status === 'Pending' ? '#ca8a04' : '#b91c1c',
+                        border: `1px solid ${lr.status === 'Approved' ? '#86efac' : lr.status === 'Pending' ? '#fde047' : '#fca5a5'}`
+                      }}>
+                        {lr.status}
+                      </span>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+          
+          {/* Apply Leave Modal */}
+          {showLeaveModal && (
+            <div style={{position:'fixed', inset:0, background:'rgba(15,23,42,0.5)', zIndex:100, display:'flex', flexDirection:'column', justifyContent:'flex-end', animation:'sheetUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)'}}>
+              <div style={{background:'#fff', padding:'24px 20px 32px', borderTopLeftRadius:24, borderTopRightRadius:24, display:'flex', flexDirection:'column', gap:16}}>
+                <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                  <p style={{margin:0, fontSize:18, fontWeight:900, color:'#1a1500'}}>Apply for Leave</p>
+                  <button onClick={() => setShowLeaveModal(false)} style={{background:'#f8fafc', border:'none', borderRadius:10, width:32, height:32, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer'}}>
+                    <span className="material-symbols-outlined" style={{fontSize:18, color:'#64748b'}}>close</span>
+                  </button>
+                </div>
+                
+                <div style={{display:'flex', flexDirection:'column', gap:12}}>
+                  <div style={{display:'flex', flexDirection:'column', gap:6}}>
+                    <label style={{fontSize:12, fontWeight:800, color:'#64748b'}}>Select Date</label>
+                    <input type="date" value={leaveDate} onChange={e => setLeaveDate(e.target.value)} style={{padding:'12px', borderRadius:10, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:14, fontWeight:600}} />
+                  </div>
+                  <div style={{display:'flex', flexDirection:'column', gap:6}}>
+                    <label style={{fontSize:12, fontWeight:800, color:'#64748b'}}>Reason for Leave</label>
+                    <select value={leaveReason} onChange={e => setLeaveReason(e.target.value)} style={{padding:'12px', borderRadius:10, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:14, fontWeight:600}}>
+                      <option value="Sick Leave">Sick Leave</option>
+                      <option value="Family Emergency">Family Emergency</option>
+                      <option value="Casual Leave">Casual Leave</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <button 
+                  onClick={() => {
+                    if(!leaveDate) return alert('Please select a date');
+                    setLeaveRequests([{ id: Date.now(), date: leaveDate, reason: leaveReason, status: 'Pending' }, ...leaveRequests]);
+                    setShowLeaveModal(false);
+                    setLeaveDate('');
+                  }}
+                  style={{marginTop:10, padding:'14px', background:'#ca8a04', color:'#fff', border:'none', borderRadius:12, fontSize:15, fontWeight:800, cursor:'pointer', fontFamily:'inherit'}}
+                >
+                  Submit Request
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Punch Log */}
           <div style={{background:'#fff', borderRadius:18, border: '1px solid #e2e8f0', padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
@@ -3256,24 +3457,146 @@ export default function StaffApp(){
       {/* ══════════════════════════════════════════════════════════════════════
           WORK REPORTS
          ══════════════════════════════════════════════════════════════════════ */}
-      {view === 'reports' && (
-        <div style={{padding:'14px 14px 32px',display:'flex',flexDirection:'column',gap:14}}>
-          <div style={{background:'#fff',borderRadius:18,border: '1px solid #e2e8f0',padding:16}}>
-            <p style={{margin:'0 0 12px',fontSize:15,fontWeight:800,color:C.text}}>📝 Submit Today's Report</p>
-            <form onSubmit={submitReport} style={{display:'flex',flexDirection:'column',gap:12}}>
-              <InputField label="Work Summary *" textarea required rows={4} value={rptText} onChange={e=>setRptText(e.target.value)} placeholder="Tasks completed, issues found, items needed…"/>
-              <button type="submit" style={{padding:13,background:meta.grad,color:'#000',border: '1px solid #e2e8f0',borderRadius:14,fontSize:14,fontWeight:800,cursor:'pointer',fontFamily:'inherit',boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>Submit Report 🚀</button>
-            </form>
+      {/* ══════════════════════════════════════════════════════════════════════
+          PERFORMANCE & FEEDBACK
+         ══════════════════════════════════════════════════════════════════════ */}
+      {view === 'performance' && (() => {
+        // Mock feedback based on role
+        let feedbackData = [];
+        if (staffRole === 'Cook') {
+           feedbackData = [
+             { id: 1, text: "Dinner was amazing today, especially the Paneer!", rating: 5, author: "Rahul (Rm 102)", date: "Today, 08:30 PM" },
+             { id: 2, text: "Lunch was a bit too spicy.", rating: 3, author: "Aryan (Rm 205)", date: "Yesterday, 02:15 PM" },
+             { id: 3, text: "Great breakfast as always.", rating: 5, author: "Rohan (Rm 301)", date: "24 Jul 2026" }
+           ];
+        } else if (staffRole === 'Cleaner') {
+           feedbackData = [
+             { id: 1, text: "Room 102 bathroom wasn't cleaned properly.", rating: 2, author: "Rahul (Rm 102)", date: "Today, 10:30 AM" },
+             { id: 2, text: "Corridor looks spotless, great job!", rating: 5, author: "Admin", date: "Yesterday, 04:00 PM" }
+           ];
+        } else if (['Plumber', 'Electrician', 'Carpenter'].includes(staffRole)) {
+           feedbackData = [
+             { id: 1, text: "Issue fixed very quickly, thanks!", rating: 5, author: "Aryan (Rm 205)", date: "Today, 11:45 AM" },
+             { id: 2, text: "The repair took a bit long, but it works now.", rating: 4, author: "Rohan (Rm 301)", date: "22 Jul 2026" }
+           ];
+        } else {
+           feedbackData = [
+             { id: 1, text: "Excellent support and quick response.", rating: 5, author: "Student Council", date: "25 Jul 2026" }
+           ];
+        }
+
+        return (
+          <div style={{padding:'14px 14px 32px',display:'flex',flexDirection:'column',gap:16}}>
+            
+            {/* Weekly Rating Card */}
+            <div style={{background: 'linear-gradient(135deg, #1e293b, #0f172a)', borderRadius:20, padding:'24px', color:'#fff', boxShadow:'0 10px 25px rgba(15,23,42,0.15)', position:'relative', overflow:'hidden'}}>
+               <div style={{position:'absolute', top:-20, right:-20, opacity:0.1, transform:'rotate(15deg)'}}>
+                  <span className="material-symbols-outlined" style={{fontSize:120}}>star</span>
+               </div>
+               <p style={{margin:0, fontSize:13, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:1}}>Weekly Average</p>
+               <div style={{display:'flex', alignItems:'flex-end', gap:12, marginTop:8}}>
+                  <h1 style={{margin:0, fontSize:56, fontWeight:900, lineHeight:1, color:'#fde047'}}>4.6</h1>
+                  <div style={{paddingBottom:8}}>
+                     <div style={{display:'flex', gap:2, color:'#fde047'}}>
+                        <span className="material-symbols-outlined" style={{fontSize:20}}>star</span>
+                        <span className="material-symbols-outlined" style={{fontSize:20}}>star</span>
+                        <span className="material-symbols-outlined" style={{fontSize:20}}>star</span>
+                        <span className="material-symbols-outlined" style={{fontSize:20}}>star</span>
+                        <span className="material-symbols-outlined" style={{fontSize:20}}>star_half</span>
+                     </div>
+                     <p style={{margin:'4px 0 0', fontSize:12, fontWeight:700, color:'#34d399'}}>↑ 12% from last week</p>
+                  </div>
+               </div>
+            </div>
+
+            {/* Recent Feedback Feed */}
+            <h3 style={{margin:'8px 0 0 4px', fontSize:18, fontWeight:900, color:'#1a1500'}}>Recent Feedback</h3>
+            
+            <div style={{display:'flex', flexDirection:'column', gap:12}}>
+               {feedbackData.map(fb => (
+                  <div key={fb.id} style={{background:'#fff', borderRadius:16, padding:'16px', border:'1px solid #f1f5f9', boxShadow:'0 2px 10px rgba(0,0,0,0.02)'}}>
+                     <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8}}>
+                        <div style={{display:'flex', gap:2, color:'#facc15'}}>
+                           {[...Array(5)].map((_, i) => (
+                              <span key={i} className="material-symbols-outlined" style={{fontSize:16, color: i < fb.rating ? '#facc15' : '#e2e8f0'}}>star</span>
+                           ))}
+                        </div>
+                        <span style={{fontSize:11, fontWeight:700, color:'#94a3b8'}}>{fb.date}</span>
+                     </div>
+                     <p style={{margin:'0 0 12px', fontSize:15, fontWeight:600, color:'#1e293b', lineHeight:1.4}}>"{fb.text}"</p>
+                     <div style={{display:'flex', alignItems:'center', gap:6}}>
+                        <div style={{width:24, height:24, borderRadius:12, background:'#f1f5f9', display:'flex', alignItems:'center', justifyContent:'center'}}>
+                           <span className="material-symbols-outlined" style={{fontSize:14, color:'#64748b'}}>person</span>
+                        </div>
+                        <span style={{fontSize:12, fontWeight:800, color:'#64748b'}}>{fb.author}</span>
+                     </div>
+                  </div>
+               ))}
+            </div>
+            
           </div>
-          <div style={{background:'#fff',borderRadius:18,border: '1px solid #e2e8f0',padding:16}}>
-            <p style={{margin:'0 0 12px',fontSize:15,fontWeight:800,color:C.text}}>📋 Past Reports</p>
-            {rptHist.map(r=>(
-              <div key={r.id} style={{background:C.bg,border: '1px solid #e2e8f0',borderRadius: 8,padding:12,marginBottom:8}}>
-                <Row style={{marginBottom:6}}><span style={{fontSize:12,fontWeight:800,color:C.text}}>{r.date}</span><Chip label={r.status} color={r.status.includes('Reviewed')?C.success:C.warn} bg={r.status.includes('Reviewed')?C.successBg:C.warnBg}/></Row>
-                <p style={{margin:0,fontSize:13,color:C.sub,lineHeight:1.5}}>{r.summary}</p>
-              </div>
-            ))}
+        );
+      })}
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          METER READING (Electrician / Manager)
+         ══════════════════════════════════════════════════════════════════════ */}
+      {view === 'meter_reading' && (
+        <div style={{padding:'14px 14px 32px',display:'flex',flexDirection:'column',gap:16}}>
+          
+          <div style={{background: 'linear-gradient(to right, #ecfeff, #cffafe)', borderRadius:16, padding:'16px', border:'1px solid #a5f3fc', display:'flex', alignItems:'center', gap:12}}>
+            <div style={{width:48, height:48, borderRadius:24, background:'#fff', display:'flex', alignItems:'center', justifyContent:'center', color:'#0891b2'}}>
+               <span className="material-symbols-outlined" style={{fontSize:24}}>electric_meter</span>
+            </div>
+            <div>
+               <h3 style={{margin:0, fontSize:16, fontWeight:900, color:'#164e63'}}>Utility Meters</h3>
+               <p style={{margin:'2px 0 0', fontSize:12, fontWeight:700, color:'#0891b2'}}>Log reading for accurate billing</p>
+            </div>
           </div>
+
+          <div style={{background:'#fff', borderRadius:16, padding:'16px', border:'1px solid #f1f5f9', boxShadow:'0 2px 10px rgba(0,0,0,0.02)', display:'flex', flexDirection:'column', gap:12}}>
+             <div style={{display:'flex', flexDirection:'column', gap:6}}>
+                <label style={{fontSize:12, fontWeight:800, color:'#64748b'}}>Room / Area</label>
+                <select value={meterRoom} onChange={e=>setMeterRoom(e.target.value)} style={{padding:'14px', borderRadius:12, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:15, fontWeight:700}}>
+                   <option value="101">Room 101</option>
+                   <option value="102">Room 102</option>
+                   <option value="103">Room 103</option>
+                   <option value="Ground Floor Lobby">Ground Floor Lobby</option>
+                </select>
+             </div>
+             <div style={{display:'flex', flexDirection:'column', gap:6}}>
+                <label style={{fontSize:12, fontWeight:800, color:'#64748b'}}>Electricity Reading (kWh)</label>
+                <input type="number" value={meterElec} onChange={e=>setMeterElec(e.target.value)} placeholder="e.g. 4502" style={{padding:'14px', borderRadius:12, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:15, fontWeight:700}} />
+             </div>
+             <div style={{display:'flex', flexDirection:'column', gap:6}}>
+                <label style={{fontSize:12, fontWeight:800, color:'#64748b'}}>Water Reading (Liters/Units)</label>
+                <input type="number" value={meterWater} onChange={e=>setMeterWater(e.target.value)} placeholder="e.g. 120" style={{padding:'14px', borderRadius:12, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:15, fontWeight:700}} />
+             </div>
+             <button 
+                onClick={()=>{
+                   if(!meterElec && !meterWater) return alert("Please enter at least one reading.");
+                   setMeterReadings([{id:Date.now(), room:meterRoom, elec:meterElec, water:meterWater, date:'Today'}, ...meterReadings]);
+                   setMeterElec(''); setMeterWater('');
+                   alert("Reading synced to Admin successfully!");
+                }}
+                style={{marginTop:8, padding:'14px', background:'#0891b2', color:'#fff', border:'none', borderRadius:12, fontSize:15, fontWeight:800, cursor:'pointer', fontFamily:'inherit'}}>
+                Sync to Admin ☁️
+             </button>
+          </div>
+
+          <h3 style={{margin:'8px 0 0 4px', fontSize:16, fontWeight:900, color:'#1a1500'}}>Recent Logs</h3>
+          <div style={{display:'flex', flexDirection:'column', gap:8}}>
+             {meterReadings.map(mr => (
+                <div key={mr.id} style={{background:'#f8fafc', borderRadius:12, padding:'12px', border:'1px solid #e2e8f0', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                   <div>
+                      <p style={{margin:0, fontSize:14, fontWeight:900, color:'#0f172a'}}>{mr.room.startsWith('Room') ? mr.room : 'Area: ' + mr.room}</p>
+                      <p style={{margin:'4px 0 0', fontSize:12, fontWeight:700, color:'#64748b'}}>⚡ {mr.elec||'N/A'} &nbsp; 💧 {mr.water||'N/A'}</p>
+                   </div>
+                   <span style={{fontSize:11, fontWeight:700, color:'#94a3b8'}}>{mr.date}</span>
+                </div>
+             ))}
+          </div>
+
         </div>
       )}
 
@@ -4601,6 +4924,298 @@ export default function StaffApp(){
           </button>
         </form>
       </Sheet>
+
+
+      {/* 🌾 STOCK REFILL MODAL */}
+      {showRefillModal && (
+         <div style={{position:'fixed', inset:0, background:'rgba(15,23,42,0.65)', zIndex:100, display:'flex', flexDirection:'column', justifyContent:'flex-end'}}>
+           <div style={{background:'#fff', padding:'20px 20px 32px', borderTopLeftRadius:24, borderTopRightRadius:24, display:'flex', flexDirection:'column', gap:14, maxHeight:'90vh', overflowY:'auto'}}>
+             <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+               <div>
+                 <p style={{margin:0, fontSize:18, fontWeight:900, color:'#0f172a'}}>Stock &amp; Refill Request</p>
+                 <p style={{margin:'2px 0 0', fontSize:12, fontWeight:600, color:'#64748b'}}>Kitchen Inventory vs Live Headcount</p>
+               </div>
+               <button onClick={() => setShowRefillModal(false)} style={{background:'#f1f5f9', border:'none', borderRadius:10, width:32, height:32, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer'}}>
+                 <span className="material-symbols-outlined" style={{fontSize:18, color:'#64748b'}}>close</span>
+               </button>
+             </div>
+
+             <div style={{display:'flex', flexDirection:'column', gap:10}}>
+               {[
+                 { name: 'Rice (Basmati)', stock: '14.5 kg', required: '5.0 kg', status: 'Sufficient', color: '#16a34a', bg: '#dcfce7' },
+                 { name: 'Atta (Wheat Flour)', stock: '8.2 kg', required: '4.0 kg', status: 'Sufficient', color: '#16a34a', bg: '#dcfce7' },
+                 { name: 'Arhar Dal', stock: '3.5 kg', required: '3.2 kg', status: '⚠️ LOW STOCK', color: '#d97706', bg: '#fef3c7' },
+                 { name: 'Fresh Vegetables', stock: '12.0 kg', required: '6.0 kg', status: 'Sufficient', color: '#16a34a', bg: '#dcfce7' },
+                 { name: 'Cooking Oil (Mustard)', stock: '4.0 L', required: '2.0 L', status: 'Sufficient', color: '#16a34a', bg: '#dcfce7' },
+                 { name: 'Spices & Salt', stock: '1.2 kg', required: '0.8 kg', status: 'Sufficient', color: '#16a34a', bg: '#dcfce7' },
+               ].map(item => (
+                 <div key={item.name} style={{background:'#f8fafc', borderRadius:14, padding:'12px 14px', border:'1px solid #e2e8f0', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                   <div>
+                     <p style={{margin:0, fontSize:14, fontWeight:900, color:'#0f172a'}}>{item.name}</p>
+                     <p style={{margin:'2px 0 0', fontSize:11, fontWeight:700, color:'#64748b'}}>In Stock: <b>{item.stock}</b> · Needed Today: {item.required}</p>
+                   </div>
+                   <span style={{fontSize:10, fontWeight:800, padding:'4px 8px', borderRadius:6, background: item.bg, color: item.color}}>
+                     {item.status}
+                   </span>
+                 </div>
+               ))}
+             </div>
+
+             <button onClick={() => {
+               setShowRefillModal(false);
+               alert('✅ Refill order submitted to Purchase Manager! Vendor ledger & store inventory updated.');
+             }} style={{marginTop:10, padding:'15px', background:'#0284c7', color:'#fff', border:'none', borderRadius:14, fontSize:15, fontWeight:900, cursor:'pointer', fontFamily:'inherit', boxShadow:'0 4px 12px rgba(2,132,199,0.3)'}}>
+               Submit Refill Order to Purchase Manager
+             </button>
+           </div>
+         </div>
+      )}
+
+      {/* 🚪 MOVE-OUT INSPECTION MODAL */}
+      {showMoveOutModal && (
+         <div style={{position:'fixed', inset:0, background:'rgba(15,23,42,0.65)', zIndex:100, display:'flex', flexDirection:'column', justifyContent:'flex-end'}}>
+           <div style={{background:'#fff', padding:'20px 20px 32px', borderTopLeftRadius:24, borderTopRightRadius:24, display:'flex', flexDirection:'column', gap:14, maxHeight:'92vh', overflowY:'auto'}}>
+             <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+               <div>
+                 <p style={{margin:0, fontSize:18, fontWeight:900, color:'#0f172a'}}>Move-Out Room Inspection</p>
+                 <p style={{margin:'2px 0 0', fontSize:12, fontWeight:600, color:'#64748b'}}>Audit room condition &amp; calculate damage fines</p>
+               </div>
+               <button onClick={() => setShowMoveOutModal(false)} style={{background:'#f1f5f9', border:'none', borderRadius:10, width:32, height:32, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer'}}>
+                 <span className="material-symbols-outlined" style={{fontSize:18, color:'#64748b'}}>close</span>
+               </button>
+             </div>
+
+             <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:10}}>
+               <input type="text" placeholder="Room No. *" value={moRoom} onChange={e=>setMoRoom(e.target.value)} style={{padding:'12px', borderRadius:12, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:14, fontWeight:700}} />
+               <input type="text" placeholder="Tenant Name" value={moTenant} onChange={e=>setMoTenant(e.target.value)} style={{padding:'12px', borderRadius:12, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:14, fontWeight:700}} />
+             </div>
+
+             <div style={{display:'flex', flexDirection:'column', gap:8}}>
+               <label style={{fontSize:11, fontWeight:800, color:'#64748b', textTransform:'uppercase', letterSpacing:0.5}}>Room Inventory Audit Checklist</label>
+               {moItems.map(item => (
+                 <div key={item.id} style={{background:'#f8fafc', borderRadius:12, padding:'10px 12px', border:'1px solid #e2e8f0', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                   <span style={{fontSize:13, fontWeight:800, color:'#0f172a'}}>{item.name}</span>
+                   <div style={{display:'flex', gap:6}}>
+                     {['Intact', 'Damaged', 'Missing'].map(st => (
+                       <button key={st} onClick={() => {
+                         const fineAmount = st === 'Damaged' ? 800 : st === 'Missing' ? 1500 : 0;
+                         setMoItems(prev => prev.map(x => x.id === item.id ? {...x, status: st, fine: fineAmount} : x));
+                       }} style={{padding:'4px 8px', borderRadius:6, border:'none', fontSize:10, fontWeight:800, cursor:'pointer', fontFamily:'inherit',
+                         background: item.status === st ? (st === 'Intact' ? '#dcfce7' : st === 'Damaged' ? '#fef08a' : '#fee2e2') : '#e2e8f0',
+                         color: item.status === st ? (st === 'Intact' ? '#15803d' : st === 'Damaged' ? '#92400e' : '#b91c1c') : '#64748b'
+                       }}>
+                         {st}
+                       </button>
+                     ))}
+                   </div>
+                 </div>
+               ))}
+             </div>
+
+             {/* Total Fine Summary */}
+             <div style={{background:'#fef2f2', borderRadius:14, padding:'12px 16px', border:'1px solid #fecaca', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+               <div>
+                 <p style={{margin:0, fontSize:11, fontWeight:800, color:'#b91c1c', textTransform:'uppercase'}}>Estimated Damage Fine</p>
+                 <p style={{margin:'2px 0 0', fontSize:18, fontWeight:900, color:'#991b1b'}}>
+                   ₹{moItems.reduce((acc, curr) => acc + curr.fine, 0)}
+                 </p>
+               </div>
+               <button onClick={() => alert('Camera opened for photo proof upload!')} style={{padding:'8px 12px', background:'#fff', border:'1px solid #fca5a5', borderRadius:10, color:'#b91c1c', fontSize:11, fontWeight:800, cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', gap:4}}>
+                 <span className="material-symbols-outlined" style={{fontSize:16}}>add_a_photo</span> Photo Proof
+               </button>
+             </div>
+
+             <button onClick={() => {
+               if (!moRoom) return alert('Please enter room number');
+               const totalFine = moItems.reduce((acc, curr) => acc + curr.fine, 0);
+               setShowMoveOutModal(false);
+               alert(`✅ Move-Out Inspection submitted for Room ${moRoom}! Total fine ₹${totalFine} synced to Admin Security Deposit Refund Settlement.`);
+               setMoRoom(''); setMoTenant('');
+             }} style={{padding:'15px', background:'#0f172a', color:'#fde047', border:'none', borderRadius:14, fontSize:15, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}>
+               Submit Inspection &amp; Sync to Admin Deposit Settlement
+             </button>
+           </div>
+         </div>
+      )}
+
+      {/* ⛽ LOG FUEL EXPENSE MODAL */}
+      {showFuelModal && (
+         <div style={{position:'fixed', inset:0, background:'rgba(15,23,42,0.65)', zIndex:100, display:'flex', flexDirection:'column', justifyContent:'flex-end'}}>
+           <div style={{background:'#fff', padding:'20px 20px 32px', borderTopLeftRadius:24, borderTopRightRadius:24, display:'flex', flexDirection:'column', gap:14}}>
+             <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+               <div>
+                 <p style={{margin:0, fontSize:18, fontWeight:900, color:'#0f172a'}}>Log Bus Fuel Expense</p>
+                 <p style={{margin:'2px 0 0', fontSize:12, fontWeight:600, color:'#64748b'}}>Syncs directly to Admin Petty Cash &amp; Vendor Ledger</p>
+               </div>
+               <button onClick={() => setShowFuelModal(false)} style={{background:'#f1f5f9', border:'none', borderRadius:10, width:32, height:32, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer'}}>
+                 <span className="material-symbols-outlined" style={{fontSize:18, color:'#64748b'}}>close</span>
+               </button>
+             </div>
+
+             <div style={{display:'flex', flexDirection:'column', gap:10}}>
+               <input type="number" placeholder="Fuel Liters (e.g. 15.5 L)" value={fuelLiters} onChange={e=>setFuelLiters(e.target.value)} style={{padding:'12px', borderRadius:12, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:14, fontWeight:600}} />
+               <input type="number" placeholder="Total Amount (₹) *" value={fuelAmount} onChange={e=>setFuelAmount(e.target.value)} style={{padding:'12px', borderRadius:12, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:14, fontWeight:600}} />
+               <input type="text" placeholder="Fuel Station / Pump Name" value={fuelPump} onChange={e=>setFuelPump(e.target.value)} style={{padding:'12px', borderRadius:12, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:14, fontWeight:600}} />
+             </div>
+
+             <button onClick={() => {
+               if (!fuelAmount) return alert('Please enter total amount');
+               setShowFuelModal(false);
+               alert(`✅ Fuel expense of ₹${fuelAmount} logged & synced to Admin Petty Cash Ledger!`);
+               setFuelLiters(''); setFuelAmount(''); setFuelPump('');
+             }} style={{padding:'14px', background:'#0f172a', color:'#fde047', border:'none', borderRadius:14, fontSize:15, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}>
+               Save Expense to Admin Ledger
+             </button>
+           </div>
+         </div>
+      )}
+
+      {/* 🛡️ GATEKEEPER VISITOR MODAL */}
+      {showGatekeeperModal && (
+         <div style={{position:'fixed', inset:0, background:'rgba(15,23,42,0.65)', zIndex:100, display:'flex', flexDirection:'column', justifyContent:'flex-end'}}>
+           <div style={{background:'#fff', padding:'20px 20px 32px', borderTopLeftRadius:24, borderTopRightRadius:24, display:'flex', flexDirection:'column', gap:14, maxHeight:'92vh', overflowY:'auto'}}>
+             
+             <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+               <div>
+                 <p style={{margin:0, fontSize:18, fontWeight:900, color:'#0f172a'}}>New Visitor Entry</p>
+                 <p style={{margin:'2px 0 0', fontSize:12, fontWeight:600, color:'#94a3b8'}}>Fill all details for gate record</p>
+               </div>
+               <button onClick={() => { setShowGatekeeperModal(false); setGkPhoto(null); }} style={{background:'#f1f5f9', border:'none', borderRadius:10, width:34, height:34, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer'}}>
+                 <span className="material-symbols-outlined" style={{fontSize:18, color:'#64748b'}}>close</span>
+               </button>
+             </div>
+
+             <div style={{display:'flex', flexDirection:'column', gap:8}}>
+               <label style={{fontSize:11, fontWeight:800, color:'#64748b', textTransform:'uppercase', letterSpacing:0.5}}>Visitor Photo</label>
+               <div style={{display:'flex', gap:10, alignItems:'center'}}>
+                 <div style={{width:72, height:72, borderRadius:16, background:'#f1f5f9', border:'2px dashed #cbd5e1', display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden', flexShrink:0}}>
+                   {gkPhoto ? (
+                     <img src={gkPhoto} alt="Visitor" style={{width:'100%', height:'100%', objectFit:'cover'}} />
+                   ) : (
+                     <span className="material-symbols-outlined" style={{fontSize:30, color:'#94a3b8'}}>person</span>
+                   )}
+                 </div>
+                 <div style={{display:'flex', flexDirection:'column', gap:8, flex:1}}>
+                   <label style={{display:'flex', alignItems:'center', gap:8, padding:'10px 14px', background:'#0f172a', borderRadius:12, cursor:'pointer', color:'#fde047', fontSize:13, fontWeight:800}}>
+                     <span className="material-symbols-outlined" style={{fontSize:18}}>photo_camera</span>
+                     Click Photo
+                     <input type="file" accept="image/*" capture="environment" onChange={e => {
+                       const file = e.target.files[0];
+                       if (file) {
+                         const reader = new FileReader();
+                         reader.onload = ev => setGkPhoto(ev.target.result);
+                         reader.readAsDataURL(file);
+                       }
+                     }} style={{display:'none'}} />
+                   </label>
+                   <label style={{display:'flex', alignItems:'center', gap:8, padding:'10px 14px', background:'#f1f5f9', borderRadius:12, cursor:'pointer', color:'#475569', fontSize:13, fontWeight:800}}>
+                     <span className="material-symbols-outlined" style={{fontSize:18}}>upload</span>
+                     Upload from Gallery
+                     <input type="file" accept="image/*" onChange={e => {
+                       const file = e.target.files[0];
+                       if (file) {
+                         const reader = new FileReader();
+                         reader.onload = ev => setGkPhoto(ev.target.result);
+                         reader.readAsDataURL(file);
+                       }
+                     }} style={{display:'none'}} />
+                   </label>
+                 </div>
+               </div>
+             </div>
+
+             <div style={{height:'1px', background:'#f1f5f9'}} />
+
+             <div style={{display:'flex', flexDirection:'column', gap:10}}>
+               <label style={{fontSize:11, fontWeight:800, color:'#64748b', textTransform:'uppercase', letterSpacing:0.5}}>Visitor Info</label>
+               <input type="text" placeholder="Full Name *" value={gkName} onChange={e=>setGkName(e.target.value)}
+                 style={{padding:'13px 14px', borderRadius:12, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:14, fontWeight:600, outline:'none'}} />
+               <input type="tel" placeholder="Phone Number" value={gkPhone} onChange={e=>setGkPhone(e.target.value)}
+                 style={{padding:'13px 14px', borderRadius:12, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:14, fontWeight:600, outline:'none'}} />
+               <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:10}}>
+                 <input type="text" placeholder="Room No. *" value={gkRoom} onChange={e=>setGkRoom(e.target.value)}
+                   style={{padding:'13px 14px', borderRadius:12, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:14, fontWeight:600, outline:'none'}} />
+                 <select value={gkRelation} onChange={e=>setGkRelation(e.target.value)}
+                   style={{padding:'13px 14px', borderRadius:12, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:14, fontWeight:600, color: gkRelation ? '#0f172a' : '#94a3b8'}}>
+                   <option value="" disabled>Relation *</option>
+                   <option>Father</option>
+                   <option>Mother</option>
+                   <option>Brother</option>
+                   <option>Sister</option>
+                   <option>Uncle (Chacha)</option>
+                   <option>Uncle (Mama)</option>
+                   <option>Aunt</option>
+                   <option>Grandfather</option>
+                   <option>Grandmother</option>
+                   <option>Friend</option>
+                   <option>Colleague</option>
+                   <option>Delivery Agent</option>
+                   <option>Other</option>
+                 </select>
+               </div>
+               <select value={gkPurpose} onChange={e=>setGkPurpose(e.target.value)}
+                 style={{padding:'13px 14px', borderRadius:12, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:14, fontWeight:600, color: gkPurpose ? '#0f172a' : '#94a3b8'}}>
+                 <option value="" disabled>Purpose of Visit</option>
+                 <option>Monthly visit &amp; fee payment</option>
+                 <option>Dropping food &amp; groceries</option>
+                 <option>Collecting documents</option>
+                 <option>Medical emergency</option>
+                 <option>Parcel / Delivery</option>
+                 <option>Festival / Special occasion</option>
+                 <option>Casual visit</option>
+                 <option>Moving in / Moving out</option>
+                 <option>Other</option>
+               </select>
+             </div>
+
+             <div style={{display:'flex', flexDirection:'column', gap:10}}>
+               <label style={{fontSize:11, fontWeight:800, color:'#64748b', textTransform:'uppercase', letterSpacing:0.5}}>Government ID Proof *</label>
+               <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:10}}>
+                 <select value={gkIdType} onChange={e=>setGkIdType(e.target.value)}
+                   style={{padding:'13px 14px', borderRadius:12, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:14, fontWeight:700}}>
+                   <option>Aadhaar Card</option>
+                   <option>Voter ID</option>
+                   <option>Driving Licence</option>
+                   <option>Passport</option>
+                   <option>PAN Card</option>
+                   <option>Employee ID</option>
+                   <option>Student ID</option>
+                 </select>
+                 <input type="text" placeholder="ID Number *" value={gkIdNumber} onChange={e=>setGkIdNumber(e.target.value)}
+                   style={{padding:'13px 14px', borderRadius:12, border:'1.5px solid #e2e8f0', fontFamily:'inherit', fontSize:14, fontWeight:600, outline:'none'}} />
+               </div>
+             </div>
+
+             <button
+               onClick={() => {
+                 if (!gkName.trim()) return alert('Visitor name is required');
+                 if (!gkRoom.trim()) return alert('Room number is required');
+                 if (!gkRelation) return alert('Please select relation with student');
+                 if (!gkIdNumber.trim()) return alert('ID Proof number is required');
+                 setVisitorLogs([{
+                   id: Date.now(),
+                   name: gkName,
+                   phone: gkPhone,
+                   room: gkRoom,
+                   relation: gkRelation,
+                   purpose: gkPurpose || 'Casual visit',
+                   idProof: `${gkIdType}: ${gkIdNumber}`,
+                   photo: gkPhoto,
+                   timeIn: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+                   timeOut: null
+                 }, ...visitorLogs]);
+                 setShowGatekeeperModal(false);
+                 setGkName(''); setGkPhone(''); setGkRoom(''); setGkRelation('');
+                 setGkPurpose(''); setGkIdNumber(''); setGkPhoto(null);
+                 alert('✅ Entry logged! Alert sent to Student and Admin.');
+               }}
+               style={{marginTop:6, padding:'15px', background:'#0f172a', color:'#fde047', border:'none', borderRadius:14, fontSize:15, fontWeight:900, cursor:'pointer', fontFamily:'inherit'}}
+             >
+               Allow Entry &amp; Log Record
+             </button>
+           </div>
+         </div>
+      )}
 
     </div>
   );
