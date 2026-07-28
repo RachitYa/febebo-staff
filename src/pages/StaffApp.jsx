@@ -763,6 +763,10 @@ export default function StaffApp(){
   const [gkIdNumber, setGkIdNumber] = useState('');
   const [gkRelation, setGkRelation] = useState('');
 
+  const [showAiAssistant, setShowAiAssistant] = useState(false);
+  const [aiMeetings, setAiMeetings] = usePersistentState('febebo_ai_meetings', []);
+
+
   const [visitorLogs, setVisitorLogs] = useState([
     { id: 1, name: 'Ramesh Singh', phone: '9876543210', room: '102', purpose: 'Parent', timeIn: '10:30 AM', timeOut: null },
     { id: 2, name: 'Swiggy Delivery', phone: '', room: '304', purpose: 'Food', timeIn: '11:15 AM', timeOut: '11:20 AM' }
@@ -5397,6 +5401,31 @@ export default function StaffApp(){
             </form>
           </div>
         </div>
+      )}
+
+
+      {/* 🤖 AI ASSISTANT FLOATING BUTTON */}
+      <button 
+        onClick={() => setShowAiAssistant(true)}
+        style={{
+          position: 'fixed', bottom: 20, right: 20, zIndex: 90,
+          width: 56, height: 56, borderRadius: 28,
+          background: 'linear-gradient(135deg, #0f172a 0%, #334155 100%)',
+          color: '#fde047', border: 'none',
+          boxShadow: '0 8px 24px rgba(15,23,42,0.3)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          cursor: 'pointer'
+        }}
+      >
+        <span className="material-symbols-outlined" style={{fontSize: 28}}>smart_toy</span>
+      </button>
+
+      {showAiAssistant && (
+        <AiChatInterface 
+          onClose={() => setShowAiAssistant(false)} 
+          meetings={aiMeetings} 
+          setMeetings={setAiMeetings} 
+        />
       )}
 
 </div>
