@@ -1,5 +1,33 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import AiChatInterface from '../components/AiScheduler/AiChatInterface';
+
+
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{position:'fixed', inset:0, zIndex:1000, background:'white', color:'red', padding: 20}}>
+           <h2>Something went wrong in AI Bot.</h2>
+           <pre>{this.state.error.toString()}</pre>
+           <pre>{this.state.error.stack}</pre>
+           <button onClick={() => this.setState({hasError:false})}>Close</button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+
 
 // ─── Design Tokens ────────────────────────────────────────────────────────────
 const C = {
@@ -5421,7 +5449,7 @@ export default function StaffApp(){
       </button>
 
       {showAiAssistant && (
-        <ErrorBoundary><AiChatInterface onClose={() => setShowAiAssistant(false)} meetings={aiMeetings} setMeetings={setAiMeetings} /></ErrorBoundary>
+        <AiChatInterface onClose={() => setShowAiAssistant(false)} meetings={aiMeetings} setMeetings={setAiMeetings} />
       )}
 
 </div>
