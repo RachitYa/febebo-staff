@@ -5421,11 +5421,7 @@ export default function StaffApp(){
       </button>
 
       {showAiAssistant && (
-        <AiChatInterface 
-          onClose={() => setShowAiAssistant(false)} 
-          meetings={aiMeetings} 
-          setMeetings={setAiMeetings} 
-        />
+        <ErrorBoundary><AiChatInterface onClose={() => setShowAiAssistant(false)} meetings={aiMeetings} setMeetings={setAiMeetings} /></ErrorBoundary>
       )}
 
 </div>
