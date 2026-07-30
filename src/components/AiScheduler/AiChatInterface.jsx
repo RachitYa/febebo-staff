@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { parseMeetingInput, analyzeSchedule } from './AiSchedulingEngine';
+import { processUserMessage, analyzeSchedule } from './AiSchedulingEngine';
 
 const AiChatInterface = ({ onClose, meetings, setMeetings }) => {
   const [messages, setMessages] = useState([
-    { sender: 'ai', text: 'Hi! I am your AI Scheduling Assistant powered by Groq & Llama 3. I can help you book meetings and detect live travel conflicts. Where do you need to be?' }
+    { sender: 'ai', text: 'Hi! I am your AI Business Assistant powered by Groq & Llama 3. I can schedule meetings, check your schedule, or just chat about business. What can I help you with today?' }
   ]);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -32,30 +32,47 @@ const AiChatInterface = ({ onClose, meetings, setMeetings }) => {
 
     try {
       // 1. Process NLP with Groq API
-      const parsed = await parseMeetingInput(text);
-      if (!parsed || !parsed.isValid) {
-        addAiMessage("I couldn't quite understand that. Please specify a location (e.g., Gurgaon, Noida) and a time (e.g., 12:00 PM).");
+      const result = await processUserMessage(text, meetings);
+
+      if (result.error) {
+        addAiMessage(result.message);
         setIsTyping(false);
         return;
       }
 
-      // 2. Check conflicts using Live OpenStreetMap API
-      const analysis = await analyzeSchedule(parsed, meetings);
+      // If intent is conversational or querying meetings
+      if (result.intent === 'chat' || result.intent === 'query') {
+        addAiMessage(result.response);
+        setIsTyping(false);
+        return;
+      }
 
-      if (analysis.hasConflict) {
-        addAiMessage(
-          `⚠️ **Conflict Detected**\n\n${analysis.reason}\n\nWould you like to schedule this meeting at **${analysis.suggestedTime}** instead?`,
-          {
-            type: 'conflict_resolution',
-            originalEvent: parsed,
-            suggestedTime: analysis.suggestedTime
-          }
-        );
-      } else {
-        scheduleMeeting(parsed);
+      // If intent is scheduling
+      if (result.intent === 'schedule') {
+        if (!result.isValid) {
+          addAiMessage("I couldn't quite understand the details. Please specify a location (e.g., Gurgaon, Noida) and a time (e.g., 12:00 PM).");
+          setIsTyping(false);
+          return;
+        }
+
+        // 2. Check conflicts using Live OpenStreetMap API
+        const analysis = await analyzeSchedule(result, meetings);
+
+        if (analysis.hasConflict) {
+          addAiMessage(
+            `⚠️ **Conflict Detected**\n\n${analysis.reason}\n\nWould you like to schedule this meeting at **${analysis.suggestedTime}** instead?`,
+            {
+              type: 'conflict_resolution',
+              originalEvent: result,
+              suggestedTime: analysis.suggestedTime
+            }
+          );
+        } else {
+          scheduleMeeting(result);
+        }
       }
     } catch (e) {
-      addAiMessage("Sorry, I encountered an error connecting to the API. Please try again.");
+      addAiMessage("Looks like my connection dropped. Please check your network and try again!");
     } finally {
       setIsTyping(false);
     }

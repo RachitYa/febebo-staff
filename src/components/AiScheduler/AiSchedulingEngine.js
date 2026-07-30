@@ -4,12 +4,32 @@ const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 export const DEFAULT_MEETING_DURATION_MINS = 60; // Assume 1 hour for meetings
 
 /**
- * Parses natural language to extract meeting details using Groq (Llama 3).
- * Example: "Schedule a meeting in Gurgaon on 2026-07-30 at 12:00 PM"
+ * Processes user intent (schedule, query, chat) using Groq (Llama 3.1) and provides schedule context.
  */
-export const parseMeetingInput = async (text) => {
-  const prompt = `Extract the location, date, and time from this meeting request: "${text}". 
-Return ONLY a valid JSON object with keys: "location" (string, strictly City Name only), "date" (string, DD/MM/YYYY format, assume current year 2026 if not specified, and tomorrow if mentioned), "time" (string, strict 12-hour format like '2:30 PM'). If something is missing, set it to null.`;
+export const processUserMessage = async (text, existingEvents) => {
+  const eventsContext = existingEvents.length > 0 
+    ? existingEvents.map(e => `- ${e.date} at ${e.time} in ${e.location}`).join('\n')
+    : "No meetings scheduled yet.";
+
+  const prompt = `You are a helpful AI Business & Scheduling Assistant for Febebo. 
+You understand English and Hinglish perfectly. If the user speaks Hinglish (Hindi written in English), respond naturally in Hinglish. Otherwise, use English.
+
+Current Scheduled Meetings:
+${eventsContext}
+
+User Message: "${text}"
+
+Determine the user's intent and respond with a strictly valid JSON object.
+Use this exact format:
+{
+  "intent": "schedule" | "query" | "chat",
+  "schedule_details": { "location": "City Name", "date": "DD/MM/YYYY", "time": "12:00 PM" },
+  "response": "Your conversational response here."
+}
+Rules:
+- If intent is "schedule", include "schedule_details". If date year is missing, use 2026.
+- If intent is "query", read the 'Current Scheduled Meetings' and summarize them for the user in "response".
+- If intent is "chat", provide helpful business advice or a friendly response in "response".`;
   
   try {
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -21,28 +41,40 @@ Return ONLY a valid JSON object with keys: "location" (string, strictly City Nam
       body: JSON.stringify({
         model: "llama-3.1-8b-instant",
         messages: [{ role: "user", content: prompt }],
-        temperature: 0.1,
+        temperature: 0.3,
         response_format: { type: "json_object" }
       })
     });
+
+    if (!response.ok) {
+      throw new Error(`API returned status ${response.status}`);
+    }
+
     const data = await response.json();
     const content = JSON.parse(data.choices[0].message.content);
     
-    // Fallbacks if LLM fails
-    let dateStr = content.date;
-    if (!dateStr || dateStr.toLowerCase().includes('null')) {
-       dateStr = new Date().toLocaleDateString('en-GB');
+    if (content.intent === 'schedule') {
+        const details = content.schedule_details || {};
+        let dateStr = details.date;
+        if (!dateStr || dateStr.toLowerCase().includes('null')) {
+           dateStr = new Date().toLocaleDateString('en-GB');
+        }
+        return {
+          intent: 'schedule',
+          isValid: !!details.time && !!details.location,
+          location: details.location || 'Unknown',
+          date: dateStr,
+          time: details.time
+        };
+    } else {
+        return {
+            intent: content.intent || 'chat',
+            response: content.response || "I didn't quite catch that."
+        };
     }
-
-    return {
-      isValid: !!content.time && !!content.location,
-      location: content.location || 'Unknown',
-      date: dateStr,
-      time: content.time
-    };
   } catch (e) {
     console.error('Groq API Error:', e);
-    return { isValid: false };
+    return { error: true, message: "Looks like my connection dropped. Please check your network and try again!" };
   }
 };
 
