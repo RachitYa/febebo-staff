@@ -539,17 +539,7 @@ export default function StaffApp(){
   const [salaryExpanded, setSalaryExpanded] = useState({});
   const [aiEstimates, setAiEstimates] = useState(null);
   const [isEstimating, setIsEstimating] = useState(false);
-
-  useEffect(() => {
-    if (staffRole === 'Cook') {
-      const count = students.filter(s=>s.statusB==='eaten').length || 32;
-      setIsEstimating(true);
-      estimateKitchenRequirements(count).then(estimates => {
-        setAiEstimates(estimates);
-        setIsEstimating(false);
-      });
-    }
-  }, [students, staffRole]);   // home | work | inout | salary | items | chat | reports | requests
+   // home | work | inout | salary | items | chat | reports | requests
 
   // Clock
   const [clocked, setClocked]   = usePersistentState('febebo_clocked', true);
@@ -562,6 +552,17 @@ export default function StaffApp(){
 
   // Cook
   const [students,setStudents]  = usePersistentState('febebo_students', STUDENTS);
+
+  useEffect(() => {
+    if (staffRole === 'Cook') {
+      const count = students.filter(s=>s.statusB==='eaten').length || 32;
+      setIsEstimating(true);
+      estimateKitchenRequirements(count).then(estimates => {
+        setAiEstimates(estimates);
+        setIsEstimating(false);
+      });
+    }
+  }, [students, staffRole]);
   const [timeFilter, setTimeFilter] = useState('Daily'); // Daily | Weekly | Monthly
   const [mealTab, setMealTab] = useState(() => {
     const hour = new Date().getHours();
