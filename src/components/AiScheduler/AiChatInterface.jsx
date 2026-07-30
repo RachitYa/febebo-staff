@@ -40,7 +40,7 @@ const AiChatInterface = ({
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
       const recognition = new SpeechRecognition();
-      recognition.continuous = false;
+      recognition.continuous = true; // Prevents it from auto-closing instantly on silence
       recognition.interimResults = true;
       recognition.lang = 'en-IN'; // Works well for English + Hinglish
       
@@ -56,6 +56,8 @@ const AiChatInterface = ({
         }
         if (finalTranscript) {
           handleSend(finalTranscript);
+          recognition.stop();
+          setIsListening(false);
         } else {
           setInputText(interimTranscript);
         }
@@ -64,6 +66,16 @@ const AiChatInterface = ({
       recognition.onerror = (event) => {
         console.error("Speech Recognition Error:", event.error);
         setIsListening(false);
+        
+        if (event.error === 'not-allowed') {
+          alert("Microphone access is blocked! Please click the camera/mic icon in your browser's address bar to allow it.");
+        } else if (event.error === 'network') {
+          alert("Speech API blocked by browser! If you are using Brave, you MUST turn off 'Shields' (the lion icon) for this site, or switch to Chrome/Edge.");
+        } else if (event.error === 'no-speech') {
+          // Ignore no-speech, it just means silence
+        } else {
+          alert("Mic error: " + event.error + ". Please ensure your microphone is plugged in.");
+        }
       };
 
       recognition.onend = () => {
