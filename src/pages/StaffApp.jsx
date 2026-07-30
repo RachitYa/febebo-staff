@@ -3341,24 +3341,77 @@ export default function StaffApp(){
             <p style={{margin:'4px 0 0', fontSize:12, fontWeight:700, color:'#000'}}>↑ Pay date: 1 Aug 2026 · On Track</p>
           </div>
 
-                    {/* Breakdown Card */}
-          <div onClick={() => setView('salaryBreakdown')} style={{background:'#fff', borderRadius:18, border: '1px solid #e2e8f0', padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)', cursor:'pointer'}}>
+                              {/* Breakdown Card */}
+          <div style={{background:'#fff', borderRadius:18, border: '1px solid #e2e8f0', padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
             <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12}}>
               <p style={{margin:0, fontSize:15, fontWeight:800, color:'#000'}}>💰 Salary Breakdown</p>
-              <span style={{fontSize:12, fontWeight:700, color:'#15803d', display:'flex', alignItems:'center'}}>View All <span className="material-symbols-outlined" style={{fontSize:16}}>chevron_right</span></span>
             </div>
             {[
-              {l:'Base Monthly', v:'₹16,000', c:'#000'},
-              {l:'Overtime (15 hrs)', v:'+₹2,500', c:'#15803d'},
-              {l:'Performance Bonus', v:'+₹1,000', c:'#15803d'},
-              {l:'Advance Deduction', v:'−₹1,000', c:'#b91c1c'}
+              { 
+                id: 'base', 
+                label: 'Base monthly', 
+                value: '₹16,000', 
+                color: '#000', 
+                details: [
+                  { label: 'July', value: '1900' },
+                  { label: 'June', value: '1900' },
+                  { label: 'May', value: '1900' },
+                  { label: 'April', value: '1900' },
+                  { label: 'March', value: '1900' },
+                  { label: 'Feb', value: '1900' },
+                  { label: 'Jan', value: '1900' },
+                  { label: '2025', value: '', isHeader: true },
+                  { label: 'Dec', value: '1900' },
+                  { label: 'Nov', value: '1900' }
+                ] 
+              },
+              { 
+                id: 'overtime', 
+                label: 'Overtime (15 hrs)', 
+                value: '+₹2,500', 
+                color: '#15803d',
+                details: [
+                  { label: 'July Week 1', value: '5 hrs (₹833)' },
+                  { label: 'July Week 2', value: '10 hrs (₹1,667)' }
+                ]
+              },
+              { id: 'bonus', label: 'Performance Bonus', value: '+₹1,000', color: '#15803d' },
+              { id: 'deduction', label: 'Advance Deduction', value: '−₹1,000', color: '#b91c1c' }
             ].map(row=>(
-              <div key={row.l} style={{display:'flex', justifyContent:'space-between', padding:'10px 0', borderBottom: '1px solid #e2e8f0'}}>
-                <span style={{fontSize:13, fontWeight:600, color:'#333'}}>{row.l}</span>
-                <span style={{fontSize:14, fontWeight:900, color:row.c}}>{row.v}</span>
+              <div key={row.id} style={{borderBottom: '1px solid #e2e8f0'}}>
+                <div 
+                  onClick={() => {
+                    if(row.details) {
+                      setSalaryExpanded(prev => ({...prev, [row.id]: !prev[row.id]}));
+                    }
+                  }}
+                  style={{display:'flex', justifyContent:'space-between', padding:'12px 0', cursor: row.details ? 'pointer' : 'default', alignItems: 'center'}}
+                >
+                  <span style={{fontSize:13, fontWeight:600, color:'#333', display:'flex', alignItems:'center', gap: 6}}>
+                    {row.label}
+                    {row.details && (
+                      <span className="material-symbols-outlined" style={{fontSize:18, color: '#64748b', transition: 'transform 0.2s', transform: salaryExpanded[row.id] ? 'rotate(180deg)' : 'rotate(0deg)'}}>
+                        keyboard_arrow_down
+                      </span>
+                    )}
+                  </span>
+                  <span style={{fontSize:14, fontWeight:900, color:row.color}}>{row.value}</span>
+                </div>
+                {row.details && salaryExpanded[row.id] && (
+                  <div style={{padding: '0 0 12px 10px', display: 'flex', flexDirection: 'column', gap: 8}}>
+                    {row.details.map((detail, i) => (
+                      <div key={i} style={{display:'flex', justifyContent:'space-between', alignItems: 'center'}}>
+                        <span style={{fontSize:13, fontWeight: detail.isHeader ? 800 : 500, color: detail.isHeader ? '#000' : '#64748b', marginTop: detail.isHeader ? 8 : 0}}>
+                          {detail.label}
+                        </span>
+                        <span style={{fontSize:13, fontWeight:600, color:'#333'}}>{detail.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
-            <div style={{display:'flex', justifyContent:'space-between', padding:'12px 0 0', alignItems:'center'}}>
+            <div style={{display:'flex', justifyContent:'space-between', padding:'16px 0 4px', alignItems:'center'}}>
               <span style={{fontSize:16, fontWeight:900, color:'#000'}}>Net Payable</span>
               <span style={{fontSize:22, fontWeight:900, color:'#78680a', background:'#fefce8', padding:'2px 8px', borderRadius:8, border: '1px solid #e8df9a'}}>₹18,500</span>
             </div>
