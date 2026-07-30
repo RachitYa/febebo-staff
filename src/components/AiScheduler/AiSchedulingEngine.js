@@ -27,7 +27,7 @@ Based on the conversation history and the latest message, determine the user's i
 Use this exact format:
 {
   "intent": "schedule" | "query" | "chat",
-  "schedule_details": { "location": "City Name", "date": "DD/MM/YYYY", "time": "12:00 PM" },
+  "schedule_details": { "location": "string or null", "date": "string or null", "time": "string or null" },
   "response": "Your conversational response here."
 }
 Rules:
@@ -60,14 +60,24 @@ Rules:
     
     if (content.intent === 'schedule') {
         const details = content.schedule_details || {};
+        const isComplete = !!details.time && details.time !== 'null' && !!details.location && details.location !== 'null';
+        
+        if (!isComplete) {
+            // Force it back to chat if the LLM stubbornly returns 'schedule' without details
+            return {
+                intent: 'chat',
+                response: content.response || "Sure! I just need to know what time and which city you'll be in to book that for you."
+            };
+        }
+
         let dateStr = details.date;
         if (!dateStr || dateStr.toLowerCase().includes('null')) {
            dateStr = new Date().toLocaleDateString('en-GB');
         }
         return {
           intent: 'schedule',
-          isValid: !!details.time && !!details.location,
-          location: details.location || 'Unknown',
+          isValid: true,
+          location: details.location,
           date: dateStr,
           time: details.time
         };
