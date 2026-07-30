@@ -534,7 +534,8 @@ export default function StaffApp(){
 
   // Sidebar & view
   const [sidebar,  setSidebar]  = useState(false);
-  const [view,     setView]     = useState('home');   // home | work | inout | salary | items | chat | reports | requests
+  const [view,     setView]     = useState('home');
+  const [salaryExpanded, setSalaryExpanded] = useState({});   // home | work | inout | salary | items | chat | reports | requests
 
   // Clock
   const [clocked, setClocked]   = usePersistentState('febebo_clocked', true);
