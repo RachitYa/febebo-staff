@@ -31,9 +31,9 @@ Use this exact format:
   "response": "Your conversational response here."
 }
 Rules:
-- If the user wants to schedule a meeting, but has NOT provided enough details (e.g., missing location or missing time), set intent to "chat" and politely ask them for the missing details in "response". Do NOT set intent to "schedule" unless you are confident you have BOTH the time and location.
+- If the user is trying to schedule or add a new meeting (even if phrased as a statement like "I have a meeting at 4pm"), but has NOT provided enough details (e.g., missing location or missing time), set intent to "chat" and politely ask them for the missing details in "response". Do NOT set intent to "schedule" unless you are confident you have BOTH the time and location.
 - If intent is "schedule", include "schedule_details". If date year is missing, use 2026.
-- If intent is "query", read the 'Current Scheduled Meetings' and summarize them for the user in "response".
+- If the user is explicitly asking to see their schedule (e.g., "What meetings do I have?"), set intent to "query", read the 'Current Scheduled Meetings' and summarize them for the user in "response".
 - If intent is "chat", provide helpful business advice, answer follow-up questions, or just chat in "response".`;
   
   try {
