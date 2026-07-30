@@ -40,7 +40,7 @@ Your response MUST strictly follow this exact JSON schema:
         'Authorization': `Bearer ${GROQ_API_KEY}`
       },
       body: JSON.stringify({
-        model: 'llama-3.1-70b-versatile',
+        model: 'llama-3.3-70b-versatile',
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.2, // Low temperature for consistent math
         response_format: { type: "json_object" }
