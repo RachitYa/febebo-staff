@@ -6,10 +6,13 @@ export const DEFAULT_MEETING_DURATION_MINS = 60; // Assume 1 hour for meetings
 /**
  * Processes user intent (schedule, query, chat) using Groq (Llama 3.1) and provides schedule context.
  */
-export const processUserMessage = async (text, existingEvents) => {
+export const processUserMessage = async (conversationHistory, existingEvents) => {
   const eventsContext = existingEvents.length > 0 
     ? existingEvents.map(e => `- ${e.date} at ${e.time} in ${e.location}`).join('\n')
     : "No meetings scheduled yet.";
+
+  // Build string of previous messages (limit to last 10 for context window)
+  const historyContext = conversationHistory.slice(-10).map(m => `${m.sender.toUpperCase()}: ${m.text}`).join('\n');
 
   const prompt = `You are a helpful AI Business & Scheduling Assistant for Febebo. 
 You understand English and Hinglish perfectly. If the user speaks Hinglish (Hindi written in English), respond naturally in Hinglish. Otherwise, use English.
@@ -17,9 +20,10 @@ You understand English and Hinglish perfectly. If the user speaks Hinglish (Hind
 Current Scheduled Meetings:
 ${eventsContext}
 
-User Message: "${text}"
+Conversation History:
+${historyContext}
 
-Determine the user's intent and respond with a strictly valid JSON object.
+Based on the conversation history and the latest message, determine the user's intent and respond with a strictly valid JSON object.
 Use this exact format:
 {
   "intent": "schedule" | "query" | "chat",
@@ -27,9 +31,10 @@ Use this exact format:
   "response": "Your conversational response here."
 }
 Rules:
+- If the user wants to schedule a meeting, but has NOT provided enough details (e.g., missing location or missing time), set intent to "chat" and politely ask them for the missing details in "response". Do NOT set intent to "schedule" unless you are confident you have BOTH the time and location.
 - If intent is "schedule", include "schedule_details". If date year is missing, use 2026.
 - If intent is "query", read the 'Current Scheduled Meetings' and summarize them for the user in "response".
-- If intent is "chat", provide helpful business advice or a friendly response in "response".`;
+- If intent is "chat", provide helpful business advice, answer follow-up questions, or just chat in "response".`;
   
   try {
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {

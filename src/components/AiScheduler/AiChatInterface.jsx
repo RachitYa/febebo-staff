@@ -26,13 +26,17 @@ const AiChatInterface = ({ onClose, meetings, setMeetings }) => {
     if (!text.trim()) return;
 
     // Add user message
-    setMessages(prev => [...prev, { sender: 'user', text }]);
+    const newMessages = [...messages, { sender: 'user', text }];
+    setMessages(newMessages);
     setInputText('');
     setIsTyping(true);
 
     try {
+      // Create a clean history array without UI options
+      const conversationHistory = newMessages.map(m => ({ sender: m.sender, text: m.text }));
+
       // 1. Process NLP with Groq API
-      const result = await processUserMessage(text, meetings);
+      const result = await processUserMessage(conversationHistory, meetings);
 
       if (result.error) {
         addAiMessage(result.message);
@@ -69,6 +73,7 @@ const AiChatInterface = ({ onClose, meetings, setMeetings }) => {
           );
         } else {
           scheduleMeeting(result);
+          addAiMessage(`Successfully scheduled your meeting in **${result.location}** on **${result.date}** at **${result.time}**!\n\nIs there a specific agenda or any topics you'd like to prepare for this meeting?`);
         }
       }
     } catch (e) {
