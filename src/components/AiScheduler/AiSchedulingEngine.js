@@ -1,102 +1,126 @@
-// AiSchedulingEngine.js - Mock AI Engine for Smart Scheduling
+// AiSchedulingEngine.js - Live API Engine for Smart Scheduling
 
-const TRAVEL_TIME_MATRIX_MINUTES = {
-  'gurgaon-ghaziabad': 90,
-  'ghaziabad-gurgaon': 90,
-  'gurgaon-noida': 75,
-  'noida-gurgaon': 75,
-  'delhi-gurgaon': 60,
-  'gurgaon-delhi': 60,
-  'delhi-ghaziabad': 50,
-  'ghaziabad-delhi': 50,
-  'noida-ghaziabad': 40,
-  'ghaziabad-noida': 40,
-  'delhi-noida': 45,
-  'noida-delhi': 45,
-};
-
+const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 export const DEFAULT_MEETING_DURATION_MINS = 60; // Assume 1 hour for meetings
 
 /**
- * Parses natural language to extract meeting details.
+ * Parses natural language to extract meeting details using Groq (Llama 3).
  * Example: "Schedule a meeting in Gurgaon on 2026-07-30 at 12:00 PM"
  */
-export const parseMeetingInput = (text) => {
-  const lowerText = text.toLowerCase();
+export const parseMeetingInput = async (text) => {
+  const prompt = `Extract the location, date, and time from this meeting request: "${text}". 
+Return ONLY a valid JSON object with keys: "location" (string, strictly City Name only), "date" (string, DD/MM/YYYY format, assume current year 2026 if not specified, and tomorrow if mentioned), "time" (string, strict 12-hour format like '2:30 PM'). If something is missing, set it to null.`;
   
-  // Extract Location (Simple keyword matching for prototype)
-  let location = 'Unknown';
-  if (lowerText.includes('gurgaon')) location = 'Gurgaon';
-  else if (lowerText.includes('ghaziabad')) location = 'Ghaziabad';
-  else if (lowerText.includes('noida')) location = 'Noida';
-  else if (lowerText.includes('delhi')) location = 'Delhi';
-
-  // Extract Time (Regex for simple HH:MM AM/PM)
-  let timeStr = null;
-  const timeRegex = /([0-9]{1,2}):?([0-9]{2})?\s*(am|pm)/i;
-  const timeMatch = text.match(timeRegex);
-  if (timeMatch) {
-    timeStr = timeMatch[0].toUpperCase();
-  } else {
-    // Check for formats like "12 PM" or "1 PM"
-    const simpleTimeRegex = /([0-9]{1,2})\s*(am|pm)/i;
-    const simpleMatch = text.match(simpleTimeRegex);
-    if (simpleMatch) {
-      timeStr = simpleMatch[1] + ':00 ' + simpleMatch[2].toUpperCase();
+  try {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${GROQ_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: "llama3-8b-8192",
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.1,
+        response_format: { type: "json_object" }
+      })
+    });
+    const data = await response.json();
+    const content = JSON.parse(data.choices[0].message.content);
+    
+    // Fallbacks if LLM fails
+    let dateStr = content.date;
+    if (!dateStr || dateStr.toLowerCase().includes('null')) {
+       dateStr = new Date().toLocaleDateString('en-GB');
     }
-  }
 
-  // Extract Date
-  let dateStr = new Date().toLocaleDateString('en-GB'); // Default to today
-  // very naive date extraction for prototype
-  const dateRegex = /([0-9]{1,2})[-/]([0-9]{1,2})[-/]([0-9]{4})/;
-  const dateMatch = text.match(dateRegex);
-  if (dateMatch) {
-    dateStr = dateMatch[0];
-  } else if (lowerText.includes('tomorrow')) {
-    const tmrw = new Date();
-    tmrw.setDate(tmrw.getDate() + 1);
-    dateStr = tmrw.toLocaleDateString('en-GB');
+    return {
+      isValid: !!content.time && !!content.location,
+      location: content.location || 'Unknown',
+      date: dateStr,
+      time: content.time
+    };
+  } catch (e) {
+    console.error('Groq API Error:', e);
+    return { isValid: false };
   }
-
-  return {
-    isValid: !!timeStr && location !== 'Unknown',
-    location,
-    date: dateStr,
-    time: timeStr
-  };
 };
 
 /**
- * Calculates travel time between two cities in NCR.
+ * Nominatim Geocoding Cache
  */
-export const getTravelTime = (locA, locB) => {
-  if (locA === locB) return 15; // 15 mins intra-city travel
-  const key = `${locA.toLowerCase()}-${locB.toLowerCase()}`;
-  return TRAVEL_TIME_MATRIX_MINUTES[key] || 30; // Default 30 mins
+const geocodeCache = {};
+
+/**
+ * Converts a City Name into Lat/Lon coordinates using OpenStreetMap Nominatim
+ */
+export const geocodeLocation = async (locationName) => {
+  const key = locationName.toLowerCase().trim();
+  if (geocodeCache[key]) return geocodeCache[key];
+  
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(locationName)}&format=json&limit=1`);
+    const data = await res.json();
+    if (data && data.length > 0) {
+      const coords = { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+      geocodeCache[key] = coords;
+      return coords;
+    }
+  } catch(e) {
+    console.error('OSM Geocode Error:', e);
+  }
+  return null;
 };
 
 /**
- * Converts a time string like "1:00 PM" into total minutes from midnight
+ * Calculates travel time between two cities using OSRM Live Routing API.
+ */
+export const getTravelTime = async (locA, locB) => {
+  if (locA.toLowerCase() === locB.toLowerCase()) return 15; // 15 mins intra-city travel
+  
+  const coordsA = await geocodeLocation(locA);
+  const coordsB = await geocodeLocation(locB);
+  
+  if (!coordsA || !coordsB) return 30; // Default fallback if OSM fails
+
+  try {
+    // OSRM expects: lon,lat;lon,lat
+    const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${coordsA.lon},${coordsA.lat};${coordsB.lon},${coordsB.lat}?overview=false`);
+    const data = await res.json();
+    if (data.routes && data.routes.length > 0) {
+      return data.routes[0].duration / 60; // convert seconds to minutes
+    }
+  } catch(e) {
+    console.error('OSRM Routing Error:', e);
+  }
+  return 30; // Default fallback
+};
+
+
+/**
+ * Helper to convert a time string like "1:00 PM" into total minutes from midnight
  */
 export const timeToMinutes = (timeStr) => {
-  const [time, modifier] = timeStr.split(' ');
+  if (!timeStr) return 0;
+  const parts = timeStr.split(' ');
+  if (parts.length < 2) return 0;
+  
+  const time = parts[0];
+  const modifier = parts[1];
   let [hours, minutes] = time.split(':');
-  if (hours === '12') {
-    hours = '00';
-  }
-  if (modifier === 'PM') {
-    hours = parseInt(hours, 10) + 12;
-  }
-  return parseInt(hours, 10) * 60 + parseInt(minutes, 10);
+  
+  if (hours === '12') hours = '00';
+  if (modifier.toUpperCase() === 'PM') hours = parseInt(hours, 10) + 12;
+  
+  return parseInt(hours, 10) * 60 + parseInt(minutes || '00', 10);
 };
 
 /**
- * Converts minutes from midnight into a time string like "1:00 PM"
+ * Helper to convert minutes from midnight into a time string like "1:00 PM"
  */
 export const minutesToTime = (totalMinutes) => {
   let hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
+  const minutes = Math.floor(totalMinutes % 60);
   const modifier = hours >= 12 ? 'PM' : 'AM';
   
   if (hours > 12) hours -= 12;
@@ -108,8 +132,9 @@ export const minutesToTime = (totalMinutes) => {
 
 /**
  * Checks for conflicts and returns a suggested alternative if one exists.
+ * Now Async to wait for Live Routing calculations.
  */
-export const analyzeSchedule = (newEvent, existingEvents) => {
+export const analyzeSchedule = async (newEvent, existingEvents) => {
   const newStartMins = timeToMinutes(newEvent.time);
   const newEndMins = newStartMins + DEFAULT_MEETING_DURATION_MINS;
   
@@ -134,25 +159,24 @@ export const analyzeSchedule = (newEvent, existingEvents) => {
 
     // Is new event AFTER existing event?
     if (newStartMins >= eventEndMins) {
-      const travelMins = getTravelTime(event.location, newEvent.location);
+      const travelMins = await getTravelTime(event.location, newEvent.location);
       if (newStartMins < eventEndMins + travelMins) {
         return {
           hasConflict: true,
-          reason: `Travel time from ${event.location} to ${newEvent.location} takes ~${Math.round(travelMins / 60 * 10) / 10} hours. You won't make it by ${newEvent.time}.`,
-          suggestedTime: minutesToTime(eventEndMins + travelMins)
+          reason: `Travel time from ${event.location} to ${newEvent.location} takes ~${Math.round(travelMins)} minutes via OpenStreetMap routing. You won't make it by ${newEvent.time}.`,
+          suggestedTime: minutesToTime(eventEndMins + travelMins + 15) // +15 mins buffer
         };
       }
     }
     
     // Is new event BEFORE existing event?
     if (newEndMins <= eventStartMins) {
-      const travelMins = getTravelTime(newEvent.location, event.location);
+      const travelMins = await getTravelTime(newEvent.location, event.location);
       if (newEndMins + travelMins > eventStartMins) {
-         // Push new event EARLIER so they can make it to existing event
          return {
            hasConflict: true,
-           reason: `If you end at ${minutesToTime(newEndMins)}, travel to ${event.location} takes ~${Math.round(travelMins / 60 * 10) / 10} hours. You will be late for your ${event.time} meeting.`,
-           suggestedTime: minutesToTime(eventStartMins - travelMins - DEFAULT_MEETING_DURATION_MINS)
+           reason: `If you end at ${minutesToTime(newEndMins)}, travel to ${event.location} takes ~${Math.round(travelMins)} minutes via OpenStreetMap routing. You will be late for your ${event.time} meeting.`,
+           suggestedTime: minutesToTime(eventStartMins - travelMins - DEFAULT_MEETING_DURATION_MINS - 15)
          };
       }
     }

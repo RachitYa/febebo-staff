@@ -352,3 +352,9 @@ p {
 .mt-2 { margin-top: 8px; }
 .mt-4 { margin-top: 16px; }
 .text-center { text-align: center; }
+
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
