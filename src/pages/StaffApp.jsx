@@ -3335,14 +3335,17 @@ export default function StaffApp(){
 
       {view === 'salary' && (
         <div style={{padding:'14px 14px 32px',display:'flex',flexDirection:'column',gap:14}}>
-          {/* Main Card */}
-          <div style={{background: C.primary, borderRadius:18, border: '1px solid #e2e8f0', padding:'20px 18px', color:'#000', boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
-            <p style={{margin:0, fontSize:11, color:'#000', fontWeight:800, textTransform:'uppercase', letterSpacing:.5}}>July 2026 · Net Estimated</p>
-            <h2 style={{margin:'6px 0 2px', fontSize:36, fontWeight:900, letterSpacing:-1}}>₹18,500</h2>
-            <p style={{margin:'4px 0 0', fontSize:12, fontWeight:700, color:'#000'}}>↑ Pay date: 1 Aug 2026 · On Track</p>
+          {/* Main Card - Premium Redesign */}
+          <div style={{background: 'linear-gradient(135deg, #111827 0%, #1f2937 100%)', borderRadius:20, padding:'24px 20px', color:'#fff', boxShadow: '0 12px 24px rgba(15,23,42,0.15)', position: 'relative', overflow: 'hidden', marginBottom: 14}}>
+            <div style={{position:'absolute', top: -40, right: -40, width: 120, height: 120, background: 'rgba(255,255,255,0.03)', borderRadius: '50%'}}></div>
+            <p style={{margin:0, fontSize:12, color:'#9ca3af', fontWeight:700, textTransform:'uppercase', letterSpacing: 1}}>Net Estimated · July 2026</p>
+            <h2 style={{margin:'8px 0 4px', fontSize:42, fontWeight:900, letterSpacing:-1.5, color: '#fef08a'}}>₹18,500</h2>
+            <div style={{display:'flex', alignItems:'center', gap: 6, marginTop: 12, padding: '6px 12px', background: 'rgba(255,255,255,0.1)', borderRadius: 20, width: 'fit-content'}}>
+              <span className="material-symbols-outlined" style={{fontSize:14, color: '#4ade80'}}>check_circle</span>
+              <p style={{margin:0, fontSize:12, fontWeight:700, color:'#f3f4f6'}}>Pay Date: 1 Aug 2026</p>
+            </div>
           </div>
-
-                              {/* Breakdown Card */}
+          {/* Breakdown Card */}
           <div style={{background:'#fff', borderRadius:18, border: '1px solid #e2e8f0', padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
             <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12}}>
               <p style={{margin:0, fontSize:15, fontWeight:800, color:'#000'}}>💰 Salary Breakdown</p>
@@ -3376,8 +3379,25 @@ export default function StaffApp(){
                   { label: 'July Week 2', value: '10 hrs (₹1,667)' }
                 ]
               },
-              { id: 'bonus', label: 'Performance Bonus', value: '+₹1,000', color: '#15803d' },
-              { id: 'deduction', label: 'Advance Deduction', value: '−₹1,000', color: '#b91c1c' }
+              { 
+                id: 'bonus', 
+                label: 'Performance Bonus', 
+                value: '+₹1,000', 
+                color: '#15803d',
+                details: [
+                  { label: '12 Jul - Top Performer', value: '₹500' },
+                  { label: '28 Jul - Target Met', value: '₹500' }
+                ]
+              },
+              { 
+                id: 'deduction', 
+                label: 'Advance Deduction', 
+                value: '−₹1,000', 
+                color: '#b91c1c',
+                details: [
+                  { label: '5 Jul - Salary Advance', value: '₹1,000' }
+                ]
+              }
             ].map(row=>(
               <div key={row.id} style={{borderBottom: '1px solid #e2e8f0'}}>
                 <div 
@@ -4959,43 +4979,47 @@ export default function StaffApp(){
         </form>
       </Sheet>
 
-      {/* Pay Slip Detailed View & Share Sheet */}
+      {/* Pay Slip Detailed View & Share Sheet - Premium UI */}
       <Sheet show={showPaySlipModal} onClose={() => setShowPaySlipModal(false)} title={`${selectedPaySlip?.m || ''} Pay Slip`} sub="Detailed Salary Statement">
         {selectedPaySlip && (
           <div style={{display:'flex', flexDirection:'column', gap:14}}>
-            <div style={{background:'#fef08a', padding:'14px 16px', borderRadius:12, border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(15,23,42,0.04)'}}>
-              <p style={{margin:0, fontSize:12, fontWeight:800, color:'#000', textTransform:'uppercase'}}>Net Disbursed Amount</p>
-              <h3 style={{margin:'4px 0 0', fontSize:30, fontWeight:900, color:'#000'}}>{selectedPaySlip.v}</h3>
-              <p style={{margin:'4px 0 0', fontSize:12, fontWeight:700, color:'#15803d'}}>✓ {selectedPaySlip.d} · {selectedPaySlip.bank}</p>
+            <div style={{background: 'linear-gradient(135deg, #111827 0%, #1f2937 100%)', padding:'24px 20px', borderRadius:16, color:'#fff', boxShadow: '0 8px 16px rgba(0,0,0,0.1)'}}>
+              <p style={{margin:0, fontSize:11, fontWeight:800, color:'#9ca3af', textTransform:'uppercase', letterSpacing:1}}>Net Disbursed Amount</p>
+              <h3 style={{margin:'6px 0 0', fontSize:36, fontWeight:900, color:'#fef08a', letterSpacing:-1}}>{selectedPaySlip.v}</h3>
+              <p style={{margin:'8px 0 0', fontSize:12, fontWeight:700, color:'#a7f3d0', display:'flex', alignItems:'center', gap: 4}}>
+                <span className="material-symbols-outlined" style={{fontSize:14}}>verified</span> {selectedPaySlip.d} · {selectedPaySlip.bank}
+              </p>
             </div>
 
-            <div style={{background:'#fff', border: '1px solid #e2e8f0', borderRadius:12, padding:'14px'}}>
-              <p style={{margin:'0 0 10px', fontSize:13, fontWeight:800, color:'#000', textTransform:'uppercase'}}>Earnings & Deductions</p>
-              <div style={{display:'flex', justifyContent:'space-between', padding:'6px 0', borderBottom:'1px solid #eee', fontSize:13}}>
-                <span style={{color:C.muted}}>Base Salary</span>
-                <span style={{fontWeight:800, color:'#000'}}>{selectedPaySlip.base}</span>
-              </div>
-              <div style={{display:'flex', justifyContent:'space-between', padding:'6px 0', borderBottom:'1px solid #eee', fontSize:13}}>
-                <span style={{color:C.muted}}>Overtime</span>
-                <span style={{fontWeight:800, color:'#15803d'}}>{selectedPaySlip.overtime}</span>
-              </div>
-              <div style={{display:'flex', justifyContent:'space-between', padding:'6px 0', borderBottom:'1px solid #eee', fontSize:13}}>
-                <span style={{color:C.muted}}>Bonus</span>
-                <span style={{fontWeight:800, color:'#15803d'}}>{selectedPaySlip.bonus}</span>
-              </div>
-              <div style={{display:'flex', justifyContent:'space-between', padding:'6px 0', borderBottom:'1px solid #eee', fontSize:13}}>
-                <span style={{color:C.muted}}>Deductions</span>
-                <span style={{fontWeight:800, color:'#b91c1c'}}>{selectedPaySlip.ded}</span>
-              </div>
-              <div style={{display:'flex', justifyContent:'space-between', padding:'10px 0 0', fontSize:14, fontWeight:900}}>
-                <span>Total Net Pay</span>
-                <span>{selectedPaySlip.v}</span>
+            <div style={{background:'#fff', border: '1px solid #e2e8f0', borderRadius:16, padding:'16px'}}>
+              <p style={{margin:'0 0 12px', fontSize:13, fontWeight:800, color:'#000', textTransform:'uppercase'}}>Earnings & Deductions Breakdown</p>
+              
+              {[
+                { label: 'Base Salary', value: selectedPaySlip.base, color: '#000' },
+                { label: 'Overtime', value: selectedPaySlip.overtime, color: '#15803d', sub: 'July W1: 5 hrs | July W2: 10 hrs' },
+                { label: 'Bonus', value: selectedPaySlip.bonus, color: '#15803d', sub: '12 Jul: Top Performer | 28 Jul: Target Met' },
+                { label: 'Deductions', value: selectedPaySlip.ded, color: '#b91c1c', sub: '5 Jul: Salary Advance' }
+              ].map((item, idx) => (
+                <div key={idx} style={{padding:'10px 0', borderBottom: idx===3 ? 'none' : '1px solid #f1f5f9'}}>
+                  <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                    <span style={{fontSize:14, fontWeight:700, color:'#334155'}}>{item.label}</span>
+                    <span style={{fontSize:15, fontWeight:900, color: item.color}}>{item.value}</span>
+                  </div>
+                  {item.sub && item.value !== '₹0' && (
+                    <p style={{margin:'4px 0 0', fontSize:11, fontWeight:600, color:'#94a3b8'}}>{item.sub}</p>
+                  )}
+                </div>
+              ))}
+              
+              <div style={{display:'flex', justifyContent:'space-between', padding:'16px 0 4px', marginTop: 8, borderTop: '2px dashed #e2e8f0', alignItems:'center'}}>
+                <span style={{fontSize:15, fontWeight:900, color:'#000'}}>Total Net Pay</span>
+                <span style={{fontSize:20, fontWeight:900, color:'#000'}}>{selectedPaySlip.v}</span>
               </div>
             </div>
 
-            <div style={{background:'#f5f5f5', border: '1px solid #e2e8f0', borderRadius:12, padding:'12px', fontSize:11, fontWeight:700, color:'#333'}}>
-              <p style={{margin:0}}>Reference TXN: {selectedPaySlip.txn}</p>
-              <p style={{margin:'4px 0 0'}}>Employee: {staffName} ({staffRole})</p>
+            <div style={{background:'#f8fafc', border: '1px dashed #cbd5e1', borderRadius:12, padding:'14px', fontSize:11, fontWeight:700, color:'#475569'}}>
+              <p style={{margin:0}}>Reference TXN: <span style={{color:'#0f172a', fontWeight:800}}>{selectedPaySlip.txn}</span></p>
+              <p style={{margin:'6px 0 0'}}>Employee: <span style={{color:'#0f172a', fontWeight:800}}>{staffName} ({staffRole})</span></p>
             </div>
 
             {/* Actions: Download & Share */}
