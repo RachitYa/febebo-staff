@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import AiChatInterface from '../components/AiScheduler/AiChatInterface';
+import { estimateKitchenRequirements } from '../components/AiKitchen/AiKitchenEngine.js';
 
 
 
@@ -535,7 +536,20 @@ export default function StaffApp(){
   // Sidebar & view
   const [sidebar,  setSidebar]  = useState(false);
   const [view,     setView]     = useState('home');
-  const [salaryExpanded, setSalaryExpanded] = useState({});   // home | work | inout | salary | items | chat | reports | requests
+  const [salaryExpanded, setSalaryExpanded] = useState({});
+  const [aiEstimates, setAiEstimates] = useState(null);
+  const [isEstimating, setIsEstimating] = useState(false);
+
+  useEffect(() => {
+    if (staffRole === 'Cook') {
+      const count = students.filter(s=>s.statusB==='eaten').length || 32;
+      setIsEstimating(true);
+      estimateKitchenRequirements(count).then(estimates => {
+        setAiEstimates(estimates);
+        setIsEstimating(false);
+      });
+    }
+  }, [students, staffRole]);   // home | work | inout | salary | items | chat | reports | requests
 
   // Clock
   const [clocked, setClocked]   = usePersistentState('febebo_clocked', true);
@@ -549,7 +563,13 @@ export default function StaffApp(){
   // Cook
   const [students,setStudents]  = usePersistentState('febebo_students', STUDENTS);
   const [timeFilter, setTimeFilter] = useState('Daily'); // Daily | Weekly | Monthly
-  const [mealTab, setMealTab]   = useState('Breakfast'); // Breakfast | Lunch | Snacks | Dinner
+  const [mealTab, setMealTab] = useState(() => {
+    const hour = new Date().getHours();
+    if (hour < 11) return 'Breakfast';
+    if (hour < 15) return 'Lunch';
+    if (hour < 18) return 'Snacks';
+    return 'Dinner';
+  }); // Breakfast | Lunch | Snacks | Dinner
   const [selectedStat, setSelectedStat] = useState('notEaten'); // requested | pack | extra | eaten | notEaten
   
   const [menus, setMenus] = useState({
@@ -1652,21 +1672,25 @@ export default function StaffApp(){
                </div>
 
                <div style={{display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:8}}>
-                  {(() => {
-                     const count = students.filter(s=>s.statusB==='eaten').length || 32;
-                     return [
-                        { label: 'Rice', qty: (count * 0.125).toFixed(1) + ' kg', icon: 'rice_bowl' },
-                        { label: 'Atta/Roti', qty: (count * 0.10).toFixed(1) + ' kg', icon: 'bakery_dining' },
-                        { label: 'Dal', qty: (count * 0.08).toFixed(1) + ' kg', icon: 'soup_kitchen' },
-                        { label: 'Veggies', qty: (count * 0.15).toFixed(1) + ' kg', icon: 'nutrition' },
+                  {isEstimating || !aiEstimates ? (
+                     <div style={{gridColumn: '1 / -1', padding: '24px 0', textAlign: 'center'}}>
+                        <span style={{fontSize:28}}>🤖</span>
+                        <p style={{margin: '8px 0 0', fontSize: 13, fontWeight: 700, color: '#64748b'}}>AI analyzing past consumption trends...</p>
+                     </div>
+                  ) : (
+                     [
+                        { label: 'Rice', qty: aiEstimates.rice + ' kg', icon: 'rice_bowl' },
+                        { label: 'Atta/Roti', qty: aiEstimates.atta + ' kg', icon: 'bakery_dining' },
+                        { label: 'Dal', qty: aiEstimates.dal + ' kg', icon: 'soup_kitchen' },
+                        { label: 'Veggies', qty: aiEstimates.veggies + ' kg', icon: 'nutrition' },
                      ].map(i => (
                         <div key={i.label} style={{background:'#f8fafc', borderRadius:12, padding:'10px 8px', textAlign:'center', border:'1px solid #f1f5f9'}}>
                            <span className="material-symbols-outlined" style={{fontSize:18, color:'#0284c7'}}>{i.icon}</span>
                            <p style={{margin:'2px 0 0', fontSize:14, fontWeight:900, color:'#0f172a'}}>{i.qty}</p>
                            <p style={{margin:'1px 0 0', fontSize:10, fontWeight:700, color:'#64748b'}}>{i.label}</p>
                         </div>
-                     ));
-                  })()}
+                     ))
+                  )}
                </div>
             </div>
 
@@ -1740,17 +1764,38 @@ export default function StaffApp(){
 
                return (
                  <>
-                   {/* Scrollable Stat Cards Container */}
-                   <div style={{display:'flex', gap:8, overflowX:'auto', paddingBottom:4, margin:'0 -4px', paddingLeft:4, paddingRight:4, scrollbarWidth:'none'}}>
-                     {statCards.map(s => (
-                       <div key={s.id} onClick={()=>setSelectedStat(s.id)} style={{flexShrink:0, width:92, background:selectedStat===s.id?s.bg:'#fff', border:`2px solid #000`, borderRadius:14, padding:'12px 10px', textAlign:'center', cursor:'pointer', boxShadow: selectedStat === s.id ? '0 4px 12px rgba(120, 104, 10, 0.06)' : 'none', transition:'all .15s'}}>
-                         <p style={{fontSize:22,fontWeight:900,color:'#000',margin:0}}>{s.v}</p>
-                         <p style={{fontSize:10,fontWeight:800,color:'#000',margin:'4px 0 0',textTransform:'uppercase'}}>{s.l}</p>
+                   {/* Redesigned Stat Cards */}
+                    <div style={{display:'flex', background:'#fff', border: '2px solid #000', borderRadius:16, marginBottom: 12, overflow:'hidden', boxShadow: '0 4px 12px rgba(15,23,42,0.05)'}}>
+                       <div 
+                         onClick={()=>setSelectedStat('pack')}
+                         style={{flex:1, padding:'16px 10px', textAlign:'center', cursor:'pointer', background: selectedStat==='pack' ? '#fef08a' : 'transparent', borderRight: '2px solid #000', transition:'all .15s'}}
+                       >
+                         <p style={{fontSize:28,fontWeight:900,color:'#000',margin:0}}>{statsObj.pack*mult}</p>
+                         <p style={{fontSize:11,fontWeight:800,color:'#000',margin:'4px 0 0',textTransform:'uppercase'}}>To Pack</p>
                        </div>
-                     ))}
-                   </div>
-                   
-                   {/* Filtered Student List */}
+                       <div 
+                         onClick={()=>setSelectedStat('extra')}
+                         style={{flex:1, padding:'16px 10px', textAlign:'center', cursor:'pointer', background: selectedStat==='extra' ? '#cffafe' : 'transparent', transition:'all .15s'}}
+                       >
+                         <p style={{fontSize:28,fontWeight:900,color:'#000',margin:0}}>{statsObj.extra*mult}</p>
+                         <p style={{fontSize:11,fontWeight:800,color:'#000',margin:'4px 0 0',textTransform:'uppercase'}}>Extra Plate</p>
+                       </div>
+                    </div>
+
+                    <div style={{display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:8, marginBottom: 16}}>
+                      {[
+                        {id:'requested', l:'Requested', v:statsObj.requested*mult, bg:'#fef08a'},
+                        {id:'eaten', l:'Eaten', v:statsObj.eaten*mult, bg:'#bbf7d0'},
+                        {id:'notEaten', l:'Not Eaten', v:statsObj.notEaten*mult, bg:'#fecaca'}
+                      ].map(s => (
+                        <div key={s.id} onClick={()=>setSelectedStat(s.id)} style={{background:selectedStat===s.id?s.bg:'#fff', border:`2px solid #000`, borderRadius:14, padding:'12px 6px', textAlign:'center', cursor:'pointer', boxShadow: selectedStat === s.id ? '0 4px 12px rgba(15,23,42,0.06)' : 'none', transition:'all .15s'}}>
+                          <p style={{fontSize:22,fontWeight:900,color:'#000',margin:0}}>{s.v}</p>
+                          <p style={{fontSize:10,fontWeight:800,color:'#000',margin:'4px 0 0',textTransform:'uppercase'}}>{s.l}</p>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    {/* Filtered Student List */}
                    <div style={{background:'#fff',borderRadius:18,border: '1px solid #e2e8f0',padding:16, boxShadow: '0 4px 16px rgba(15,23,42,0.05)'}}>
                      <p style={{margin:'0 0 12px',fontSize:15,fontWeight:800,color:'#000'}}>
                        {statCards.find(c=>c.id===selectedStat)?.l} · {mealTab} <span style={{fontSize:12, fontWeight:600, color:C.muted}}>({workDate})</span>
