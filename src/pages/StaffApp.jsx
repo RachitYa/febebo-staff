@@ -440,33 +440,7 @@ function usePersistentState(key, defaultValue) {
 
 
 // ─── Inventory View Component ──────────────────────────────────────────────────
-function InventoryView({ staffRole, setView, showToast }) {
-  const getInventoryForRole = (role) => {
-    const common = [
-      { id: '1', name: 'Uniform', icon: 'checkroom', qty: 2 },
-      { id: '2', name: 'ID Card', icon: 'badge', qty: 1 }
-    ];
-    if (role === 'Cleaner') return [...common, { id: '3', name: 'Apron', icon: 'dry_cleaning', qty: 2 }, { id: '4', name: 'Gloves', icon: 'front_hand', qty: 3 }, { id: '5', name: 'Mop', icon: 'cleaning_services', qty: 2 }, { id: '6', name: 'Broom', icon: 'mop', qty: 1 }, { id: '7', name: 'Bucket', icon: 'water_drop', qty: 2 }, { id: '8', name: 'Cleaning Spray', icon: 'sanitizer', qty: 3 }, { id: '9', name: 'Dustpan', icon: 'delete_sweep', qty: 1 }];
-    if (role === 'Security Guard') return [...common, { id: '3', name: 'Whistle', icon: 'sports', qty: 1 }, { id: '4', name: 'Torch / Flashlight', icon: 'flashlight_on', qty: 1 }, { id: '5', name: 'Baton', icon: 'gavel', qty: 1 }, { id: '6', name: 'Raincoat', icon: 'umbrella', qty: 1 }, { id: '7', name: 'Walkie-Talkie', icon: 'settings_remote', qty: 1 }];
-    if (role === 'Cook') return [...common, { id: '3', name: 'Chef Hat', icon: 'restaurant_menu', qty: 2 }, { id: '4', name: 'Apron', icon: 'dry_cleaning', qty: 3 }, { id: '5', name: 'Kitchen Gloves', icon: 'front_hand', qty: 4 }, { id: '6', name: 'Thermometer', icon: 'device_thermostat', qty: 1 }];
-    if (role === 'Bus Driver') return [...common, { id: '3', name: 'License Badge', icon: 'directions_bus', qty: 1 }, { id: '4', name: 'First Aid Kit', icon: 'medical_services', qty: 1 }, { id: '5', name: 'Reflective Vest', icon: 'safety_divider', qty: 1 }];
-    if (['Plumber', 'Electrician', 'Carpenter', 'Maintenance'].includes(role)) return [...common, { id: '3', name: 'Safety Helmet', icon: 'engineering', qty: 1 }, { id: '4', name: 'Toolbelt', icon: 'home_repair_service', qty: 1 }, { id: '5', name: 'Safety Shoes', icon: 'snowshoeing', qty: 1 }, { id: '6', name: 'Heavy Gloves', icon: 'front_hand', qty: 2 }];
-    if (['HR', 'Sales Manager', 'Purchase Manager'].includes(role)) return [...common, { id: '3', name: 'Laptop', icon: 'laptop_mac', qty: 1 }, { id: '4', name: 'Tablet', icon: 'tablet_mac', qty: 1 }, { id: '5', name: 'Notebook', icon: 'menu_book', qty: 2 }];
-    return [...common, { id: '3', name: 'Notebook', icon: 'menu_book', qty: 1 }, { id: '4', name: 'Safety Vest', icon: 'safety_divider', qty: 1 }];
-  };
-
-  const [myInventory, setMyInventory] = useState(() => getInventoryForRole(staffRole));
-
-  const updateQty = (id, newQty) => {
-    if(newQty < 0) return;
-    setMyInventory(prev => prev.map(item => item.id === id ? { ...item, qty: newQty } : item));
-  };
-
-  const removeItem = (id) => {
-    if(window.confirm('Remove this item from your allotted inventory?')) {
-      setMyInventory(prev => prev.filter(item => item.id !== id));
-    }
-  };
+function InventoryView({ myInventory, updateQty, removeItem, setView, showToast }) {
 
   const saveInventory = () => {
     showToast('Inventory saved successfully!', 'success');
@@ -518,6 +492,20 @@ function InventoryView({ staffRole, setView, showToast }) {
   );
 }
 
+const getInventoryForRole = (role) => {
+  const common = [
+    { id: '1', name: 'Uniform', icon: 'checkroom', qty: 2 },
+    { id: '2', name: 'ID Card', icon: 'badge', qty: 1 }
+  ];
+  if (role === 'Cleaner') return [...common, { id: '3', name: 'Apron', icon: 'dry_cleaning', qty: 2 }, { id: '4', name: 'Gloves', icon: 'front_hand', qty: 3 }, { id: '5', name: 'Mop', icon: 'cleaning_services', qty: 2 }, { id: '6', name: 'Broom', icon: 'mop', qty: 1 }, { id: '7', name: 'Bucket', icon: 'water_drop', qty: 2 }, { id: '8', name: 'Cleaning Spray', icon: 'sanitizer', qty: 3 }, { id: '9', name: 'Dustpan', icon: 'delete_sweep', qty: 1 }];
+  if (role === 'Security Guard') return [...common, { id: '3', name: 'Whistle', icon: 'sports', qty: 1 }, { id: '4', name: 'Torch / Flashlight', icon: 'flashlight_on', qty: 1 }, { id: '5', name: 'Baton', icon: 'gavel', qty: 1 }, { id: '6', name: 'Raincoat', icon: 'umbrella', qty: 1 }, { id: '7', name: 'Walkie-Talkie', icon: 'settings_remote', qty: 1 }];
+  if (role === 'Cook') return [...common, { id: '3', name: 'Chef Hat', icon: 'restaurant_menu', qty: 2 }, { id: '4', name: 'Apron', icon: 'dry_cleaning', qty: 3 }, { id: '5', name: 'Kitchen Gloves', icon: 'front_hand', qty: 4 }, { id: '6', name: 'Thermometer', icon: 'device_thermostat', qty: 1 }];
+  if (role === 'Bus Driver') return [...common, { id: '3', name: 'License Badge', icon: 'directions_bus', qty: 1 }, { id: '4', name: 'First Aid Kit', icon: 'medical_services', qty: 1 }, { id: '5', name: 'Reflective Vest', icon: 'safety_divider', qty: 1 }];
+  if (['Plumber', 'Electrician', 'Carpenter', 'Maintenance'].includes(role)) return [...common, { id: '3', name: 'Safety Helmet', icon: 'engineering', qty: 1 }, { id: '4', name: 'Toolbelt', icon: 'home_repair_service', qty: 1 }, { id: '5', name: 'Safety Shoes', icon: 'snowshoeing', qty: 1 }, { id: '6', name: 'Heavy Gloves', icon: 'front_hand', qty: 2 }];
+  if (['HR', 'Sales Manager', 'Purchase Manager'].includes(role)) return [...common, { id: '3', name: 'Laptop', icon: 'laptop_mac', qty: 1 }, { id: '4', name: 'Tablet', icon: 'tablet_mac', qty: 1 }, { id: '5', name: 'Notebook', icon: 'menu_book', qty: 2 }];
+  return [...common, { id: '3', name: 'Notebook', icon: 'menu_book', qty: 1 }, { id: '4', name: 'Safety Vest', icon: 'safety_divider', qty: 1 }];
+};
+
 export default function StaffApp(){
 
     const {user,logout} = useAuth();
@@ -539,6 +527,17 @@ export default function StaffApp(){
   const [salaryExpanded, setSalaryExpanded] = useState({});
   const [aiEstimates, setAiEstimates] = useState(null);
   const [isEstimating, setIsEstimating] = useState(false);
+  
+  const [myInventory, setMyInventory] = useState(() => getInventoryForRole(staffRole));
+  const updateQty = (id, newQty) => {
+    if(newQty < 0) return;
+    setMyInventory(prev => prev.map(item => item.id === id ? { ...item, qty: newQty } : item));
+  };
+  const removeItem = (id) => {
+    if(window.confirm('Remove this item from your allotted inventory?')) {
+      setMyInventory(prev => prev.filter(item => item.id !== id));
+    }
+  };
    // home | work | inout | salary | items | chat | reports | requests
 
   // Clock
@@ -3595,7 +3594,7 @@ export default function StaffApp(){
       {/* ══════════════════════════════════════════════════════════════════════
           ITEM LIST
          ══════════════════════════════════════════════════════════════════════ */}
-      {view === 'items' && <InventoryView staffRole={staffRole} setView={setView} showToast={showToast} />}
+      {view === 'items' && <InventoryView myInventory={myInventory} updateQty={updateQty} removeItem={removeItem} setView={setView} showToast={showToast} />}
 
       {/* ══════════════════════════════════════════════════════════════════════
           CHAT — WHATSAPP STYLE WITH REMINDERS
