@@ -59,7 +59,7 @@ export const geocodeLocation = async (locationName) => {
   if (geocodeCache[key]) return geocodeCache[key];
   
   try {
-    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(locationName)}&format=json&limit=1`);
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(locationName)}&format=json&limit=1&countrycodes=in`);
     const data = await res.json();
     if (data && data.length > 0) {
       const coords = { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
@@ -119,15 +119,20 @@ export const timeToMinutes = (timeStr) => {
  * Helper to convert minutes from midnight into a time string like "1:00 PM"
  */
 export const minutesToTime = (totalMinutes) => {
-  let hours = Math.floor(totalMinutes / 60);
-  const minutes = Math.floor(totalMinutes % 60);
+  let days = Math.floor(totalMinutes / (24 * 60));
+  let minsInDay = Math.floor(totalMinutes % (24 * 60));
+  
+  let hours = Math.floor(minsInDay / 60);
+  const minutes = Math.floor(minsInDay % 60);
   const modifier = hours >= 12 ? 'PM' : 'AM';
   
-  if (hours > 12) hours -= 12;
+  hours = hours % 12;
   if (hours === 0) hours = 12;
   
   const minStr = minutes < 10 ? '0' + minutes : minutes;
-  return `${hours}:${minStr} ${modifier}`;
+  let res = `${hours}:${minStr} ${modifier}`;
+  if (days > 0) res += ` (+${days} Day${days > 1 ? 's' : ''})`;
+  return res;
 };
 
 /**
