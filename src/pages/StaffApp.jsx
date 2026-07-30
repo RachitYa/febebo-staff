@@ -5573,7 +5573,19 @@ export default function StaffApp(){
       </button>
 
       {showAiAssistant && (
-        <AiChatInterface onClose={() => setShowAiAssistant(false)} meetings={aiMeetings} setMeetings={setAiMeetings} />
+        <AiChatInterface 
+          onClose={() => setShowAiAssistant(false)} 
+          meetings={aiMeetings} 
+          setMeetings={setAiMeetings}
+          staffRole={staffRole}
+          currentView={view}
+          clocked={clocked}
+          setClocked={setClocked}
+          myInventory={myInventory}
+          setMyInventory={setMyInventory}
+          tasks={tasks}
+          setTasks={setTasks}
+        />
       )}
 
 </div>
