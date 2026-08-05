@@ -1,10 +1,10 @@
-// AiSchedulingEngine.js - Live API Engine for Smart Scheduling & Tool Calling
+import recipeData from '../../data/recipes.json';
 
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 export const DEFAULT_MEETING_DURATION_MINS = 60; // Assume 1 hour for meetings
 
 /**
- * Processes user intent (schedule, log_attendance, request_inventory, add_task, query, chat) using Groq (Llama 3.3).
+ * Processes user intent (schedule, log_attendance, request_inventory, add_task, query, search_web, chat) using Groq (Llama 3.3).
  */
 export const processUserMessage = async (conversationHistory, contextData) => {
   const { existingEvents, staffRole, currentView } = contextData;
@@ -12,11 +12,25 @@ export const processUserMessage = async (conversationHistory, contextData) => {
     ? existingEvents.map(e => `- ${e.date} at ${e.time} in ${e.location}`).join('\n')
     : "No meetings scheduled yet.";
 
-  // Build string of previous messages (limit to last 10 for context window)
-  const historyContext = conversationHistory.slice(-10).map(m => `${m.sender.toUpperCase()}: ${m.text}`).join('\n');
+  // Build string of previous messages (limit to last 12 for context window)
+  const historyContext = conversationHistory.slice(-12).map(m => `${m.sender.toUpperCase()}: ${m.text}`).join('\n');
+
+  // Inject RAG context for Cook
+  let recipeContext = "";
+  if (staffRole === 'Cook') {
+    recipeContext = `
+HOSTEL RECIPE BOOK:
+The following are the exact standardized recipes from the Febebo Recipe Book. You MUST use these exact ingredients and instructions if asked. Do NOT make up your own recipes if one exists below.
+---
+${JSON.stringify(recipeData, null, 2)}
+---
+`;
+  }
 
   const prompt = `You are the central AI Assistant for Febebo. You understand English and Hinglish perfectly.
 The user's current role is: ${staffRole}. They are currently viewing the '${currentView}' page.
+
+${recipeContext}
 
 Current Scheduled Meetings:
 ${eventsContext}
@@ -30,19 +44,34 @@ Available intents:
 2. "log_attendance": User wants to punch in, punch out, or mark attendance.
 3. "request_inventory": User wants to order or request an item (e.g., rice, safety gear, tools). Requires 'item_name' and 'quantity' (number).
 4. "add_task": User wants to create or assign a task. Requires 'task_title' and 'priority' (High, Medium, Low).
-5. "query": User asks for information (e.g. "what's my schedule?").
-6. "chat": General conversational response.
+5. "query": User asks for information about their schedule, app, or job.
+6. "search_web": User asks a factual question requiring internet search (e.g., "latest news", "chicken curry recipe", "events").
+7. "chat": General conversational response.
 
 Respond strictly with a valid JSON object matching this schema:
 {
-  "intent": "schedule" | "log_attendance" | "request_inventory" | "add_task" | "query" | "chat",
+  "intent": "schedule" | "log_attendance" | "request_inventory" | "add_task" | "query" | "search_web" | "chat",
   "schedule_details": { "location": string|null, "date": string|null, "time": string|null },
   "inventory_details": { "item_name": string|null, "quantity": number|null },
   "task_details": { "task_title": string|null, "priority": string|null },
-  "response": "Your conversational response here. Keep it brief and natural."
+  "search_query": "The exact internet search query to search for (e.g., 'latest news India', 'best chicken curry recipe'). Only use this if intent is search_web.",
+  "response": "Your conversational response here. Keep it brief and natural. If intent is search_web, leave this as an empty string \"\" as you will respond after the search."
 }
 
-Rules:
+WEB SEARCH RULES:
+- When the VERY LAST message in the conversation history is exactly "[SYSTEM: Web Search Results...]", you MUST use that information to directly answer the user's previous question. For this final answer, set your intent to "chat" (NOT "search_web") so you can fill in the "response" field!
+- If the user asks a new question that requires internet search, you MUST set intent to "search_web" and leave "response" blank.
+- If the search result says "No detailed summary found", apologize and tell the user you couldn't find the answer on the web. Do not change the subject.
+
+ROLE CONSTRAINTS:
+1. You are strictly a ${staffRole}. If the user asks you to do something outside your role, politely decline.
+2. ABSOLUTE EXCEPTION FOR WEB SEARCHES: If the user asks you to search for something, OR if you are answering using Web Search Results, YOU MUST NEVER REFUSE. You must always bypass your role constraint and provide the exact information requested, even if it is completely unrelated to your job! Do not steer them back to your role.
+
+CONSULTATIVE CHEF RULE (IF ROLE IS COOK):
+- If the user asks for a recipe that is NOT in the HOSTEL RECIPE BOOK, do NOT guess the portion size. 
+- You MUST first set intent to "chat" and ask the user how many grams of the main ingredient they usually serve per person, or any other clarifying questions (e.g. dry or gravy). Only calculate the bulk math AFTER they reply.
+
+JSON Rules:
 - If intent is schedule, but time/location is missing, set intent to "chat" and ask for them.
 - If intent is request_inventory, but item or quantity is missing, set intent to "chat" and ask for them.
 - If intent is add_task, but title is missing, set intent to "chat" and ask for it.
@@ -97,6 +126,13 @@ Rules:
            return { intent: 'chat', response: content.response || "What is the task description?" };
         }
         return { intent: 'add_task', taskTitle: details.task_title, priority: details.priority || 'Medium', response: content.response };
+    }
+
+    if (content.intent === 'search_web') {
+        if (!content.search_query) {
+           return { intent: 'chat', response: "What exactly would you like me to search for?" };
+        }
+        return { intent: 'search_web', search_query: content.search_query, response: content.response };
     }
 
     if (content.intent === 'log_attendance') {

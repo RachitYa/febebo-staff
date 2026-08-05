@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+import LZString from 'lz-string';
 import { processUserMessage, analyzeSchedule } from './AiSchedulingEngine';
+import { speakWithCloud, stopAllSpeech } from '../../utils/ttsEngine';
 
 const AiChatInterface = ({ 
   onClose, 
@@ -12,20 +14,73 @@ const AiChatInterface = ({
   myInventory,
   setMyInventory,
   tasks,
-  setTasks
+  setTasks,
+  salary,
+  menus,
+  chats,
+  performance,
+  roleContext,
+  screenContext,
+  onAiItemRequest,
+  onAiInventoryUpdate
 }) => {
-  const [messages, setMessages] = useState([
-    { sender: 'ai', text: 'Hi! I am your central AI Assistant powered by Llama 3.3. I can schedule meetings, check your inventory, log attendance, or manage tasks. I also support voice mode—try speaking to me! What can I help you with today?' }
-  ]);
+  const [messages, setMessages] = useState(() => {
+    try {
+      const stored = localStorage.getItem(`febebo_ai_chat_${staffRole}`);
+      if (stored) {
+        const decompressed = LZString.decompress(stored);
+        if (decompressed) return JSON.parse(decompressed);
+      }
+    } catch (e) {
+      console.warn('Failed to load chat history:', e);
+    }
+    return [
+      { sender: 'ai', text: 'Hi! I am your central AI Assistant powered by Llama 3.3. I can schedule meetings, check your inventory, log attendance, or manage tasks. I also support voice mode—try speaking to me! What can I help you with today?' }
+    ];
+  });
+
+  // Save compressed chat history to local storage whenever it changes
+  useEffect(() => {
+    try {
+      const compressed = LZString.compress(JSON.stringify(messages));
+      localStorage.setItem(`febebo_ai_chat_${staffRole}`, compressed);
+    } catch (e) {
+      console.warn('Failed to save chat history:', e);
+    }
+  }, [messages, staffRole]);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   
   // Voice state
   const [isListening, setIsListening] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(false);
+  const [speakingMsgIndex, setSpeakingMsgIndex] = useState(null);
+  const [isSpeechPaused, setIsSpeechPaused] = useState(false);
   const recognitionRef = useRef(null);
+  const ttsControllerRef = useRef(null); // holds { stop } from speakWithCloud
+  const [liveLocation, setLiveLocation] = useState(null);
   
   const chatEndRef = useRef(null);
+  
+  // Use a ref to hold all current state needed by handleSend (to prevent stale closures in Voice API)
+  const stateRef = useRef({ messages, meetings, staffRole, currentView, myInventory, salary, menus, chats, performance, liveLocation, roleContext, screenContext });
+  useEffect(() => {
+    stateRef.current = { messages, meetings, staffRole, currentView, myInventory, salary, menus, chats, performance, liveLocation, roleContext, screenContext };
+  }, [messages, meetings, staffRole, currentView, myInventory, salary, menus, chats, performance, liveLocation, roleContext, screenContext]);
+
+  // Fetch Live Location on Mount
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${position.coords.latitude}&lon=${position.coords.longitude}&format=json`);
+          const data = await res.json();
+          const city = data.address?.city || data.address?.town || data.address?.state;
+          if (city) setLiveLocation(city);
+        } catch(e) {}
+      });
+    }
+  }, []);
 
   const scrollToBottom = () => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -98,24 +153,50 @@ const AiChatInterface = ({
     }
   };
 
-  const speakText = (text) => {
-    if (!voiceEnabled) return;
-    const synth = window.speechSynthesis;
-    if (synth) {
-      // Basic text cleanup for TTS
-      const cleanText = text.replace(/[*#]/g, '');
-      const utterance = new SpeechSynthesisUtterance(cleanText);
-      // Try to pick a female voice or default
-      const voices = synth.getVoices();
-      const prefVoice = voices.find(v => v.name.includes('Google') || v.name.includes('Female')) || voices[0];
-      if (prefVoice) utterance.voice = prefVoice;
-      synth.speak(utterance);
+  // Cloud TTS — plays AI responses using free Google Translate audio stream
+  const speakText = (text, force = false, msgIndex = null) => {
+    if (!voiceEnabled && !force) return;
+    // Stop any currently playing audio first
+    if (ttsControllerRef.current) {
+      ttsControllerRef.current.stop();
+      ttsControllerRef.current = null;
+    }
+    setIsSpeechPaused(false);
+
+    const controller = speakWithCloud(text, {
+      onStart: () => { if (msgIndex !== null) setSpeakingMsgIndex(msgIndex); },
+      onEnd:   () => { setSpeakingMsgIndex(null); setIsSpeechPaused(false); ttsControllerRef.current = null; },
+      rate: 1.0
+    });
+    ttsControllerRef.current = controller;
+  };
+
+  // Pause / resume — cloud audio doesn't support native pause, so we stop and show paused state
+  const toggleSpeechPause = () => {
+    if (ttsControllerRef.current) {
+      ttsControllerRef.current.stop();
+      ttsControllerRef.current = null;
+      setSpeakingMsgIndex(null);
+      setIsSpeechPaused(false);
     }
   };
 
+  const stopSpeech = () => {
+    if (ttsControllerRef.current) {
+      ttsControllerRef.current.stop();
+      ttsControllerRef.current = null;
+    }
+    stopAllSpeech(); // also cancel any Web Speech fallback
+    setSpeakingMsgIndex(null);
+    setIsSpeechPaused(false);
+  };
+
   const addAiMessage = (text, options = null) => {
-    setMessages(prev => [...prev, { sender: 'ai', text, options }]);
-    speakText(text);
+    setMessages(prev => {
+      const newMsgs = [...prev, { sender: 'ai', text, options }];
+      speakText(text, false, newMsgs.length - 1);
+      return newMsgs;
+    });
   };
 
   const handleSend = async (textOverride = null) => {
@@ -127,14 +208,38 @@ const AiChatInterface = ({
        setIsListening(false);
     }
 
-    const newMessages = [...messages, { sender: 'user', text }];
+    const currentState = stateRef.current;
+    const currentMessages = currentState.messages;
+    const currentMeetings = currentState.meetings;
+    const currentRole = currentState.staffRole;
+    const currView = currentState.currentView;
+    const currInv = currentState.myInventory;
+    const currSalary = currentState.salary;
+    const currMenus = currentState.menus;
+    const currChats = currentState.chats;
+    const currPerf = currentState.performance;
+    
+    const newMessages = [...currentMessages, { sender: 'user', text }];
     setMessages(newMessages);
     setInputText('');
     setIsTyping(true);
 
     try {
       const conversationHistory = newMessages.map(m => ({ sender: m.sender, text: m.text }));
-      const contextData = { existingEvents: meetings, staffRole, currentView };
+      const contextData = { 
+        existingEvents: currentMeetings, 
+        staffRole: currentRole, 
+        currentView: currView, 
+        myInventory: currInv,
+        salary: currSalary,
+        menus: currMenus,
+        chats: currChats,
+        performance: currPerf,
+        liveLocation: currentState.liveLocation,
+        roleContext: currentState.roleContext,
+        screenContext: currentState.screenContext
+
+      };
 
       const result = await processUserMessage(conversationHistory, contextData);
 
@@ -152,32 +257,91 @@ const AiChatInterface = ({
           return;
         }
 
-        const analysis = await analyzeSchedule(result, meetings);
+        const analysis = await analyzeSchedule(result, currentMeetings, currentState.liveLocation);
         if (analysis.hasConflict) {
           addAiMessage(
             `⚠️ **Conflict Detected**\n\n${analysis.reason}\n\nWould you like to schedule this meeting at **${analysis.suggestedTime}** instead?`,
             { type: 'conflict_resolution', originalEvent: result, suggestedTime: analysis.suggestedTime }
           );
+        } else if (analysis.isMissingLocation) {
+          addAiMessage(`⚠️ **Location Required**\n\n${analysis.reason}`);
+        } else if (analysis.needsTransportMode) {
+          addAiMessage(`🚀 **Long Distance Trip — ${analysis.distKm} km**\n\n${analysis.reason}`);
         } else {
           scheduleMeeting(result);
         }
+      }
+      // Meeting Update Intent
+      else if (result.intent === 'meeting_update') {
+        setMeetings(prev => prev.map(m => {
+          const matchesDate = !result.date || m.date === result.date;
+          const matchesTime = !result.time || m.time === result.time;
+          const matchesLoc = !result.location || m.location?.toLowerCase() === result.location?.toLowerCase();
+          if (matchesDate && matchesTime && matchesLoc && result.notes) {
+            return { ...m, notes: result.notes };
+          }
+          return m;
+        }));
+        addAiMessage(result.response || `Notes saved to your meeting.`);
       } 
+      // Cancel Schedule Intent
+      else if (result.intent === 'cancel_schedule') {
+        const matchingMeeting = currentMeetings.find(m => 
+          (!result.date || m.date === result.date) && 
+          (!result.time || m.time === result.time) && 
+          (!result.location || m.location.toLowerCase() === result.location.toLowerCase())
+        );
+
+        if (matchingMeeting) {
+          setMeetings(prev => prev.filter(m => m.id !== matchingMeeting.id));
+          addAiMessage(result.response || `✅ I have successfully canceled your meeting on ${matchingMeeting.date} at ${matchingMeeting.time}.`);
+        } else {
+          addAiMessage("I couldn't find a meeting matching those details to cancel.");
+        }
+      }
       // Attendance Intent
       else if (result.intent === 'log_attendance') {
-        setClocked(true);
-        addAiMessage(result.response || "✅ You have been successfully punched in for today!");
+        const isPunchIn = result.action === 'in';
+        setClocked(isPunchIn);
+        addAiMessage(result.response || (isPunchIn ? "✅ You have been successfully punched in for today!" : "✅ You have been successfully punched out."));
       }
       // Inventory Intent
       else if (result.intent === 'request_inventory') {
-        const newItem = { id: Date.now().toString(), name: result.itemName, icon: 'inventory_2', qty: result.qty };
-        setMyInventory(prev => [...prev, newItem]);
-        addAiMessage(result.response || `✅ I have added ${result.qty} of ${result.itemName} to your inventory request.`);
+        if (onAiItemRequest) onAiItemRequest(result.itemName, result.qty || 'Auto');
+        addAiMessage(result.response || `✅ I have requested ${result.qty || 'Auto'} of ${result.itemName} in Need Supplies.`);
+      }
+      else if (result.intent === 'update_inventory') {
+        if (onAiInventoryUpdate) onAiInventoryUpdate(result.itemName, result.qty);
+        addAiMessage(result.response || `✅ I have added ${result.qty} of ${result.itemName} to your live inventory.`);
       }
       // Task Intent
       else if (result.intent === 'add_task') {
         const newTask = { id: Date.now(), title: result.taskTitle, priority: result.priority, status: 'Pending', assignedTo: staffRole };
         setTasks(prev => [newTask, ...prev]);
         addAiMessage(result.response || `✅ I have assigned the task "${result.taskTitle}" (${result.priority} priority) successfully.`);
+      }
+      // Web Search Intent
+      else if (result.intent === 'search_web' && (result.search_query || result.query)) {
+        const queryStr = result.search_query || result.query;
+        addAiMessage(`🔍 Searching the web for: "${queryStr}"...`);
+        try {
+          const { performWebSearch } = await import('../../utils/webSearch');
+          const summary = await performWebSearch(queryStr);
+          
+          const searchContextMessage = { sender: 'user', text: `[SYSTEM: Web Search Results for "${queryStr}": ${summary}]` };
+          const secondResult = await processUserMessage([...conversationHistory, searchContextMessage], {
+            existingEvents: currentMeetings, staffRole, currentView, myInventory, salary, menus: null, chats, performance, liveLocation: null, roleContext, screenContext,
+          });
+          
+          // Small delay so user sees the "Searching" message before the result pops in
+          setTimeout(() => {
+             addAiMessage(secondResult?.response || "I found the info, but had trouble reading it.");
+          }, 500);
+          return; // Skip normal addAiMessage at bottom
+        } catch (e) {
+          addAiMessage("I couldn't connect to the web search.");
+          return;
+        }
       }
       // Query or Chat
       else {
@@ -191,9 +355,21 @@ const AiChatInterface = ({
   };
 
   const scheduleMeeting = (eventData) => {
-    const newEvent = { ...eventData, id: Date.now() };
+    const newEvent = { 
+      ...eventData, 
+      id: Date.now(),
+      withWhom: eventData.withWhom || null,
+      agenda: eventData.agenda || null,
+      durationMins: eventData.durationMins || 60,
+      notes: null
+    };
     setMeetings(prev => [...prev, newEvent]);
-    addAiMessage(`✅ Successfully scheduled meeting in **${newEvent.location}** on ${newEvent.date} at ${newEvent.time}.`);
+    let msg = `✅ Meeting scheduled in **${newEvent.location}** on ${newEvent.date} at ${newEvent.time}`;
+    if (newEvent.withWhom) msg += ` with **${newEvent.withWhom}**`;
+    if (newEvent.agenda) msg += ` — *${newEvent.agenda}*`;
+    if (newEvent.durationMins) msg += ` (~${newEvent.durationMins} min)`;
+    msg += '.';
+    addAiMessage(msg);
   };
 
   return (
@@ -256,6 +432,52 @@ const AiChatInterface = ({
                 fontSize: 14, lineHeight: 1.5
               }}>
                 <div style={{ whiteSpace: 'pre-wrap' }}>{msg.text}</div>
+                
+                {msg.sender === 'ai' && (
+                  <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
+                    {speakingMsgIndex === i ? (
+                      <>
+                        <button 
+                          onClick={toggleSpeechPause} 
+                          style={{
+                            background: 'none', border: 'none', color: '#10b981', cursor: 'pointer',
+                            padding: '4px 8px 4px 0', display: 'flex', alignItems: 'center', gap: 4,
+                            fontSize: 12, fontWeight: 700, fontFamily: 'inherit'
+                          }}
+                        >
+                          <span className="material-symbols-outlined" style={{ fontSize: 18 }}>{isSpeechPaused ? 'play_arrow' : 'pause'}</span>
+                          {isSpeechPaused ? 'Resume' : 'Pause'}
+                        </button>
+                        <button 
+                          onClick={stopSpeech} 
+                          style={{
+                            background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer',
+                            padding: '4px 8px 4px 0', display: 'flex', alignItems: 'center', gap: 4,
+                            fontSize: 12, fontWeight: 700, fontFamily: 'inherit'
+                          }}
+                        >
+                          <span className="material-symbols-outlined" style={{ fontSize: 18 }}>stop</span>
+                          Stop
+                        </button>
+                      </>
+                    ) : (
+                      <button 
+                        onClick={() => speakText(msg.text, true, i)} 
+                        style={{
+                          background: 'none', border: 'none', color: '#a855f7', cursor: 'pointer',
+                          padding: '4px 8px 4px 0', display: 'flex', alignItems: 'center', gap: 4,
+                          fontSize: 12, fontWeight: 700, fontFamily: 'inherit',
+                          opacity: 0.8, transition: 'opacity 0.2s'
+                        }}
+                        onMouseOver={e => e.currentTarget.style.opacity = 1}
+                        onMouseOut={e => e.currentTarget.style.opacity = 0.8}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: 18 }}>volume_up</span>
+                        Listen
+                      </button>
+                    )}
+                  </div>
+                )}
 
                 {msg.options?.type === 'conflict_resolution' && (
                   <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>

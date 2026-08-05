@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import AiChatInterface from '../components/AiScheduler/AiChatInterface';
+import BackgroundAiListener from '../components/AiScheduler/BackgroundAiListener';
 import { estimateKitchenRequirements } from '../components/AiKitchen/AiKitchenEngine.js';
 
 
@@ -142,10 +143,10 @@ const INIT_CANDIDATES = [
 ];
 
 const INIT_ENQUIRIES = [
-  {id:1, name:'Rohit Sharma', phone:'+91 9876543210', requirement:'Single Room AC', budget:'₹10,000', status:'New 🔴', source:'WhatsApp', text:'Looking for a single room with AC. Budget around ₹10,000.'},
-  {id:2, name:'Priya Mehta', phone:'+91 9123456789', requirement:'Double Sharing', budget:'₹7,500', status:'Contacted 🟡', source:'NoBroker', text:'Do you have double sharing available near metro station?'},
-  {id:3, name:'Arun Verma', phone:'+91 9012345678', requirement:'Triple Sharing', budget:'₹6,000', status:'Closed 🟢', source:'MagicBricks', text:'What is the security deposit for triple sharing?'},
-  {id:4, name:'Kavya Singh', phone:'+91 9811122233', requirement:'Double Sharing AC', budget:'₹8,500', status:'New 🔴', source:'Direct Call', text:'Need immediate move-in from 1st August.'}
+  {id:1, name:'Rohit Sharma', phone:'+91 9876543210', requirement:'Single Room AC', budget:'10,000', status:'New', source:'WhatsApp', text:'Looking for a single room with AC.', notes:'', chat:[{sender:'lead',text:'Hi, is AC single room available?',time:'10:30 AM'},{sender:'staff',text:'Yes we have one. Want to visit?',time:'10:32 AM'}], timeline:[{event:'Lead Created',time:'02 Aug 2026'}]},
+  {id:2, name:'Priya Mehta', phone:'+91 9123456789', requirement:'Double Sharing', budget:'7,500', status:'Contacted', source:'NoBroker', text:'Do you have double sharing near metro?', notes:'', chat:[{sender:'lead',text:'Double sharing near metro?',time:'09:15 AM'},{sender:'staff',text:'Yes! 5 min from metro. 7,500/month.',time:'09:18 AM'}], timeline:[{event:'Lead Created',time:'01 Aug 2026'},{event:'Status: Contacted',time:'01 Aug 2026'}]},
+  {id:3, name:'Arun Verma', phone:'+91 9012345678', requirement:'Triple Sharing', budget:'6,000', status:'Closed', source:'MagicBricks', text:'What is the security deposit?', notes:'Converted. Moved in 1st Aug.', chat:[{sender:'lead',text:'Security deposit?',time:'2:00 PM'},{sender:'staff',text:'2 months = 12,000. Refundable.',time:'2:05 PM'}], timeline:[{event:'Lead Created',time:'31 Jul 2026'},{event:'Closed',time:'01 Aug 2026'}]},
+  {id:4, name:'Kavya Singh', phone:'+91 9811122233', requirement:'Double Sharing AC', budget:'8,500', status:'New', source:'Direct Call', text:'Need move-in from 1st August.', notes:'', chat:[], timeline:[{event:'Lead Created',time:'02 Aug 2026'}]}
 ];
 
 const INIT_TASKS = [
@@ -491,6 +492,78 @@ function InventoryView({ myInventory, updateQty, removeItem, setView, showToast 
     </div>
   );
 }
+const getFeedbackData = (role) => {
+  let feedbackData = [];
+  switch (role) {
+    case 'Cook':
+      feedbackData = [
+        { id: 1, text: "Dinner was amazing today, especially the Paneer!", rating: 5, author: "Rahul (Rm 102)", date: "Today, 08:30 PM" },
+        { id: 2, text: "Lunch was a bit too spicy.", rating: 3, author: "Aryan (Rm 205)", date: "Yesterday, 02:15 PM" },
+        { id: 3, text: "Great breakfast as always.", rating: 5, author: "Rohan (Rm 301)", date: "24 Jul 2026" }
+      ];
+      break;
+    case 'Cleaner':
+      feedbackData = [
+        { id: 1, text: "Room 102 bathroom wasn't cleaned properly.", rating: 2, author: "Rahul (Rm 102)", date: "Today, 10:30 AM" },
+        { id: 2, text: "Corridor looks spotless, great job!", rating: 5, author: "Admin", date: "Yesterday, 04:00 PM" }
+      ];
+      break;
+    case 'Security Guard':
+      feedbackData = [
+        { id: 1, text: "Very polite at the gate, checked visitor ID properly.", rating: 5, author: "Admin", date: "Today, 11:00 AM" },
+        { id: 2, text: "Helped me carry my parcel, thank you!", rating: 5, author: "Priya (Rm 404)", date: "Yesterday, 05:30 PM" },
+        { id: 3, text: "Late night entry process was smooth.", rating: 4, author: "Kabir (Rm 112)", date: "23 Jul 2026" }
+      ];
+      break;
+    case 'Bus Driver':
+      feedbackData = [
+        { id: 1, text: "Drives safely and on time.", rating: 5, author: "Transport Dept", date: "Today, 09:15 AM" },
+        { id: 2, text: "Bus AC wasn't working in the morning.", rating: 3, author: "Student (Route A)", date: "Yesterday, 08:00 AM" },
+        { id: 3, text: "Very helpful with luggage during move-in.", rating: 5, author: "Neha (Rm 201)", date: "25 Jul 2026" }
+      ];
+      break;
+    case 'Plumber':
+    case 'Electrician':
+    case 'Carpenter':
+    case 'Maintenance':
+      feedbackData = [
+        { id: 1, text: "Issue fixed very quickly, thanks!", rating: 5, author: "Aryan (Rm 205)", date: "Today, 11:45 AM" },
+        { id: 2, text: "The repair took a bit long, but it works now.", rating: 4, author: "Rohan (Rm 301)", date: "22 Jul 2026" }
+      ];
+      break;
+    case 'Purchase Manager':
+      feedbackData = [
+        { id: 1, text: "Inventory records are perfectly maintained.", rating: 5, author: "Accounts Head", date: "Today, 10:00 AM" },
+        { id: 2, text: "Pending vegetable stock request cleared on time.", rating: 5, author: "Kitchen Head", date: "Yesterday, 03:00 PM" }
+      ];
+      break;
+    case 'HR':
+      feedbackData = [
+        { id: 1, text: "Payroll processing was very smooth this month.", rating: 5, author: "Accounts Head", date: "Today, 02:00 PM" },
+        { id: 2, text: "Staff induction was handled very professionally.", rating: 5, author: "Admin", date: "24 Jul 2026" }
+      ];
+      break;
+    case 'Sales Manager':
+      feedbackData = [
+        { id: 1, text: "Closed 5 new admissions this week, great work!", rating: 5, author: "Director", date: "Today, 04:30 PM" },
+        { id: 2, text: "Follow-up with parents was excellent.", rating: 4, author: "Admin", date: "Yesterday, 12:15 PM" }
+      ];
+      break;
+    case 'Helper':
+      feedbackData = [
+        { id: 1, text: "Very prompt in shifting luggage.", rating: 5, author: "Aditi (Rm 310)", date: "Today, 01:00 PM" },
+        { id: 2, text: "Helped set up the event chairs quickly.", rating: 5, author: "Admin", date: "25 Jul 2026" }
+      ];
+      break;
+    default:
+      feedbackData = [
+        { id: 1, text: "Excellent support and quick response.", rating: 5, author: "Student Council", date: "25 Jul 2026" },
+        { id: 2, text: "Always punctual and dedicated to duties.", rating: 5, author: "Admin", date: "20 Jul 2026" }
+      ];
+      break;
+  }
+  return feedbackData;
+};
 
 const getInventoryForRole = (role) => {
   const common = [
@@ -666,6 +739,12 @@ export default function StaffApp(){
   const [candidates, setCandidates] = useState(INIT_CANDIDATES);
   const [enquiries, setEnquiries]   = useState(INIT_ENQUIRIES);
   const [hrTab, setHrTab]           = useState('hiring'); // hiring | enquiries
+  const [selectedLead, setSelectedLead] = useState(null);
+  const [autoPilotLeads, setAutoPilotLeads] = useState({}); // {leadId: true/false} (default true)
+  const [leadChatInput, setLeadChatInput] = useState('');
+  const [aiLeadSuggestion, setAiLeadSuggestion] = useState(null);
+  const [isAnalysing, setIsAnalysing] = useState(false);
+  const [managerModal, setManagerModal] = useState(null);
 
   // Helper / Plumber / Electrician / Carpenter / Sales / Manager state
   const [selectedAttMonth, setSelectedAttMonth] = useState(null);
@@ -815,6 +894,25 @@ export default function StaffApp(){
   const [showAiAssistant, setShowAiAssistant] = useState(false);
   const [aiMeetings, setAiMeetings] = usePersistentState('febebo_ai_meetings', []);
 
+  // Live screen context — tells the AI exactly what the user is currently looking at
+  const screenContext = useMemo(() => {
+    const parts = [`Staff Role: ${staffRole}`, `Current App Section: ${view}`];
+    if (selectedLead) {
+      parts.push(`OPEN LEAD: ${selectedLead.name} | Phone: ${selectedLead.phone} | Requirement: ${selectedLead.requirement} | Budget: ₹${selectedLead.budget} | Status: ${selectedLead.status} | Source: ${selectedLead.source}`);
+      parts.push(`Lead's initial message: "${selectedLead.text}"`);
+      if (selectedLead.chat?.length) {
+        parts.push(`Conversation so far (${selectedLead.chat.length} messages):`);
+        selectedLead.chat.slice(-6).forEach(m => parts.push(`  ${m.sender === 'staff' ? 'STAFF' : 'LEAD'}: ${m.text}`));
+      }
+    } else if (managerModal) {
+      parts.push(`Manager is viewing the "${managerModal}" detail drawer`);
+    } else if (view === 'work' && staffRole === 'HR') {
+      parts.push(`HR tab: ${hrTab}`);
+      if (hrTab === 'enquiries') parts.push(`Viewing ${enquiries.length} total leads (${enquiries.filter(e=>e.status.includes('New')).length} new)`);
+    }
+    return parts.join('\n');
+  }, [staffRole, view, selectedLead, managerModal, hrTab, enquiries]);
+
 
   const [visitorLogs, setVisitorLogs] = useState([
     { id: 1, name: 'Ramesh Singh', phone: '9876543210', room: '102', purpose: 'Parent', timeIn: '10:30 AM', timeOut: null },
@@ -877,6 +975,35 @@ export default function StaffApp(){
     setItemReqSentList(prev => [req, ...prev]);
     setShowItemRequestModal(false);
     showToast('Item request sent to ' + itemReqSendTo + '!', 'success');
+  };
+
+  const handleAiItemRequest = (itemName, qty) => {
+    // Add it to the form so the user can see it was checked
+    setItemReqItems(prev => {
+      const existingIdx = prev.findIndex(i => i.name.toLowerCase() === itemName.toLowerCase());
+      if (existingIdx >= 0) {
+        return prev.map((item, idx) => idx === existingIdx ? { ...item, checked: true, qty: qty } : item);
+      } else {
+        return [{ name: itemName, unit: 'items', cat: 'AI Added', qty: qty, checked: true, custom: true }, ...prev];
+      }
+    });
+    // Create the sent request instantly
+    const req = {
+      id: Date.now(),
+      items: [`${itemName} — ${qty || 'Auto'}`],
+      sendTo: 'Manager',
+      date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
+      status: 'Pending',
+      note: 'AI Auto-Generated Request'
+    };
+    setItemReqSentList(prev => [req, ...prev]);
+    showToast(`AI successfully requested ${itemName}!`, 'success');
+  };
+
+  const handleAiInventoryUpdate = (itemName, qty) => {
+    const newItem = { id: Date.now().toString(), name: itemName, icon: 'inventory_2', qty: qty || 1 };
+    setMyInventory(prev => [...prev, newItem]);
+    showToast(`Added ${itemName} to live inventory`, 'success');
   };
 
   // Salary Pay Slip Details
@@ -2808,14 +2935,18 @@ export default function StaffApp(){
             {/* Department KPI Grid */}
             <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:10}}>
               {[
-                {label:'Staff On Duty', value:'12 / 15', icon:'groups', bg:'#eef2ff', color:'#78350f', sub:'3 on leave'},
-                {label:'Open Tickets', value: String(tickets.filter(t=>t.status!=='Resolved').length + plumbingJobs.filter(j=>j.status==='Open').length + electricalJobs.filter(j=>j.status==='Open').length + carpenterJobs.filter(j=>j.status==='Open').length), icon:'confirmation_number', bg:'#fee2e2', color:'#b91c1c', sub:'Across all depts'},
-                {label:'Vacant Rooms', value: String(rooms.filter(r=>r.status==='Vacant').length), icon:'meeting_room', bg:'#fef3c7', color:'#92400e', sub:'Fill immediately'},
-                {label:'Pending POs', value: String(demands.filter(d=>d.status==='Pending').length), icon:'pending_actions', bg:'#f0fdf4', color:'#166534', sub:'Supplier action needed'},
-                {label:'New Leads', value: String(enquiries.filter(e=>e.status.includes('New')).length), icon:'contact_phone', bg:'#ecfdf5', color:'#065f46', sub:'Room enquiries'},
-                {label:'Mess Covers', value:'28 / 30', icon:'restaurant', bg:'#ede9fe', color:'#7c3aed', sub:'Today lunch'},
+                {label:'Staff On Duty', value:'12 / 15', icon:'groups', bg:'#eef2ff', color:'#78350f', sub:'3 on leave', modal: 'staff'},
+                {label:'Open Tickets', value: String(tickets.filter(t=>t.status!=='Resolved').length + plumbingJobs.filter(j=>j.status==='Open').length + electricalJobs.filter(j=>j.status==='Open').length + carpenterJobs.filter(j=>j.status==='Open').length), icon:'confirmation_number', bg:'#fee2e2', color:'#b91c1c', sub:'Across all depts', modal: 'tickets'},
+                {label:'Vacant Rooms', value: String(rooms.filter(r=>r.status==='Vacant').length), icon:'meeting_room', bg:'#fef3c7', color:'#92400e', sub:'Fill immediately', modal: 'rooms'},
+                {label:'Pending POs', value: String(demands.filter(d=>d.status==='Pending').length), icon:'pending_actions', bg:'#f0fdf4', color:'#166534', sub:'Supplier action needed', modal: 'pos'},
+                {label:'New Leads', value: String(enquiries.filter(e=>e.status.includes('New')).length), icon:'contact_phone', bg:'#ecfdf5', color:'#065f46', sub:'Room enquiries', modal: 'leads'},
+                {label:'Mess Covers', value:'28 / 30', icon:'restaurant', bg:'#ede9fe', color:'#7c3aed', sub:'Today lunch', modal: 'mess'},
               ].map(k => (
-                <div key={k.label} style={{background:k.bg, borderRadius:14, border:'1px solid #e2e8f0', padding:14, boxShadow:'0 3px 10px rgba(15,23,42,0.04)'}}>
+                <div key={k.label} 
+                     onClick={() => setManagerModal(k.modal)}
+                     onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.02)'; e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.1)'; }}
+                     onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 3px 10px rgba(15,23,42,0.04)'; }}
+                     style={{background:k.bg, borderRadius:14, border:'1px solid #e2e8f0', padding:14, boxShadow:'0 3px 10px rgba(15,23,42,0.04)', cursor: 'pointer', transition: 'all 0.2s'}}>
                   <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
                     <div>
                       <p style={{fontSize:11, fontWeight:800, color:k.color, margin:0, textTransform:'uppercase', letterSpacing:0.3}}>{k.label}</p>
@@ -2837,7 +2968,9 @@ export default function StaffApp(){
                 {dept:'Electrical', count: electricalJobs.filter(j=>j.status==='Open').length, icon:'bolt', high: electricalJobs.filter(j=>j.priority==='High'&&j.status==='Open').length, color:'#facc15', bg:'#fefce8'},
                 {dept:'Carpentry', count: carpenterJobs.filter(j=>j.status==='Open').length, icon:'carpenter', high: carpenterJobs.filter(j=>j.priority==='High'&&j.status==='Open').length, color:'#d97706', bg:'#fef3c7'},
               ].map(d => (
-                <div key={d.dept} style={{background:d.bg, border:`1px solid ${d.color}40`, borderRadius:12, padding:'10px 14px', marginBottom:8, display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                <div key={d.dept} 
+                     onClick={() => setManagerModal(d.dept.toLowerCase())}
+                     style={{background:d.bg, border:`1px solid ${d.color}40`, borderRadius:12, padding:'10px 14px', marginBottom:8, display:'flex', justifyContent:'space-between', alignItems:'center', cursor:'pointer'}}>
                   <div style={{display:'flex', alignItems:'center', gap:10}}>
                     <span className="material-symbols-outlined" style={{fontSize:18, color:d.color}}>{d.icon}</span>
                     <div>
@@ -2865,6 +2998,324 @@ export default function StaffApp(){
               </div>
             </div>
           </>)}
+
+          {/* MANAGER DETAIL MODALS */}
+          {managerModal && (
+            <div style={{position:'fixed', top:0, left:0, right:0, bottom:0, background:'rgba(0,0,0,0.6)', zIndex:999, display:'flex', flexDirection:'column', justifyContent:'flex-end'}}>
+              <div style={{background:'#f8fafc', height:'85vh', borderTopLeftRadius:24, borderTopRightRadius:24, display:'flex', flexDirection:'column', overflow:'hidden', animation: 'slideUp 0.3s ease-out'}}>
+                <div style={{background:'#fff', padding:'16px 20px', borderBottom:'1px solid #e2e8f0', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                  <h3 style={{margin:0, fontSize:18, fontWeight:900, color:C.text, textTransform:'capitalize'}}>{managerModal} Details</h3>
+                  <button onClick={() => setManagerModal(null)} style={{background:'transparent', border:'none', fontSize:24, fontWeight:900, cursor:'pointer', color:C.text}}>×</button>
+                </div>
+                <div style={{padding:16, overflowY:'auto', flex:1, display:'flex', flexDirection:'column', gap:10}}>
+
+                  {/* Staff Modal */}
+                  {managerModal === 'staff' && [
+                    {role:'Cook', count:2, status:'On Duty', clockIn:'07:30 AM', color:'#166534', bg:'#dcfce7'},
+                    {role:'Cleaner', count:3, status:'On Duty', clockIn:'08:00 AM', color:'#166534', bg:'#dcfce7'},
+                    {role:'Maintenance', count:2, status:'On Duty', clockIn:'09:00 AM', color:'#166534', bg:'#dcfce7'},
+                    {role:'Security Guard', count:2, status:'On Duty', clockIn:'08:00 AM', color:'#166534', bg:'#dcfce7'},
+                    {role:'Helper', count:3, status:'On Duty', clockIn:'09:30 AM', color:'#166534', bg:'#dcfce7'},
+                    {role:'Plumber', count:1, status:'On Duty', clockIn:'09:00 AM', color:'#166534', bg:'#dcfce7'},
+                    {role:'HR', count:1, status:'On Leave', clockIn:'—', color:'#b91c1c', bg:'#fee2e2'},
+                    {role:'Bus Driver', count:1, status:'On Duty', clockIn:'07:00 AM', color:'#166534', bg:'#dcfce7'},
+                  ].map(s => (
+                    <div key={s.role} style={{background:'#fff', border:'1px solid #e2e8f0', borderRadius:12, padding:'12px 14px', display:'flex', justifyContent:'space-between', alignItems:'center', boxShadow:'0 2px 6px rgba(0,0,0,0.03)'}}>
+                      <div>
+                        <p style={{margin:0, fontSize:14, fontWeight:800, color:C.text}}>{s.role} <span style={{color:'#64748b', fontWeight:600, fontSize:13}}>×{s.count}</span></p>
+                        <p style={{margin:'2px 0 0', fontSize:11, color:'#64748b', fontWeight:600}}>Clock-in: {s.clockIn}</p>
+                      </div>
+                      <span style={{fontSize:11, fontWeight:800, padding:'4px 10px', borderRadius:20, background:s.bg, color:s.color}}>{s.status}</span>
+                    </div>
+                  ))}
+
+                  {/* Tickets Modal */}
+                  {managerModal === 'tickets' && [
+                    ...tickets.filter(t=>t.status!=='Resolved').map(t=>({...t, dept:'Maintenance', deptColor:'#fda4af', deptBg:'#fff1f2'})),
+                    ...plumbingJobs.filter(j=>j.status==='Open').map(j=>({...j, dept:'Plumbing', title:j.issue, deptColor:'#60a5fa', deptBg:'#eff6ff'})),
+                    ...electricalJobs.filter(j=>j.status==='Open').map(j=>({...j, dept:'Electrical', title:j.issue, deptColor:'#facc15', deptBg:'#fefce8'})),
+                    ...carpenterJobs.filter(j=>j.status==='Open').map(j=>({...j, dept:'Carpentry', title:j.issue, deptColor:'#d97706', deptBg:'#fef3c7'})),
+                  ].map((t,i) => (
+                    <div key={i} style={{background:'#fff', border:'1px solid #e2e8f0', borderRadius:12, padding:'12px 14px', boxShadow:'0 2px 6px rgba(0,0,0,0.03)'}}>
+                      <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:6}}>
+                        <span style={{fontSize:11, fontWeight:800, padding:'2px 8px', borderRadius:8, background:t.deptBg, color:t.deptColor, border:`1px solid ${t.deptColor}40`}}>{t.dept}</span>
+                        <span style={{fontSize:11, fontWeight:800, padding:'2px 8px', borderRadius:8, background:t.priority==='High'?'#fef08a':'#f1f5f9', color:'#000'}}>{t.priority}</span>
+                      </div>
+                      <p style={{margin:'4px 0 2px', fontSize:13, fontWeight:800, color:C.text}}>{t.title || t.issue}</p>
+                      <p style={{margin:0, fontSize:11, color:'#64748b', fontWeight:600}}>Room {t.room} · {t.date}</p>
+                    </div>
+                  ))}
+                  {managerModal === 'tickets' && tickets.filter(t=>t.status!=='Resolved').length + plumbingJobs.filter(j=>j.status==='Open').length + electricalJobs.filter(j=>j.status==='Open').length + carpenterJobs.filter(j=>j.status==='Open').length === 0 && (
+                    <p style={{textAlign:'center', color:'#64748b', padding:24, fontWeight:700}}>✅ No open tickets!</p>
+                  )}
+
+                  {/* Rooms Modal */}
+                  {managerModal === 'rooms' && rooms.filter(r=>r.status==='Vacant').map(r => (
+                    <div key={r.id} style={{background:'#fffbeb', border:'1px solid #fcd34d', borderRadius:12, padding:'12px 14px', display:'flex', justifyContent:'space-between', alignItems:'center', boxShadow:'0 2px 6px rgba(0,0,0,0.03)'}}>
+                      <div>
+                        <p style={{margin:0, fontSize:15, fontWeight:900, color:C.text}}>Room {r.number}</p>
+                        <p style={{margin:'2px 0 0', fontSize:11, color:'#64748b', fontWeight:600}}>Floor {r.floor} · {r.type} · {r.ac?'AC ❄️':'Non-AC'}</p>
+                      </div>
+                      <div style={{textAlign:'right'}}>
+                        <p style={{margin:0, fontSize:14, fontWeight:900, color:'#166534'}}>{r.rent}</p>
+                        <Chip label="Vacant" color="#92400e" bg="#fef3c7"/>
+                      </div>
+                    </div>
+                  ))}
+                  {managerModal === 'rooms' && rooms.filter(r=>r.status==='Vacant').length === 0 && (
+                    <p style={{textAlign:'center', color:'#64748b', padding:24, fontWeight:700}}>✅ No vacant rooms!</p>
+                  )}
+
+                  {/* Pending POs Modal */}
+                  {managerModal === 'pos' && demands.filter(d=>d.status==='Pending').map((d,i) => (
+                    <div key={i} style={{background:'#f0fdf4', border:'1px solid #86efac', borderRadius:12, padding:'12px 14px', display:'flex', justifyContent:'space-between', alignItems:'center', boxShadow:'0 2px 6px rgba(0,0,0,0.03)'}}>
+                      <div>
+                        <p style={{margin:0, fontSize:14, fontWeight:800, color:C.text}}>{d.item || d.name}</p>
+                        <p style={{margin:'2px 0 0', fontSize:11, color:'#64748b', fontWeight:600}}>{d.supplier || 'No supplier'} · {d.date || 'Today'}</p>
+                      </div>
+                      <span style={{fontSize:13, fontWeight:900, color:'#166534'}}>{d.amount || d.total || '—'}</span>
+                    </div>
+                  ))}
+                  {managerModal === 'pos' && demands.filter(d=>d.status==='Pending').length === 0 && (
+                    <p style={{textAlign:'center', color:'#64748b', padding:24, fontWeight:700}}>✅ No pending purchase orders!</p>
+                  )}
+
+                  {/* Mess Modal */}
+                  {managerModal === 'mess' && (
+                    <>
+                      <div style={{display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:10}}>
+                        {[{label:'Breakfast',covers:28,total:30},{label:'Lunch',covers:28,total:30},{label:'Dinner',covers:25,total:30}].map(m=>(
+                          <div key={m.label} style={{background:'#faf5ff',border:'1px solid #e9d5ff',borderRadius:12,padding:14,textAlign:'center'}}>
+                            <p style={{margin:0,fontSize:10,fontWeight:800,textTransform:'uppercase',color:'#7c3aed'}}>{m.label}</p>
+                            <p style={{margin:'4px 0 0',fontSize:22,fontWeight:900,color:'#7c3aed'}}>{m.covers}<span style={{fontSize:12,color:'#94a3b8'}}>/{m.total}</span></p>
+                          </div>
+                        ))}
+                      </div>
+                      <div style={{background:'#fff', border:'1px solid #e2e8f0', borderRadius:12, padding:14}}>
+                        <p style={{margin:'0 0 8px', fontSize:13, fontWeight:800, color:C.text}}>Today's Absent</p>
+                        <p style={{margin:0, fontSize:12, color:'#64748b', fontWeight:600}}>2 residents absent · 1 opted out for dinner</p>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Leads Modal */}
+                  {managerModal === 'leads' && (
+                    <div style={{display:'flex', flexDirection:'column', gap:12}}>
+                      {enquiries.map(e => (
+                        <div key={e.id} 
+                             onClick={() => setSelectedLead(e)}
+                             style={{background:'#fff', border: '1px solid #e2e8f0', borderRadius:16, padding:16, boxShadow: '0 4px 14px rgba(15,23,42,0.04)', cursor: 'pointer'}}>
+                          <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:8}}>
+                            <div>
+                              <h4 style={{margin:0, fontSize:15, fontWeight:900, color:'#0f172a'}}>{e.name}</h4>
+                              <p style={{margin:0, fontSize:12, color:'#64748b', fontWeight:600}}>{e.phone}</p>
+                            </div>
+                            <span style={{fontSize:11, fontWeight:800, padding:'4px 10px', borderRadius:20, background:e.status.includes('Closed')?'#dcfce7':e.status.includes('Contacted')?'#fef3c7':'#fee2e2', color:e.status.includes('Closed')?'#15803d':e.status.includes('Contacted')?'#b45309':'#b91c1c'}}>{e.status}</span>
+                          </div>
+                          <div style={{display:'flex', gap:6, flexWrap:'wrap', marginTop:8}}>
+                            <span style={{fontSize:11, fontWeight:800, background:'#f1f5f9', color:'#475569', padding:'2px 8px', borderRadius:6}}>{e.requirement}</span>
+                            <span style={{fontSize:11, fontWeight:800, background:'#f1f5f9', color:'#475569', padding:'2px 8px', borderRadius:6}}>{e.budget}</span>
+                            <span style={{fontSize:11, fontWeight:800, background:'#f8fafc', color:'#94a3b8', padding:'2px 8px', borderRadius:6}}>{e.source}</span>
+                          </div>
+                        </div>
+                      ))}
+                      {enquiries.length === 0 && (
+                        <p style={{textAlign:'center', color:'#64748b', padding:24, fontWeight:700}}>No active leads.</p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Per-Department Job Modals */}
+                  {['maintenance','plumbing','electrical','carpentry'].includes(managerModal) && (managerModal==='maintenance'?tickets:managerModal==='plumbing'?plumbingJobs:managerModal==='electrical'?electricalJobs:carpenterJobs).map((t,i) => (
+                    <div key={i} style={{background:'#f8fafc', border:'1px solid #e2e8f0', borderRadius:12, padding:'12px 14px', boxShadow:'0 2px 6px rgba(0,0,0,0.03)'}}>
+                      <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:6}}>
+                        <span style={{fontSize:13, fontWeight:800, color:C.text}}>Room {t.room}</span>
+                        <span style={{fontSize:11, fontWeight:800, padding:'2px 8px', borderRadius:8, background:t.priority==='High'?'#fef08a':t.status==='Resolved'||t.status==='Completed'?'#dcfce7':'#f1f5f9', color:'#000'}}>{t.status}</span>
+                      </div>
+                      <p style={{margin:'2px 0', fontSize:12, fontWeight:700, color:C.text}}>{t.issue || t.title}</p>
+                      {t.priority === 'High' && <p style={{margin:'2px 0 0', fontSize:11, fontWeight:800, color:'#b91c1c'}}>⚠️ High Priority</p>}
+                      <p style={{margin:'4px 0 0', fontSize:11, color:'#64748b'}}>{t.date} {t.note ? `· ${t.note}` : ''}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* LEAD DETAIL PAGE (Full Screen) */}
+          {selectedLead && (
+            <div style={{position:'fixed', top:0, left:0, right:0, bottom:0, background:'#f8fafc', zIndex:1000, display:'flex', flexDirection:'column', overflow:'hidden'}}>
+              {/* Header */}
+              <div style={{background:'#fff', padding:'16px 20px', borderBottom:'1px solid #e2e8f0', display:'flex', alignItems:'center', gap:12}}>
+                <button onClick={() => { setSelectedLead(null); setAiLeadSuggestion(null); setLeadChatInput(''); }} style={{background:'transparent', border:'none', fontSize:24, fontWeight:900, cursor:'pointer', padding:0, display:'flex', alignItems:'center', color:C.text}}><span className="material-symbols-outlined">arrow_back</span></button>
+                <div style={{flex:1}}>
+                  <h3 style={{margin:0, fontSize:18, fontWeight:900, color:C.text}}>{selectedLead.name}</h3>
+                  <p style={{margin:0, fontSize:13, color:'#64748b', fontWeight:600}}>{selectedLead.requirement} • {selectedLead.budget}</p>
+                </div>
+                
+                {/* Auto Pilot Toggle */}
+                <div style={{display:'flex', alignItems:'center', gap:6, background: autoPilotLeads[selectedLead.id] !== false ? '#dcfce7' : '#f1f5f9', padding:'4px 10px', borderRadius:20, border: autoPilotLeads[selectedLead.id] !== false ? '1px solid #22c55e' : '1px solid #cbd5e1', cursor:'pointer'}} onClick={() => setAutoPilotLeads(prev => ({...prev, [selectedLead.id]: prev[selectedLead.id] === false}))}>
+                  <span style={{fontSize:16}}>{autoPilotLeads[selectedLead.id] !== false ? '🤖' : '👨‍💻'}</span>
+                  <span style={{fontSize:11, fontWeight:800, color: autoPilotLeads[selectedLead.id] !== false ? '#15803d' : '#64748b'}}>
+                    {autoPilotLeads[selectedLead.id] !== false ? 'AUTO-PILOT ON' : 'MANUAL'}
+                  </span>
+                </div>
+
+                <Chip label={selectedLead.status} color="#b91c1c" bg="#fee2e2" />
+              </div>
+
+              <div style={{flex:1, overflowY:'auto', display:'flex', flexDirection:'column', background: '#f1f5f9'}}>
+                {/* AI Insight Panel */}
+                {aiLeadSuggestion && (
+                  <div style={{margin:'16px 16px 0', padding:16, background:'linear-gradient(135deg,#eff6ff,#dbeafe)', borderRadius:16, border:'2px solid #93c5fd'}}>
+                    <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10}}>
+                      <div style={{display:'flex', alignItems:'center', gap:8}}>
+                        <span className="material-symbols-outlined" style={{color:'#2563eb', fontSize:20}}>smart_toy</span>
+                        <span style={{fontSize:13, fontWeight:900, color:'#1e40af'}}>AI Conversation Coach</span>
+                      </div>
+                      <div style={{display:'flex', gap:2}}>
+                        {[1,2,3,4,5].map(s => (
+                          <span key={s} style={{fontSize:16, color: s <= aiLeadSuggestion.score ? '#f59e0b' : '#cbd5e1'}}>{s <= aiLeadSuggestion.score ? '★' : '☆'}</span>
+                        ))}
+                      </div>
+                    </div>
+                    <div style={{background:'rgba(239,68,68,0.08)', borderRadius:10, padding:'8px 12px', marginBottom:10, borderLeft:'3px solid #ef4444'}}>
+                      <p style={{margin:'0 0 2px', fontSize:10, fontWeight:900, textTransform:'uppercase', color:'#b91c1c', letterSpacing:0.5}}>⚠️ Critique</p>
+                      <p style={{margin:0, fontSize:12, fontWeight:700, color:'#1e293b', lineHeight:1.5}}>{aiLeadSuggestion.critique}</p>
+                    </div>
+                    <div style={{background:'rgba(34,197,94,0.08)', borderRadius:10, padding:'8px 12px', marginBottom:10, borderLeft:'3px solid #22c55e'}}>
+                      <p style={{margin:'0 0 2px', fontSize:10, fontWeight:900, textTransform:'uppercase', color:'#15803d', letterSpacing:0.5}}>💡 Suggested Reply</p>
+                      <p style={{margin:0, fontSize:12, fontWeight:600, color:'#1e293b', lineHeight:1.5, fontStyle:'italic'}}>"{aiLeadSuggestion.suggestion}"</p>
+                    </div>
+                    <button
+                      onClick={() => setLeadChatInput(aiLeadSuggestion.suggestion)}
+                      style={{width:'100%', padding:'9px 0', background:'#1d4ed8', border:'none', borderRadius:10, color:'#fff', fontSize:12, fontWeight:900, cursor:'pointer', fontFamily:'inherit', letterSpacing:0.3}}
+                    >
+                      ✓ Use This Reply
+                    </button>
+                  </div>
+                )}
+                
+                {/* Timeline */}
+                <div style={{padding:'0 16px', marginTop:16}}>
+                  <p style={{margin:'0 0 8px', fontSize:12, fontWeight:800, color:'#64748b', textTransform:'uppercase'}}>Timeline</p>
+                  <div style={{display:'flex', flexDirection:'column', gap:8}}>
+                    {selectedLead.timeline?.map((t, idx) => (
+                      <div key={idx} style={{display:'flex', alignItems:'center', gap:10}}>
+                        <div style={{width:8, height:8, borderRadius:'50%', background:'#cbd5e1'}} />
+                        <span style={{fontSize:13, fontWeight:600, color:'#475569'}}>{t.event}</span>
+                        <span style={{fontSize:11, color:'#94a3b8', marginLeft:'auto'}}>{t.time}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Chat Container */}
+                <div style={{padding:16, flex:1, display:'flex', flexDirection:'column', gap:12}}>
+                  <p style={{margin:0, fontSize:12, fontWeight:800, color:'#64748b', textTransform:'uppercase', textAlign:'center'}}>Chat History</p>
+                  {selectedLead.chat?.map((msg, idx) => (
+                    <div key={idx} style={{alignSelf: msg.sender === 'staff' ? 'flex-end' : 'flex-start', maxWidth:'80%'}}>
+                      <div style={{background: msg.sender === 'staff' ? '#dcfce7' : '#fff', padding:'10px 14px', borderRadius:16, border: msg.sender === 'staff' ? '1px solid #bbf7d0' : '1px solid #e2e8f0', color:C.text, fontSize:14, fontWeight:500, boxShadow:'0 2px 4px rgba(0,0,0,0.02)'}}>
+                        {msg.text}
+                      </div>
+                      <p style={{margin:'4px 4px 0', fontSize:10, color:'#94a3b8', textAlign: msg.sender === 'staff' ? 'right' : 'left'}}>{msg.time}</p>
+                    </div>
+                  ))}
+                  {isAnalysing && (
+                    <div style={{alignSelf:'flex-end', background:'#f1f5f9', padding:'8px 12px', borderRadius:12, fontSize:12, color:'#64748b', display:'flex', alignItems:'center', gap:6}}>
+                      <span className="material-symbols-outlined" style={{fontSize:14, animation:'spin 2s linear infinite'}}>sync</span> Analyzing...
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Chat Input */}
+              <div style={{background:'#fff', padding:'12px 16px', borderTop:'1px solid #e2e8f0', display:'flex', gap:10, alignItems:'center'}}>
+                <input 
+                  type="text" 
+                  value={leadChatInput}
+                  onChange={e => setLeadChatInput(e.target.value)}
+                  placeholder="Type a message..."
+                  style={{flex:1, padding:'12px 16px', borderRadius:24, border:'1px solid #cbd5e1', fontSize:14, outline:'none'}}
+                  onKeyDown={e => {
+                    if(e.key === 'Enter' && leadChatInput.trim()) {
+                      const newMsg = {sender:'staff', text:leadChatInput.trim(), time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})};
+                      const updatedLead = {...selectedLead, chat: [...(selectedLead.chat||[]), newMsg]};
+                      setSelectedLead(updatedLead);
+                      setEnquiries(enquiries.map(eq => eq.id === selectedLead.id ? updatedLead : eq));
+                      setLeadChatInput('');
+                      
+                      // Trigger AI Coaching Analysis ONLY if Auto-Pilot is OFF
+                      if (autoPilotLeads[selectedLead.id] === false) {
+                        setIsAnalysing(true);
+                        import('../components/AiScheduler/AiSchedulingEngine').then(async m => {
+                          const result = await m.analyzeEnquiryChat(updatedLead.chat, updatedLead);
+                          setAiLeadSuggestion(result);
+                          setIsAnalysing(false);
+                        }).catch(() => setIsAnalysing(false));
+                      }
+                    }
+                  }}
+                />
+                <button 
+                  onClick={() => {
+                    if(leadChatInput.trim()) {
+                      const newMsg = {sender:'staff', text:leadChatInput.trim(), time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})};
+                      const updatedLead = {...selectedLead, chat: [...(selectedLead.chat||[]), newMsg]};
+                      setSelectedLead(updatedLead);
+                      setEnquiries(enquiries.map(eq => eq.id === selectedLead.id ? updatedLead : eq));
+                      setLeadChatInput('');
+                      
+                      if (autoPilotLeads[selectedLead.id] === false) {
+                        setIsAnalysing(true);
+                        import('../components/AiScheduler/AiSchedulingEngine').then(async m => {
+                          const result = await m.analyzeEnquiryChat(updatedLead.chat, updatedLead);
+                          setAiLeadSuggestion(result);
+                          setIsAnalysing(false);
+                        }).catch(() => setIsAnalysing(false));
+                      }
+                    }
+                  }}
+                  style={{background:'#0f172a', color:'#fff', border:'none', width:44, height:44, borderRadius:'50%', display:'flex', justifyContent:'center', alignItems:'center', cursor:'pointer'}}
+                >
+                  <span className="material-symbols-outlined" style={{fontSize:20}}>send</span>
+                </button>
+                <button 
+                  onClick={async () => {
+                    const leadMsgText = prompt("Type a message to simulate the LEAD replying:");
+                    if (!leadMsgText) return;
+                    
+                    const newMsg = {sender:'lead', text:leadMsgText.trim(), time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})};
+                    let updatedLead = {...selectedLead, chat: [...(selectedLead.chat||[]), newMsg]};
+                    setSelectedLead(updatedLead);
+                    setEnquiries(enquiries.map(eq => eq.id === selectedLead.id ? updatedLead : eq));
+
+                    if (autoPilotLeads[selectedLead.id] !== false) {
+                      setIsAnalysing(true);
+                      try {
+                        const m = await import('../components/AiScheduler/AiSchedulingEngine');
+                        const autoReplyText = await m.generateLeadAutoReply(updatedLead.chat, updatedLead);
+                        
+                        const aiMsg = {sender:'staff', text: autoReplyText, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})};
+                        updatedLead = {...updatedLead, chat: [...updatedLead.chat, aiMsg]};
+                        setSelectedLead(updatedLead);
+                        setEnquiries(enquiries.map(eq => eq.id === selectedLead.id ? updatedLead : eq));
+                        showToast("🤖 Auto-Pilot replied to Lead", "success");
+                      } catch (e) {
+                         console.error(e);
+                      } finally {
+                        setIsAnalysing(false);
+                      }
+                    }
+                  }}
+                  title="Simulate Lead Reply"
+                  style={{background:'#e2e8f0', color:'#475569', border:'none', width:44, height:44, borderRadius:'50%', display:'flex', justifyContent:'center', alignItems:'center', cursor:'pointer'}}
+                >
+                  <span className="material-symbols-outlined" style={{fontSize:20}}>person_raised_hand</span>
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* HR DASHBOARD - HIRING & ENQUIRIES */}
           {staffRole === 'HR' && (<>
@@ -2981,7 +3432,9 @@ export default function StaffApp(){
                 {/* Enquiries List */}
                 <div style={{display:'flex', flexDirection:'column', gap:12}}>
                   {enquiries.map(e => (
-                    <div key={e.id} style={{background:'#fff', border: '1px solid #e2e8f0', borderRadius:16, padding:16, boxShadow: '0 4px 14px rgba(15,23,42,0.04)'}}>
+                    <div key={e.id} 
+                         onClick={() => setSelectedLead(e)}
+                         style={{background:'#fff', border: '1px solid #e2e8f0', borderRadius:16, padding:16, boxShadow: '0 4px 14px rgba(15,23,42,0.04)', cursor: 'pointer'}}>
                       <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:8}}>
                         <div>
                           <h4 style={{margin:0, fontSize:15, fontWeight:900, color:'#0f172a'}}>{e.name}</h4>
@@ -5584,9 +6037,32 @@ export default function StaffApp(){
           setMyInventory={setMyInventory}
           tasks={tasks}
           setTasks={setTasks}
+          salary={salaryInput}
+          menus={null}
+          roleContext={{tickets, rooms, enquiries, candidates, demands}}
+          chats={chatHist}
+          performance={getFeedbackData(staffRole)}
+          screenContext={screenContext}
+          onAiItemRequest={handleAiItemRequest}
+          onAiInventoryUpdate={handleAiInventoryUpdate}
         />
       )}
 
+      {/* Background AI Wake-Word Listener — always mounted, always listening */}
+      <BackgroundAiListener
+        staffRole={staffRole}
+        currentView={view}
+        roleContext={{tickets, rooms, enquiries, candidates, demands}}
+        screenContext={screenContext}
+        myInventory={myInventory}
+        salary={salaryInput}
+        tasks={tasks}
+        chats={chatHist}
+        performance={getFeedbackData(staffRole)}
+        onAiItemRequest={handleAiItemRequest}
+        onAiInventoryUpdate={handleAiInventoryUpdate}
+      />
+
 </div>
   );
-}
+}
