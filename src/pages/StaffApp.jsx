@@ -1,10 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import AiChatInterface from '../components/AiScheduler/AiChatInterface';
-import { estimateKitchenRequirements } from '../components/AiKitchen/AiKitchenEngine.js';
-
-
-
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -5555,38 +5550,7 @@ export default function StaffApp(){
       )}
 
 
-      {/* 🤖 AI ASSISTANT FLOATING BUTTON */}
-      <button 
-        onClick={() => setShowAiAssistant(true)}
-        style={{
-          position: 'fixed', bottom: 20, right: 20, zIndex: 90,
-          width: 56, height: 56, borderRadius: 28,
-          background: 'linear-gradient(135deg, #0f172a 0%, #334155 100%)',
-          color: '#fde047', border: 'none',
-          boxShadow: '0 8px 24px rgba(15,23,42,0.3)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          cursor: 'pointer'
-        }}
-      >
-        <span className="material-symbols-outlined" style={{fontSize: 28}}>smart_toy</span>
-      </button>
-
-      {showAiAssistant && (
-        <AiChatInterface 
-          onClose={() => setShowAiAssistant(false)} 
-          meetings={aiMeetings} 
-          setMeetings={setAiMeetings}
-          staffRole={staffRole}
-          currentView={view}
-          clocked={clocked}
-          setClocked={setClocked}
-          myInventory={myInventory}
-          setMyInventory={setMyInventory}
-          tasks={tasks}
-          setTasks={setTasks}
-        />
-      )}
-
+      
 </div>
   );
 }
